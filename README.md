@@ -10,6 +10,7 @@
 
 ```bash
 lake build
+scripts/run_audit.sh
 ```
 
 Mathlib 的版本和提交由 `lean-toolchain`、`lakefile.toml` 与 `lake-manifest.json` 共同固定。`.lake` 目录是本机缓存和编译产物，不属于源代码发布内容。
@@ -23,6 +24,7 @@ Mathlib 的版本和提交由 `lean-toolchain`、`lakefile.toml` 与 `lake-manif
 - 任意增益的线性估计器和确定性误差分解；
 - 良定性假设、创新协方差的逆矩阵性质和增益规格；
 - 标准后验协方差、Joseph 协方差及其半正定性。
+- 精确的一维和秩亏二维测试例子，以及非法协方差边界测试。
 
 形式定理只说明给定定义和显式假设下的数学性质。它们不自动证明某个 ARTS 配置、观测数据、数据库参数或有限精度程序符合这些假设。范围、信任边界和后续路线见 [`docs/scope.md`](docs/scope.md) 与 [`docs/roadmap.md`](docs/roadmap.md)。
 
