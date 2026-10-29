@@ -1,0 +1,16 @@
+module
+
+public import LeanOEM
+
+#print axioms LeanOEM.innovationCovariance_posDef
+#print axioms LeanOEM.innovationCovariance_isUnit
+#print axioms LeanOEM.innovationCovariance_inv_posDef
+#print axioms LeanOEM.innovationCovariance_inv_mul
+#print axioms LeanOEM.innovationCovariance_mul_inv
+#print axioms LeanOEM.gain_mul_innovationCovariance
+#print axioms LeanOEM.josephCovariance_posSemidef
+#print axioms LeanOEM.posteriorCovariance_eq_josephCovariance
+#print axioms LeanOEM.prior_minus_posterior_eq_gain_covariance_gain_conjTranspose
+#print axioms LeanOEM.prior_minus_posterior_posSemidef
+#print axioms LeanOEM.posteriorCovariance_posSemidef
+#print axioms LeanOEM.retrievalError_decomposition
