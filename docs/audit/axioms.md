@@ -1,0 +1,41 @@
+# 公理审计记录
+
+审计日期：2026-10-30
+
+审计提交：`69198dc`
+
+执行命令：
+
+```bash
+lake env lean LeanOEM/Tests/Axioms.lean
+```
+
+核心定理输出均只依赖以下基础公理：
+
+```text
+[propext, Classical.choice, Quot.sound]
+```
+
+审计的公开定理包括：
+
+- `innovationCovariance_posDef`；
+- `innovationCovariance_isUnit`；
+- `innovationCovariance_inv_posDef`；
+- `innovationCovariance_inv_mul`；
+- `innovationCovariance_mul_inv`；
+- `gain_mul_innovationCovariance`；
+- `josephCovariance_posSemidef`；
+- `posteriorCovariance_eq_josephCovariance`；
+- `prior_minus_posterior_eq_gain_covariance_gain_conjTranspose`；
+- `prior_minus_posterior_posSemidef`；
+- `posteriorCovariance_posSemidef`；
+- `dofs_add_left`；
+- `observable_iff_kernel_eq_zero`；
+- `weightedNormalMatrix_posDef`；
+- `informationMatrix_posDef`；
+- `posteriorCovariance_eq_informationMatrix_inv`；
+- `posteriorCovariance_posDef`；
+- `posteriorCovariance_inv_eq_informationMatrix`；
+- `retrievalError_decomposition`。
+
+另行执行的源代码扫描没有发现 `sorry`、`admit`、`sorryAx` 或未登记自定义 `axiom`。
