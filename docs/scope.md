@@ -40,7 +40,7 @@ P10 当前批次还实现了 `LeanOEM.Physics.FiniteLayer` 和 `LeanOEM.Physics.
 `scripts/run_audit.sh`，独立数值核对位于 `scripts/validate_oem_numeric.py`，定义和证据映射见
 `docs/source-mapping.md`。当前没有把这些定义解释为某个具体 ARTS 配置、真实观测或有限精度程序的事实。
 概率测度、简化谱线响应、单位系统、传感器响应和 ARTS 连接属于后续模块；当前 Planck、
-Doppler 和通道响应只实现了无量纲/归一化数学性质。
+Doppler、通道响应和 Gauss–Newton 只实现了无量纲或单步数学性质。
 
 ## 后续形式化边界
 
@@ -48,7 +48,7 @@ Doppler 和通道响应只实现了无量纲/归一化数学性质。
 
 - `ForwardModel` 抽象描述状态到观测的函数，Jacobian 作为导数的矩阵表示或带误差的近似规格；
 - 简化辐射传输、Doppler 频移、通道响应和有限层递推在独立数学模块中定义；
-- 非线性 Gauss–Newton OEM 先形式化目标函数、单步更新和局部条件，不直接声称全局收敛；
+- 非线性 Gauss–Newton OEM 先形式化目标函数、单步更新和局部条件，不直接声称全局收敛；当前已实现目标函数、正规方程和可逆矩阵下的单步规格；
 - ARTS/Python 只通过固定版本、配置、fixture 和误差报告与形式模型建立符合性证据；
 - 真实单位、谱线数据库、浮点误差和观测有效性保持为独立假设或工程证据。
 

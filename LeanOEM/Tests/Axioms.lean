@@ -45,3 +45,6 @@ public import LeanOEM
 #print axioms LeanOEM.RadiativeTransfer.lineResponse_nonneg
 #print axioms LeanOEM.RadiativeTransfer.centralDifference_eq_derivative_add_remainder
 #print axioms LeanOEM.RadiativeTransfer.centralDifference_error_bound
+#print axioms LeanOEM.NonlinearProblem.normalMatrix_mulVec_gaussNewtonStep
+#print axioms LeanOEM.Problem.toNonlinear_residual_eq_innovation
+#print axioms LeanOEM.Problem.toNonlinear_normalMatrix_eq_informationMatrix

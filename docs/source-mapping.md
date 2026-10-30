@@ -168,6 +168,20 @@ P9 的第一批已经完成：后续形式化仍不把 ARTS 代码直接导入 L
 
 这些对象的形式定理可以证明维度、导数关系、递推性质、线性化余项条件和局部误差结论。ARTS/Python fixture 则记录具体版本、配置、谱线库、单位、数组哈希和数值误差，用来支持“具体 ARTS 输出符合某个形式规格”的工程判断。该判断不会被写成无条件的 Lean 定理。
 
+### 非线性 OEM 第一批映射
+
+- `NonlinearProblem`：观测、先验均值、先验权重和观测权重的非线性 MAP 规格；
+- `NonlinearProblem.residual`：$y-F(x)$；
+- `NonlinearProblem.objective`：带观测权重和先验权重的二次目标；
+- `NonlinearProblem.normalMatrix`：$K^\mathsf{T}W_yK+W_a$；
+- `NonlinearProblem.normalRhs`：$K^\mathsf{T}W_y(y-F(x))-W_a(x-x_a)$；
+- `NonlinearProblem.gaussNewtonStep`：正规矩阵总函数逆定义的状态增量；
+- `normalMatrix_mulVec_gaussNewtonStep`：在正规矩阵可逆条件下，增量满足正规方程；
+- `Problem.toNonlinear`：线性 `Problem` 到非线性规格的权重形式映射；
+- `Problem.toNonlinear_normalMatrix_eq_informationMatrix`：该映射的正规矩阵退化为信息矩阵。
+
+当前批次只证明代数规格和可逆性条件，不证明非线性迭代的全局收敛、阻尼策略或现实正演有效性。
+
 ## 当前边界
 
 - 形式化核心没有单位系统；公式中的每个量默认已经在同一组一致单位下表达。

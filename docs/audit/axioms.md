@@ -60,6 +60,9 @@ lake env lean LeanOEM/Tests/Axioms.lean
 - `RadiativeTransfer.gaussianLineProfile_symmetric`；
 - `RadiativeTransfer.lineResponse_nonneg`；
 - `RadiativeTransfer.centralDifference_eq_derivative_add_remainder`；
-- `RadiativeTransfer.centralDifference_error_bound`。
+- `RadiativeTransfer.centralDifference_error_bound`；
+- `NonlinearProblem.normalMatrix_mulVec_gaussNewtonStep`；
+- `Problem.toNonlinear_residual_eq_innovation`；
+- `Problem.toNonlinear_normalMatrix_eq_informationMatrix`。
 
 另行执行的源代码扫描没有发现 `sorry`、`admit`、`sorryAx` 或未登记自定义 `axiom`。
