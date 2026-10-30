@@ -32,3 +32,10 @@ public import LeanOEM
 #print axioms LeanOEM.RadiativeTransfer.propagateLayers_nonneg
 #print axioms LeanOEM.RadiativeTransfer.propagateLayers_bounds
 #print axioms LeanOEM.RadiativeTransfer.propagateTwo_eq
+#print axioms LeanOEM.RadiativeTransfer.planckRadiance_pos
+#print axioms LeanOEM.RadiativeTransfer.dopplerShift_zero
+#print axioms LeanOEM.RadiativeTransfer.dopplerShift_expand
+#print axioms LeanOEM.RadiativeTransfer.dopplerShift_pos
+#print axioms LeanOEM.RadiativeTransfer.ChannelResponse.apply_nonneg
+#print axioms LeanOEM.RadiativeTransfer.ChannelResponse.apply_le_of_le
+#print axioms LeanOEM.RadiativeTransfer.ChannelResponse.apply_const

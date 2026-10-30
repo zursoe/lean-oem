@@ -188,10 +188,12 @@ ARTS、Python、单位系统、传感器响应、非线性 Jacobian、概率测�
 
 ## 阶段 P10：最小辐射传输理论模型
 
-第一批已完成：在独立于 ARTS 的数学模块中实现了归一化有限层、无散射模型，并证明基本范围性质。
+当前批次已完成：在独立于 ARTS 的数学模块中实现了归一化有限层、无散射模型，以及 Planck、Doppler 和有限通道响应的基本性质。
 
 - `LeanOEM/Physics/FiniteLayer.lean` 定义 `Layer`、有效层假设、单层递推、有限层传播和两层组合；
 - `LeanOEM/Tests/FiniteLayer.lean` 覆盖精确数值、非负性、上界和两层传播；
+- `LeanOEM/Physics/Spectral.lean` 定义 `planckRadiance`、`dopplerShift` 和 `ChannelResponse`；
+- `LeanOEM/Tests/Spectral.lean` 覆盖正性、零速度、Doppler 正性、通道加权和边界性质；
 - `LeanOEM/Tests/Axioms.lean` 已纳入有限层公开定理的公理记录。
 
 - 有限层辐射传输递推和边界条件；
@@ -200,9 +202,9 @@ ARTS、Python、单位系统、传感器响应、非线性 Jacobian、概率测�
 - 通道响应、双边带合成和观测量变换；
 - 对温度、吸收系数和风扰动的导数，以及 Jacobian 的链式组合。
 
-第一批使用归一化量；真实单位系统另立模块，避免把单位转换混入基础证明。
+当前批次使用归一化量；真实单位系统另立模块，避免把单位转换混入基础证明。
 
-第一批验收已达到：每个有限层对象都有输入域和适用假设；已证明递推非负性、上界保持和两层组合公式。Planck、Doppler、通道响应和失败边界继续作为 P10 后续批次。
+当前批次验收已达到：有限层递推、Planck 正性、Doppler 基本代数/正性和通道响应范围性质均有形式定理与测试。简化谱线响应、失败边界和离散误差继续作为 P10/P12 后续批次。
 
 ## 阶段 P11：非线性 Gauss–Newton OEM 规格
 
@@ -266,4 +268,4 @@ SciLean 继续暂缓：其当前主分支工具链仍为 Lean `v4.28.0-rc1`，�
 - README、范围文档和来源映射明确写出“已证明范围”和“尚未证明范围”；
 - 干净 checkout 可以在锁定工具链和 `lake-manifest.json` 下完成构建。
 
-下一次实际编码批次继续 P10：在有限层递推之上增加 Planck、Doppler 和通道响应的独立数学模型；继续保持理论、算法、ARTS 实现和现实证据的边界。
+下一次实际编码批次继续 P10/P12：增加简化谱线响应并开始有限差分/离散化误差契约；继续保持理论、算法、ARTS 实现和现实证据的边界。

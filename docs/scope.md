@@ -32,14 +32,15 @@
 测试中的标量平方模型验证了一个非线性 Jacobian 和二阶锚点余项；这仍是数学接口示例，
 不是辐射传输模型。
 
-P10 第一批还实现了 `LeanOEM.Physics.FiniteLayer`：归一化的有限层、无散射传输递推，
-以及有效层的非负性、上界保持和两层组合公式。它是独立数学模型，不代表 ARTS 的完整实现。
+P10 当前批次还实现了 `LeanOEM.Physics.FiniteLayer` 和 `LeanOEM.Physics.Spectral`：归一化的有限层、
+无散射传输递推、Planck 正性、Doppler 基本性质和通道响应范围性质。它们是独立数学模型，
+不代表 ARTS 的完整实现。
 
 测试模块包含一维精确数值、秩亏 `2 × 1` 观测和非法协方差边界；自动审计脚本位于
 `scripts/run_audit.sh`，独立数值核对位于 `scripts/validate_oem_numeric.py`，定义和证据映射见
 `docs/source-mapping.md`。当前没有把这些定义解释为某个具体 ARTS 配置、真实观测或有限精度程序的事实。
-概率测度、Planck 函数、Doppler 频移、通道响应、单位系统、传感器响应和 ARTS 连接属于后续模块。
-当前辐射传输只实现了归一化有限层递推。
+概率测度、简化谱线响应、单位系统、传感器响应和 ARTS 连接属于后续模块；当前 Planck、
+Doppler 和通道响应只实现了无量纲/归一化数学性质。
 
 ## 后续形式化边界
 

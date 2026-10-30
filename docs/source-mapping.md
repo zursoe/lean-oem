@@ -121,6 +121,19 @@
 这些定理只负责归一化有限层模型的数学性质，不负责谱线参数、Planck 函数、单位转换、ARTS
 数值误差或真实大气有效性。测试例子位于 `LeanOEM/Tests/FiniteLayer.lean`。
 
+### 频谱和通道响应第一批映射
+
+- `planckRadiance`：带显式常数和正参数假设的归一化 Planck 函数；
+- `planckRadiance_pos`：正频率、正温度和正物理常数下辐亮度为正；
+- `dopplerShift`：一阶无量纲 Doppler 频移；
+- `dopplerShift_zero`、`dopplerShift_expand`、`dopplerShift_pos`：零速度、代数展开和正性结论；
+- `ChannelResponse`：非负且归一化的有限通道权重；
+- `ChannelResponse.apply`：通道加权求和；
+- `ChannelResponse.apply_nonneg`、`apply_le_of_le`、`apply_const`：非负性、上界保持和常量保持。
+
+这些结果见 `LeanOEM/Physics/Spectral.lean`。它们没有引入单位、真实谱线参数、ARTS 采样或
+浮点误差界；测试例子位于 `LeanOEM/Tests/Spectral.lean`。
+
 ## 独立数值证据
 
 `scripts/validate_oem_numeric.py` 使用 Python 标准库 `fractions.Fraction` 独立实现小型矩阵运算，避免依赖 Lean、Mathlib、NumPy 或 SciPy。它核对：
@@ -161,6 +174,6 @@ P9 的第一批已经完成：后续形式化仍不把 ARTS 代码直接导入 L
 - 没有把随机变量、概率测度、期望或统计协方差引入核心；当前 `Covariance` 是带正定性假设的矩阵。
 - 没有给浮点实现、条件数、舍入误差或迭代求解器建立误差界。
 - 没有把 Python、ARTS 代码、运行数据、观测数据库或具体场景输出作为 Lean 依赖。
-- 没有把连续辐射传输方程、有限层离散化、Doppler 频移、通道响应或非线性 Gauss–Newton 迭代形式化；这些属于路线 P10–P14。
+- 没有把连续辐射传输方程、简化谱线响应、有限差分误差或非线性 Gauss–Newton 迭代形式化；这些属于路线 P10–P14。
 - DOFS 的上下界、谱半径和特征值结论尚未加入；当前只定义 trace 并验证其代数性质。
 - Rodgers 的教材支持术语和公式来源，不自动支持某个现实场景中的参数、先验或误差模型。

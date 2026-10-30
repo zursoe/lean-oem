@@ -4,6 +4,7 @@ public import LeanOEM.Core.Types
 public import LeanOEM.Core.LinearModel
 public import LeanOEM.Core.ForwardModel
 public import LeanOEM.Physics.FiniteLayer
+public import LeanOEM.Physics.Spectral
 public import LeanOEM.Core.Estimator
 public import LeanOEM.Core.Assumptions
 public import LeanOEM.Core.Covariance

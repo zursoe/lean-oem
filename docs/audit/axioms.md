@@ -36,6 +36,24 @@ lake env lean LeanOEM/Tests/Axioms.lean
 - `posteriorCovariance_eq_informationMatrix_inv`；
 - `posteriorCovariance_posDef`；
 - `posteriorCovariance_inv_eq_informationMatrix`；
-- `retrievalError_decomposition`。
+- `retrievalError_decomposition`；
+- `ForwardModel.observe_eq_linearized_add_remainder`；
+- `ForwardModel.linearizedObserve_eq_offset_add`；
+- `ForwardModel.linearizedObserve_eq_problem_predict_add_offset`；
+- `ForwardModel.JacobianSpec.hasJacobianAt`；
+- `ForwardModel.matrixDerivative_apply`；
+- `ForwardModel.hasJacobianAt_of_hasFDerivAt_matrix`；
+- `RadiativeTransfer.Layer.Valid.propagate_nonneg`；
+- `RadiativeTransfer.Layer.Valid.propagate_le_of_le`；
+- `RadiativeTransfer.propagateLayers_nonneg`；
+- `RadiativeTransfer.propagateLayers_bounds`；
+- `RadiativeTransfer.propagateTwo_eq`；
+- `RadiativeTransfer.planckRadiance_pos`；
+- `RadiativeTransfer.dopplerShift_zero`；
+- `RadiativeTransfer.dopplerShift_expand`；
+- `RadiativeTransfer.dopplerShift_pos`；
+- `RadiativeTransfer.ChannelResponse.apply_nonneg`；
+- `RadiativeTransfer.ChannelResponse.apply_le_of_le`；
+- `RadiativeTransfer.ChannelResponse.apply_const`。
 
 另行执行的源代码扫描没有发现 `sorry`、`admit`、`sorryAx` 或未登记自定义 `axiom`。
