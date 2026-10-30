@@ -20,24 +20,6 @@ private def scalarProblem (f : ℝ → ℝ) (y : ℝ) : NonlinearProblem 1 1 whe
   priorWeight := !![1]
   observationWeight := !![1]
 
-private lemma scalar_update (f : ℝ → ℝ) (y : ℝ) (x : State 1) (k : ℝ) :
-    (scalarProblem f y).gaussNewtonUpdate x !![k] =
-      ![x 0 + (k * (y - f (x 0)) - x 0) / (k * k + 1)] := by
-  have hNormal : (scalarProblem f y).normalMatrix x !![k] =
-      Matrix.diagonal ![k * k + 1] := by
-    ext i j
-    fin_cases i
-    fin_cases j
-    simp [normalMatrix, scalarProblem, Matrix.mul_apply,
-      Matrix.diagonal, Matrix.conjTranspose]
-  unfold gaussNewtonUpdate gaussNewtonStep
-  rw [hNormal, Matrix.inv_subsingleton]
-  ext i
-  fin_cases i
-  simp [normalRhs, NonlinearProblem.residual, scalarProblem, Matrix.mulVec, dotProduct,
-    Matrix.diagonal, Matrix.conjTranspose, Matrix.vecHead, Ring.inverse_eq_inv, div_eq_mul_inv]
-  ring
-
 private def linearProblem := scalarProblem (fun z => z) 4
 
 private lemma scalar_norm (a : ℝ) : ‖(![a] : State 1)‖ = |a| := by
@@ -49,10 +31,13 @@ private lemma scalar_norm (a : ℝ) : ‖(![a] : State 1)‖ = |a| := by
 
 private lemma linear_update (x : State 1) :
     linearProblem.gaussNewtonUpdate x !![1] = ![2] := by
-  rw [linearProblem, scalar_update]
+  unfold gaussNewtonUpdate gaussNewtonStep
   ext i
   fin_cases i
-  norm_num
+  norm_num [normalMatrix, normalRhs, NonlinearProblem.residual, linearProblem,
+    scalarProblem, Matrix.mul_apply, Matrix.mulVec, Matrix.diagonal,
+    Matrix.conjTranspose, Matrix.transpose, Matrix.vecHead, dotProduct,
+    Fin.sum_univ_succ, Function.comp_def, Pi.smul_apply, Ring.inverse_eq_inv]
   ring
 
 /-- 线性例子一步到达已知的正则化解，任意初值都适用。 -/
@@ -85,12 +70,13 @@ example :
     positivity
   have hStep : linearProblem.gaussNewtonStep ![(5 / 2 : ℝ)] !![1] =
       ![(-1 / 2 : ℝ)] := by
-    have h := congrFun (linear_update (![(5 / 2 : ℝ)] : State 1)) (0 : Fin 1)
-    simp only [gaussNewtonUpdate, Pi.add_apply, Matrix.cons_val_zero] at h
+    unfold gaussNewtonStep
     ext i
     fin_cases i
-    norm_num
-    linarith
+    norm_num [normalMatrix, normalRhs, NonlinearProblem.residual, linearProblem,
+      scalarProblem, Matrix.mul_apply, Matrix.mulVec, Matrix.diagonal,
+      Matrix.conjTranspose, Matrix.transpose, Matrix.vecHead, dotProduct,
+      Fin.sum_univ_succ, Function.comp_def, Pi.smul_apply, Ring.inverse_eq_inv]
   apply linearProblem.stoppedAt_error_le _ _ ![2] (by norm_num) hContract 0
   change 0 ≤ (1 / 2 : ℝ) ∧ ‖linearProblem.gaussNewtonStep ![(5 / 2 : ℝ)] !![1]‖ ≤ 1 / 2
   rw [hStep, scalar_norm]
@@ -116,11 +102,23 @@ private def frozen : ℕ → State 1 → Jacobian 1 1 := fun _ _ => !![2]
 
 /-- 刷新 Jacobian：从 1 出发，经 2 后到达 32/17。 -/
 example : squareProblem.gaussNewtonIterate refreshed ![1] 2 = ![(32 / 17 : ℝ)] := by
-  norm_num [gaussNewtonIterate, refreshed, squareProblem, scalar_update]
+  ext i
+  fin_cases i
+  norm_num [gaussNewtonIterate, gaussNewtonUpdate, gaussNewtonStep, normalMatrix,
+    normalRhs, NonlinearProblem.residual, refreshed, squareProblem, scalarProblem,
+    Matrix.mul_apply, Matrix.mulVec, Matrix.diagonal, Matrix.conjTranspose,
+    Matrix.transpose, Matrix.vecHead, dotProduct, Fin.sum_univ_succ,
+    Function.comp_def, Pi.smul_apply, Ring.inverse_eq_inv]
 
 /-- 冻结初始 Jacobian 时第二步变为 8/5，明确两种策略的不同。 -/
 example : squareProblem.gaussNewtonIterate frozen ![1] 2 = ![(8 / 5 : ℝ)] := by
-  norm_num [gaussNewtonIterate, frozen, squareProblem, scalar_update]
+  ext i
+  fin_cases i
+  norm_num [gaussNewtonIterate, gaussNewtonUpdate, gaussNewtonStep, normalMatrix,
+    normalRhs, NonlinearProblem.residual, frozen, squareProblem, scalarProblem,
+    Matrix.mul_apply, Matrix.mulVec, Matrix.diagonal, Matrix.conjTranspose,
+    Matrix.transpose, Matrix.vecHead, dotProduct, Fin.sum_univ_succ,
+    Function.comp_def, Pi.smul_apply, Ring.inverse_eq_inv]
 
 /-- 反例使用的零 Jacobian 确实是模型在零点的导数。 -/
 example : squareProblem.model.HasJacobianAt (0 : State 1) (!![0] : Jacobian 1 1) := by
@@ -130,10 +128,13 @@ example : squareProblem.model.HasJacobianAt (0 : State 1) (!![0] : Jacobian 1 1)
 
 private lemma square_update_zero :
     squareProblem.gaussNewtonUpdate (0 : State 1) !![0] = 0 := by
-  rw [squareProblem, scalar_update]
+  unfold gaussNewtonUpdate gaussNewtonStep
   ext i
   fin_cases i
-  norm_num
+  norm_num [normalMatrix, normalRhs, NonlinearProblem.residual, squareProblem,
+    scalarProblem, Matrix.mul_apply, Matrix.mulVec, Matrix.diagonal,
+    Matrix.conjTranspose, Matrix.transpose, Matrix.vecHead, dotProduct,
+    Fin.sum_univ_succ, Function.comp_def, Pi.smul_apply, Ring.inverse_eq_inv]
 
 /-- 初值为零时真实导数刷新也一直停在零点。 -/
 private lemma square_iterate_zero (i : ℕ) :

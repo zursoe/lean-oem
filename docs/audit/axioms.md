@@ -63,6 +63,18 @@ lake env lean LeanOEM/Tests/Axioms.lean
 - `RadiativeTransfer.centralDifference_error_bound`；
 - `NonlinearProblem.normalMatrix_mulVec_gaussNewtonStep`；
 - `Problem.toNonlinear_residual_eq_innovation`；
-- `Problem.toNonlinear_normalMatrix_eq_informationMatrix`。
+- `Problem.toNonlinear_normalMatrix_eq_informationMatrix`；
+- `NonlinearProblem.gaussNewtonIterate_zero`；
+- `NonlinearProblem.gaussNewtonIterate_succ`；
+- `NonlinearProblem.gaussNewtonIterate_succ_sub`；
+- `NonlinearProblem.gaussNewtonStep_eq_zero_iff`；
+- `NonlinearProblem.gaussNewtonIterate_mem`；
+- `NonlinearProblem.contractsTowardAlong_of_lipschitzOn`；
+- `NonlinearProblem.gaussNewtonIterate_error_le`；
+- `NonlinearProblem.gaussNewtonIterate_tendsto`；
+- `NonlinearProblem.error_le_step_div_one_sub`；
+- `NonlinearProblem.stoppedAt_error_le`；
+- `NonlinearProblem.gaussNewtonIterate_step_le`；
+- `NonlinearProblem.eventually_stoppedAt`。
 
 另行执行的源代码扫描没有发现 `sorry`、`admit`、`sorryAx` 或未登记自定义 `axiom`。
