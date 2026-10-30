@@ -39,3 +39,9 @@ public import LeanOEM
 #print axioms LeanOEM.RadiativeTransfer.ChannelResponse.apply_nonneg
 #print axioms LeanOEM.RadiativeTransfer.ChannelResponse.apply_le_of_le
 #print axioms LeanOEM.RadiativeTransfer.ChannelResponse.apply_const
+#print axioms LeanOEM.RadiativeTransfer.gaussianLineProfile_pos
+#print axioms LeanOEM.RadiativeTransfer.gaussianLineProfile_center
+#print axioms LeanOEM.RadiativeTransfer.gaussianLineProfile_symmetric
+#print axioms LeanOEM.RadiativeTransfer.lineResponse_nonneg
+#print axioms LeanOEM.RadiativeTransfer.centralDifference_eq_derivative_add_remainder
+#print axioms LeanOEM.RadiativeTransfer.centralDifference_error_bound

@@ -54,6 +54,12 @@ lake env lean LeanOEM/Tests/Axioms.lean
 - `RadiativeTransfer.dopplerShift_pos`；
 - `RadiativeTransfer.ChannelResponse.apply_nonneg`；
 - `RadiativeTransfer.ChannelResponse.apply_le_of_le`；
-- `RadiativeTransfer.ChannelResponse.apply_const`。
+- `RadiativeTransfer.ChannelResponse.apply_const`；
+- `RadiativeTransfer.gaussianLineProfile_pos`；
+- `RadiativeTransfer.gaussianLineProfile_center`；
+- `RadiativeTransfer.gaussianLineProfile_symmetric`；
+- `RadiativeTransfer.lineResponse_nonneg`；
+- `RadiativeTransfer.centralDifference_eq_derivative_add_remainder`；
+- `RadiativeTransfer.centralDifference_error_bound`。
 
 另行执行的源代码扫描没有发现 `sorry`、`admit`、`sorryAx` 或未登记自定义 `axiom`。

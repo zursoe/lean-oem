@@ -16,6 +16,22 @@ noncomputable section
 example : 0 < planckRadiance 1 1 1 1 1 := by
   apply planckRadiance_pos <;> norm_num
 
+/-- Gaussian 谱线在中心处取归一化峰值。 -/
+example (center width : ℝ) :
+    gaussianLineProfile center center width = 1 :=
+  gaussianLineProfile_center center width
+
+/-- Gaussian 谱线关于中心对称。 -/
+example (center width offset : ℝ) :
+    gaussianLineProfile (center + offset) center width =
+      gaussianLineProfile (center - offset) center width :=
+  gaussianLineProfile_symmetric center width offset
+
+/-- 非负线强度给出非负谱线响应。 -/
+example : 0 ≤ lineResponse 3 1 0 2 := by
+  apply lineResponse_nonneg
+  norm_num
+
 /-- 零速度时 Doppler 频移保持原频率。 -/
 example : dopplerShift 3 0 2 = 3 := by
   norm_num [dopplerShift]

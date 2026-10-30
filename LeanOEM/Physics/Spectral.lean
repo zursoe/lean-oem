@@ -33,6 +33,34 @@ theorem planckRadiance_pos {h c k frequency temperature : ℝ}
     mul_pos (sq_pos_of_pos hLightSpeed) hExponential
   exact div_pos hNumerator hDenominator
 
+/-- 归一化 Gaussian 谱线响应。 -/
+def gaussianLineProfile (frequency center width : ℝ) : ℝ :=
+  Real.exp (-((frequency - center) / width) ^ 2)
+
+theorem gaussianLineProfile_pos (frequency center width : ℝ) :
+    0 < gaussianLineProfile frequency center width := by
+  exact Real.exp_pos _
+
+theorem gaussianLineProfile_center (center width : ℝ) :
+    gaussianLineProfile center center width = 1 := by
+  simp [gaussianLineProfile]
+
+theorem gaussianLineProfile_symmetric (center width offset : ℝ) :
+    gaussianLineProfile (center + offset) center width =
+      gaussianLineProfile (center - offset) center width := by
+  unfold gaussianLineProfile
+  congr 1
+  ring
+
+/-- 带线强度的归一化 Gaussian 谱线响应。 -/
+def lineResponse (strength frequency center width : ℝ) : ℝ :=
+  strength * gaussianLineProfile frequency center width
+
+theorem lineResponse_nonneg {strength frequency center width : ℝ}
+    (hStrength : 0 ≤ strength) :
+    0 ≤ lineResponse strength frequency center width := by
+  exact mul_nonneg hStrength (gaussianLineProfile_pos frequency center width).le
+
 /-- 一阶 Doppler 频移的无量纲形式。 -/
 def dopplerShift (frequency velocity lightSpeed : ℝ) : ℝ :=
   frequency * (1 - velocity / lightSpeed)
