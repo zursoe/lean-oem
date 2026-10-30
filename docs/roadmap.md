@@ -121,6 +121,8 @@ Joseph 恒等式应先抽象成一个小型非交换矩阵代数引理，再实�
 
 ## 阶段 P4：averaging kernel、DOFS 和静态可辨识性
 
+本批次已完成第一层接口：新增 `dofs` 和 `Problem.dofs` 的 trace 定义、零增益与增益加法性质；新增 `Observable`、核为零刻画和正定权重下的加权正规矩阵定理；示例覆盖一维 DOFS、单位 Jacobian 和秩亏 Jacobian。DOFS 上下界和谱理论仍未声明。
+
 后验协方差完成后再扩展诊断量。
 
 1. 将 `averagingKernel` 的最优增益特例固定为 `A = gK`，并添加 `dofs` 的定义 `Matrix.trace A`。
@@ -153,4 +155,4 @@ ARTS、Python、单位系统、传感器响应、非线性 Jacobian、概率测�
 - README、范围文档和来源映射明确写出“已证明范围”和“尚未证明范围”；
 - 干净 checkout 可以在锁定工具链和 `lake-manifest.json` 下完成构建。
 
-下一次实际编码批次进入 P4：先整理 `averagingKernel` 和 DOFS 的定义及 trace 示例，再定义静态可辨识性；继续保持 DOFS 上下界、ARTS 对接和 SciLean 依赖的独立边界。
+下一次实际编码批次进入 P5：研究信息形式和先验正定条件下的后验逆矩阵恒等式；继续保持 DOFS 上下界、ARTS 对接和 SciLean 依赖的独立边界。

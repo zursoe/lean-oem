@@ -125,6 +125,13 @@ example : (posteriorCovariance scalarProblem).PosSemidef :=
   posteriorCovariance_posSemidef scalarProblem
     scalarProblem_prior_posSemidef scalarProblem_observation_posDef
 
+/-- 一维精确例子的 DOFS 为 `12 / 17`。 -/
+example : scalarProblem.dofs = (12 / 17 : ℝ) := by
+  unfold Problem.dofs dofs averagingKernel
+  rw [scalarProblem_gain_eq]
+  rw [Matrix.trace_fin_one]
+  norm_num [scalarProblem, Matrix.mul_apply, Matrix.vecMul, Matrix.vecHead, dotProduct]
+
 /-- `2 × 1` 秩亏观测例子：第二个状态方向不进入观测。 -/
 private def rankDeficientProblem : Problem 2 1 :=
   { jacobian := !![1, 0]
@@ -184,6 +191,34 @@ example : posteriorCovariance rankDeficientProblem 1 1 = 1 := by
 example : (posteriorCovariance rankDeficientProblem).PosSemidef :=
   posteriorCovariance_posSemidef rankDeficientProblem
     rankDeficientProblem_prior_posSemidef rankDeficientProblem_observation_posDef
+
+private def rankDeficientJacobian : Jacobian 2 1 := !![1, 0]
+
+/-- 秩亏 Jacobian 不是静态可辨识的。 -/
+example : ¬ Observable rankDeficientJacobian := by
+  intro h
+  have hinjective : Function.Injective rankDeficientJacobian.mulVec := h
+  have hzero :
+      rankDeficientJacobian.mulVec (![0, 1] : State 2) =
+        rankDeficientJacobian.mulVec (0 : State 2) := by
+    funext i
+    fin_cases i
+    norm_num [rankDeficientJacobian, Matrix.mulVec, dotProduct, Fin.sum_univ_succ]
+  have hx : (![0, 1] : State 2) = 0 := hinjective hzero
+  have hcoord := congrFun hx (1 : Fin 2)
+  norm_num at hcoord
+
+/-- 单位 Jacobian 是静态可辨识的。 -/
+example : Observable (1 : Matrix (Fin 2) (Fin 2) ℝ) := by
+  change Function.Injective (1 : Matrix (Fin 2) (Fin 2) ℝ).mulVec
+  intro x y hxy
+  simpa using hxy
+
+/-- 正定观测权重和可辨识 Jacobian 给出正定加权正规矩阵。 -/
+example {n m : ℕ} (k : Jacobian n m) (s : Covariance m)
+    (hWeight : s.PosDef) (hObservable : Observable k) :
+    (weightedNormalMatrix k s).PosDef :=
+  weightedNormalMatrix_posDef k s hWeight hObservable
 
 /-- 负定观测误差矩阵不能满足正定观测误差假设。 -/
 example :

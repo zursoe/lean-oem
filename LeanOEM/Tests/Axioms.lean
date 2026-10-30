@@ -13,4 +13,7 @@ public import LeanOEM
 #print axioms LeanOEM.prior_minus_posterior_eq_gain_covariance_gain_conjTranspose
 #print axioms LeanOEM.prior_minus_posterior_posSemidef
 #print axioms LeanOEM.posteriorCovariance_posSemidef
+#print axioms LeanOEM.dofs_add_left
+#print axioms LeanOEM.observable_iff_kernel_eq_zero
+#print axioms LeanOEM.weightedNormalMatrix_posDef
 #print axioms LeanOEM.retrievalError_decomposition
