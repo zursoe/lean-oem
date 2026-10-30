@@ -175,11 +175,41 @@ def rank_deficient_case() -> None:
         raise AssertionError("秩亏例子的不可观测方向不应被收缩")
 
 
+def iteration_cases() -> None:
+    """精确复算状态增量，检查刷新、冻结和零步长停滞。"""
+    def update(state: Fraction, prediction: Fraction, jacobian: Fraction) -> Fraction:
+        normal = jacobian * jacobian + 1
+        rhs = jacobian * (4 - prediction) - state
+        return state + rhs / normal
+
+    for initial in (F(-3), F(0), F(7, 2)):
+        if update(initial, initial, F(1)) != 2:
+            raise AssertionError("线性 OEM 没有一步恢复正则化解")
+
+    refreshed = [F(1)]
+    frozen = [F(1)]
+    for _ in range(2):
+        state = refreshed[-1]
+        refreshed.append(update(state, state * state, 2 * state))
+        state = frozen[-1]
+        frozen.append(update(state, state * state, F(2)))
+    assert_vector(refreshed, [F(1), F(2), F(32, 17)], "刷新 Jacobian 的轨迹")
+    assert_vector(frozen, [F(1), F(2), F(8, 5)], "冻结 Jacobian 的轨迹")
+
+    stalled = update(F(0), F(0), F(0))
+    objective_zero = F(1, 2) * ((4 - 0**2) ** 2 + 0**2)
+    objective_two = F(1, 2) * ((4 - 2**2) ** 2 + 2**2)
+    if stalled != 0 or not objective_zero > objective_two:
+        raise AssertionError("零步长非最优反例未复现")
+
+
 def main() -> None:
     scalar_case()
     rank_deficient_case()
+    iteration_cases()
     print("一维精确 OEM 交叉验证：通过")
     print("秩亏二维 OEM 交叉验证：通过")
+    print("Gauss–Newton 轨迹与停滞反例交叉验证：通过")
     print("所有独立有理数交叉验证：通过")
 
 

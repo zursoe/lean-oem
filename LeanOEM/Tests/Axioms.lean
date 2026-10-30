@@ -48,3 +48,15 @@ public import LeanOEM
 #print axioms LeanOEM.NonlinearProblem.normalMatrix_mulVec_gaussNewtonStep
 #print axioms LeanOEM.Problem.toNonlinear_residual_eq_innovation
 #print axioms LeanOEM.Problem.toNonlinear_normalMatrix_eq_informationMatrix
+#print axioms LeanOEM.NonlinearProblem.gaussNewtonIterate_zero
+#print axioms LeanOEM.NonlinearProblem.gaussNewtonIterate_succ
+#print axioms LeanOEM.NonlinearProblem.gaussNewtonIterate_succ_sub
+#print axioms LeanOEM.NonlinearProblem.gaussNewtonStep_eq_zero_iff
+#print axioms LeanOEM.NonlinearProblem.gaussNewtonIterate_mem
+#print axioms LeanOEM.NonlinearProblem.contractsTowardAlong_of_lipschitzOn
+#print axioms LeanOEM.NonlinearProblem.gaussNewtonIterate_error_le
+#print axioms LeanOEM.NonlinearProblem.gaussNewtonIterate_tendsto
+#print axioms LeanOEM.NonlinearProblem.error_le_step_div_one_sub
+#print axioms LeanOEM.NonlinearProblem.stoppedAt_error_le
+#print axioms LeanOEM.NonlinearProblem.gaussNewtonIterate_step_le
+#print axioms LeanOEM.NonlinearProblem.eventually_stoppedAt

@@ -32,12 +32,13 @@ Mathlib 的版本和提交由 `lean-toolchain`、`lakefile.toml` 与 `lake-manif
 - 最小有限层无散射辐射传输递推，以及非负性、上界保持和两层组合性质。
 - 归一化 Planck 函数、Doppler 频移和非负归一化通道响应的基本性质。
 - 非线性 MAP 目标、Gauss–Newton 正规方程规格，以及与线性 OEM 信息形式的连接。
+- Gauss–Newton 迭代轨迹、步长停止判据，以及显式收缩条件下的收敛和停止误差界。
 
 形式定理只说明给定定义和显式假设下的数学性质。它们不自动证明某个 ARTS 配置、观测数据、数据库参数或有限精度程序符合这些假设。范围、信任边界、来源映射和后续路线见 [`docs/scope.md`](docs/scope.md)、[`docs/source-mapping.md`](docs/source-mapping.md) 与 [`docs/roadmap.md`](docs/roadmap.md)。
 
 ## 后续方向
 
-本库将保持与 ARTS 解耦。后续先定义通用 `ForwardModel`、Jacobian 和线性化契约，再形式化有限层辐射传输、Doppler 频移、通道响应和非线性 Gauss–Newton OEM 的可复用数学部分。ARTS/Python 作为具体实现和外部数值证据，通过版本固定的 fixture 与误差报告接入，不作为 Lean 包依赖。
+本库将保持与 ARTS 解耦。已有正演契约、有限层和频谱基础模块；后续完善导数与误差传播证明，并从具体模型条件推导非线性迭代的适用范围。迭代语义和证明边界见 [`docs/iteration.md`](docs/iteration.md)。ARTS/Python 作为具体实现和外部数值证据，通过版本固定的 fixture 与误差报告接入，不作为 Lean 包依赖。
 
 ## 许可证
 

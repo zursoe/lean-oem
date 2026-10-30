@@ -7,3 +7,4 @@ import LeanOEM.Tests.FiniteLayer
 import LeanOEM.Tests.Spectral
 import LeanOEM.Tests.Discretization
 import LeanOEM.Tests.NonlinearOEM
+import LeanOEM.Tests.Iteration
