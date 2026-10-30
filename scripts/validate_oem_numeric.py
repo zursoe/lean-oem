@@ -1,0 +1,187 @@
+#!/usr/bin/env python3
+"""用精确有理数独立核对 Lean OEM 核心例子。"""
+
+from __future__ import annotations
+
+from fractions import Fraction
+from typing import Iterable, Sequence
+
+
+F = Fraction
+Matrix = list[list[Fraction]]
+Vector = list[Fraction]
+
+
+def matrix(rows: Iterable[Iterable[int | Fraction]]) -> Matrix:
+    result = [[value if isinstance(value, Fraction) else F(value) for value in row]
+              for row in rows]
+    if not result or any(len(row) != len(result[0]) for row in result):
+        raise ValueError("矩阵必须非空且每行长度一致")
+    return result
+
+
+def identity(size: int) -> Matrix:
+    return [[F(int(i == j)) for j in range(size)] for i in range(size)]
+
+
+def add(left: Matrix, right: Matrix) -> Matrix:
+    return [[a + b for a, b in zip(row_a, row_b)]
+            for row_a, row_b in zip(left, right)]
+
+
+def subtract(left: Matrix, right: Matrix) -> Matrix:
+    return [[a - b for a, b in zip(row_a, row_b)]
+            for row_a, row_b in zip(left, right)]
+
+
+def multiply(left: Matrix, right: Matrix) -> Matrix:
+    if len(left[0]) != len(right):
+        raise ValueError("矩阵维度不匹配")
+    return [[sum(left[i][k] * right[k][j] for k in range(len(right)))
+             for j in range(len(right[0]))]
+            for i in range(len(left))]
+
+
+def transpose(value: Matrix) -> Matrix:
+    return [list(column) for column in zip(*value)]
+
+
+def inverse(value: Matrix) -> Matrix:
+    size = len(value)
+    if any(len(row) != size for row in value):
+        raise ValueError("只有方阵可以求逆")
+    augmented = [row[:] + identity(size)[i] for i, row in enumerate(value)]
+    for column in range(size):
+        pivot = next((row for row in range(column, size)
+                      if augmented[row][column] != 0), None)
+        if pivot is None:
+            raise ValueError("奇异矩阵没有逆")
+        augmented[column], augmented[pivot] = augmented[pivot], augmented[column]
+        scale = augmented[column][column]
+        augmented[column] = [entry / scale for entry in augmented[column]]
+        for row in range(size):
+            if row == column:
+                continue
+            scale = augmented[row][column]
+            augmented[row] = [a - scale * b
+                              for a, b in zip(augmented[row], augmented[column])]
+    return [row[size:] for row in augmented]
+
+
+def matrix_vector(value: Matrix, vector: Vector) -> Vector:
+    return [sum(entry * component for entry, component in zip(row, vector))
+            for row in value]
+
+
+def trace(value: Matrix) -> Fraction:
+    return sum(value[i][i] for i in range(len(value)))
+
+
+def assert_matrix(actual: Matrix, expected: Matrix, label: str) -> None:
+    if actual != expected:
+        raise AssertionError(f"{label} 不一致：实际 {actual}，期望 {expected}")
+
+
+def assert_vector(actual: Vector, expected: Vector, label: str) -> None:
+    if actual != expected:
+        raise AssertionError(f"{label} 不一致：实际 {actual}，期望 {expected}")
+
+
+def scalar_case() -> None:
+    jacobian = matrix([[2]])
+    prior = matrix([[3]])
+    observation_error = matrix([[5]])
+    innovation = add(multiply(multiply(jacobian, prior), transpose(jacobian)),
+                     observation_error)
+    gain = multiply(multiply(prior, transpose(jacobian)), inverse(innovation))
+    averaging = multiply(gain, jacobian)
+    posterior = subtract(
+        prior,
+        multiply(multiply(multiply(prior, transpose(jacobian)), inverse(innovation)),
+                 multiply(jacobian, prior)),
+    )
+    joseph = add(
+        multiply(
+            multiply(subtract(identity(1), averaging), prior),
+            transpose(subtract(identity(1), averaging)),
+        ),
+        multiply(multiply(gain, observation_error), transpose(gain)),
+    )
+    information = add(
+        inverse(prior),
+        multiply(multiply(transpose(jacobian), inverse(observation_error)), jacobian),
+    )
+
+    assert_matrix(innovation, matrix([[17]]), "一维创新协方差")
+    assert_matrix(gain, matrix([[F(6, 17)]]), "一维增益")
+    assert_matrix(averaging, matrix([[F(12, 17)]]), "一维 averaging kernel")
+    assert_matrix(posterior, matrix([[F(15, 17)]]), "一维后验协方差")
+    assert_matrix(joseph, posterior, "一维 Joseph 形式")
+    assert_matrix(information, matrix([[F(17, 15)]]), "一维信息矩阵")
+    assert_matrix(inverse(posterior), information, "一维后验逆矩阵")
+
+    prior_mean = [F(0)]
+    state = [F(4)]
+    noise = [F(2)]
+    observation = add_vector(matrix_vector(jacobian, state), noise)
+    estimate = add_vector(
+        prior_mean,
+        matrix_vector(gain, subtract_vector(observation, matrix_vector(jacobian, prior_mean))),
+    )
+    error = subtract_vector(estimate, state)
+    decomposition = add_vector(
+        matrix_vector(subtract(identity(1), averaging), subtract_vector(prior_mean, state)),
+        matrix_vector(gain, noise),
+    )
+    assert_vector(error, decomposition, "一维确定性误差分解")
+    if trace(averaging) != F(12, 17):
+        raise AssertionError("一维 DOFS 不一致")
+
+
+def add_vector(left: Vector, right: Vector) -> Vector:
+    return [a + b for a, b in zip(left, right)]
+
+
+def subtract_vector(left: Vector, right: Vector) -> Vector:
+    return [a - b for a, b in zip(left, right)]
+
+
+def rank_deficient_case() -> None:
+    jacobian = matrix([[1, 0]])
+    prior = matrix([[1, 0], [0, 1]])
+    observation_error = matrix([[1]])
+    innovation = add(multiply(multiply(jacobian, prior), transpose(jacobian)),
+                     observation_error)
+    gain = multiply(multiply(prior, transpose(jacobian)), inverse(innovation))
+    averaging = multiply(gain, jacobian)
+    posterior = subtract(
+        prior,
+        multiply(multiply(multiply(prior, transpose(jacobian)), inverse(innovation)),
+                 multiply(jacobian, prior)),
+    )
+    information = add(
+        inverse(prior),
+        multiply(multiply(transpose(jacobian), inverse(observation_error)), jacobian),
+    )
+
+    assert_matrix(innovation, matrix([[2]]), "秩亏创新协方差")
+    assert_matrix(gain, matrix([[F(1, 2)], [0]]), "秩亏增益")
+    assert_matrix(averaging, matrix([[F(1, 2), 0], [0, 0]]), "秩亏 averaging kernel")
+    assert_matrix(posterior, matrix([[F(1, 2), 0], [0, 1]]), "秩亏后验协方差")
+    assert_matrix(inverse(posterior), information, "秩亏后验逆矩阵")
+    assert_vector(matrix_vector(jacobian, [F(0), F(1)]), [F(0)],
+                  "秩亏不可观测方向")
+    if posterior[1][1] != 1:
+        raise AssertionError("秩亏例子的不可观测方向不应被收缩")
+
+
+def main() -> None:
+    scalar_case()
+    rank_deficient_case()
+    print("一维精确 OEM 交叉验证：通过")
+    print("秩亏二维 OEM 交叉验证：通过")
+    print("所有独立有理数交叉验证：通过")
+
+
+if __name__ == "__main__":
+    main()

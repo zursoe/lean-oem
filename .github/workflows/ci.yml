@@ -1,0 +1,33 @@
+name: Lean OEM CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-audit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: 安装 Lean、获取 Mathlib 缓存并构建
+        uses: leanprover/lean-action@fe408643ea7367d8c0404a8be3975bb145f5fb64 # v1
+        with:
+          build: true
+          test: false
+          lint: false
+          use-mathlib-cache: true
+          axiom-audit: true
+          axiom-audit-allow: propext,Classical.choice,Quot.sound
+
+      - name: 运行仓库审计
+        run: bash scripts/run_audit.sh --no-build
+
+      - name: 运行精确数值交叉验证
+        run: python3 scripts/validate_oem_numeric.py
