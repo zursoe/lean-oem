@@ -155,6 +155,29 @@ ARTS、Python、单位系统、传感器响应、非线性 Jacobian、概率测�
 
 本批次已完成：新增 `docs/release-notes.md`、`docs/release-checklist.md`、`docs/review/linear-core-review.md` 和 `docs/audit/axioms.md`，集中记录候选版本、验证命令、公理审计结果、审查问题和明确不包含的内容。远端推送仍保留为维护者审查后的独立动作。
 
+## 阶段 P8：CI 和远端审查
+
+当前状态：本地 `api/linear-core` 已完成构建、公理、数值和干净 checkout 审计；远端 `main` 仍为初始骨架，没有 GitHub Actions、issue 或 PR。
+
+建议按以下顺序推进：
+
+1. 新增 GitHub Actions 工作流，在 `push`、`pull_request` 和手动触发时运行 `lake build`、`scripts/run_audit.sh --no-build` 和 `python3 scripts/validate_oem_numeric.py`；
+2. 使用 `leanprover/lean-action@v1` 的 Mathlib 缓存和 axiom audit 功能，发布工作流中将 action 固定到已核对的提交；
+3. 在本地重新运行工作流等价命令，确认 CI 不依赖 WSL 私有路径、代理、缓存或登录态；
+4. 维护者审阅 `docs/review/linear-core-review.md` 后，再把 `api/linear-core` 推送为远端审查分支并建立 draft PR；
+5. 根据审查结果冻结 API 名称、矩阵方向和假设边界，再决定是否打 `0.1.0` 标签。
+
+这一阶段的验收标准是：干净 GitHub runner 可以完成构建和审计；远端审查分支可复现；没有把 `.lake`、Mathlib 源码、科研数据或凭据提交到仓库。推送、建立 PR 和合并属于外部仓库写操作，保持为独立授权步骤。
+
+## 阶段 P9：审查后的两条研发路线
+
+远端审查通过后再在下面两条路线中择一作为主线：
+
+- **谱理论路线**：在正定先验和正定观测误差条件下形式化 averaging kernel 的谱性质，最后再研究 `0 ≤ DOFS ≤ n`。需要使用 Mathlib 的 Hermitian、谱分解和矩阵序理论，先建立反例和边界条件。
+- **工程桥接路线**：建立机器可读的精确 fixture 和独立 NumPy/Python 对照，记录单位、矩阵方向、误差模型和 ARTS 输入输出版本；桥接内容放入独立模块或 `lean-atmo-lab`，不改变核心定理的信任边界。
+
+SciLean 继续暂缓：其当前主分支工具链仍为 Lean `v4.28.0-rc1`，与本项目锁定的 Lean/Mathlib `v4.35.0` 不兼容。只有在兼容性、依赖责任和数值接口经过单独验证后，才重新评估是否引入。
+
 ## 发布门槛
 
 在把线性协方差模块提升为公开稳定主线前，需要同时满足：
@@ -167,4 +190,4 @@ ARTS、Python、单位系统、传感器响应、非线性 Jacobian、概率测�
 - README、范围文档和来源映射明确写出“已证明范围”和“尚未证明范围”；
 - 干净 checkout 可以在锁定工具链和 `lake-manifest.json` 下完成构建。
 
-下一次实际编码批次进入 P8：在维护者审查后处理远端审查分支、版本标签和发布说明；继续保持经验数据、单位系统和有限精度误差界的独立边界。
+下一次实际编码批次进入 P8：先补 CI 工作流和远端审查准备；继续保持经验数据、单位系统和有限精度误差界的独立边界。
