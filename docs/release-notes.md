@@ -15,6 +15,7 @@
 - 信息矩阵、Woodbury 后验公式、后验正定性和后验逆矩阵恒等式；
 - 一维、秩亏二维和非法协方差精确示例；
 - 独立 `Fraction` 数值交叉验证和自动审计脚本。
+- 固定 action 提交的 GitHub Actions 工作流，运行 Lean 构建、Mathlib 缓存、公理审计、仓库审计和精确数值校验。
 
 ## 形式化边界
 
@@ -31,6 +32,8 @@ python3 scripts/validate_oem_numeric.py
 ```
 
 依赖版本由 `lean-toolchain`、`lakefile.toml` 和 `lake-manifest.json` 固定。Mathlib 源码和 `.lake` 编译缓存不进入 Git。
+
+GitHub Actions 工作流位于 `.github/workflows/ci.yml`，在 `push`、`pull_request` 和手动触发时运行同一组检查。当前仅完成本地等价验证，远端首次运行和审查分支仍待维护者授权。
 
 干净 checkout 已重新物化锁定依赖并完成 3166 个构建目标，详细记录见 [`docs/audit/build-report.md`](audit/build-report.md)。
 
