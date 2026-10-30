@@ -132,6 +132,25 @@ example : scalarProblem.dofs = (12 / 17 : ℝ) := by
   rw [Matrix.trace_fin_one]
   norm_num [scalarProblem, Matrix.mul_apply, Matrix.vecMul, Matrix.vecHead, dotProduct]
 
+/-- 一维精确例子的信息矩阵为 `17 / 15`。 -/
+example : informationMatrix scalarProblem = !![(17 / 15 : ℝ)] := by
+  unfold informationMatrix
+  ext i j
+  fin_cases i
+  fin_cases j
+  norm_num [scalarProblem, Matrix.inv_diagonal, Matrix.mul_apply, Matrix.vecMul,
+    Matrix.vecHead, dotProduct, Matrix.diagonal, Matrix.conjTranspose, Ring.inverse]
+
+/-- 一维精确例子满足信息形式的后验逆恒等式。 -/
+example : (posteriorCovariance scalarProblem)⁻¹ = informationMatrix scalarProblem := by
+  exact posteriorCovariance_inv_eq_informationMatrix scalarProblem
+    (diag1_posDef 3 (by norm_num)) (diag1_posDef 5 (by norm_num))
+
+/-- 一维正定先验例子的后验协方差是正定的。 -/
+example : (posteriorCovariance scalarProblem).PosDef := by
+  exact posteriorCovariance_posDef scalarProblem
+    (diag1_posDef 3 (by norm_num)) (diag1_posDef 5 (by norm_num))
+
 /-- `2 × 1` 秩亏观测例子：第二个状态方向不进入观测。 -/
 private def rankDeficientProblem : Problem 2 1 :=
   { jacobian := !![1, 0]

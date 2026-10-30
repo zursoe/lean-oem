@@ -67,6 +67,34 @@ example {n m : ℕ} (p : Problem n m)
     posteriorCovariance p |>.PosSemidef := by
   exact posteriorCovariance_posSemidef p hPrior hObservation
 
+/-- 检查正定先验下的后验正定性。 -/
+example {n m : ℕ} (p : Problem n m)
+    (hPrior : p.priorCovariance.PosDef)
+    (hObservation : p.observationErrorCovariance.PosDef) :
+    (posteriorCovariance p).PosDef := by
+  exact posteriorCovariance_posDef p hPrior hObservation
+
+/-- 检查信息矩阵的正定性。 -/
+example {n m : ℕ} (p : Problem n m)
+    (hPrior : p.priorCovariance.PosDef)
+    (hObservation : p.observationErrorCovariance.PosDef) :
+    (informationMatrix p).PosDef := by
+  exact informationMatrix_posDef p hPrior hObservation
+
+/-- 检查后验协方差的信息形式。 -/
+example {n m : ℕ} (p : Problem n m)
+    (hPrior : p.priorCovariance.PosDef)
+    (hObservation : p.observationErrorCovariance.PosDef) :
+    posteriorCovariance p = (informationMatrix p)⁻¹ := by
+  exact posteriorCovariance_eq_informationMatrix_inv p hPrior hObservation
+
+/-- 检查后验逆矩阵等于信息矩阵。 -/
+example {n m : ℕ} (p : Problem n m)
+    (hPrior : p.priorCovariance.PosDef)
+    (hObservation : p.observationErrorCovariance.PosDef) :
+    (posteriorCovariance p)⁻¹ = informationMatrix p := by
+  exact posteriorCovariance_inv_eq_informationMatrix p hPrior hObservation
+
 /-- 检查后验不确定性减少的半正定结论。 -/
 example {n m : ℕ} (p : Problem n m)
     (hPrior : p.priorCovariance.PosSemidef)

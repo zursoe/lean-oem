@@ -16,4 +16,8 @@ public import LeanOEM
 #print axioms LeanOEM.dofs_add_left
 #print axioms LeanOEM.observable_iff_kernel_eq_zero
 #print axioms LeanOEM.weightedNormalMatrix_posDef
+#print axioms LeanOEM.informationMatrix_posDef
+#print axioms LeanOEM.posteriorCovariance_eq_informationMatrix_inv
+#print axioms LeanOEM.posteriorCovariance_posDef
+#print axioms LeanOEM.posteriorCovariance_inv_eq_informationMatrix
 #print axioms LeanOEM.retrievalError_decomposition

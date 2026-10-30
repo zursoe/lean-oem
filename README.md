@@ -26,6 +26,7 @@ Mathlib 的版本和提交由 `lean-toolchain`、`lakefile.toml` 与 `lake-manif
 - 标准后验协方差、Joseph 协方差及其半正定性。
 - 精确的一维和秩亏二维测试例子，以及非法协方差边界测试。
 - averaging kernel 的 DOFS trace 定义和静态可辨识性接口。
+- 信息矩阵、Woodbury 后验公式和后验逆矩阵恒等式。
 
 形式定理只说明给定定义和显式假设下的数学性质。它们不自动证明某个 ARTS 配置、观测数据、数据库参数或有限精度程序符合这些假设。范围、信任边界和后续路线见 [`docs/scope.md`](docs/scope.md) 与 [`docs/roadmap.md`](docs/roadmap.md)。
 

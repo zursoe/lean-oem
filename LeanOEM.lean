@@ -6,6 +6,7 @@ public import LeanOEM.Core.Estimator
 public import LeanOEM.Core.Assumptions
 public import LeanOEM.Core.Covariance
 public import LeanOEM.Core.Diagnostics
+public import LeanOEM.Core.Information
 public import LeanOEM.Core.Observability
 public import LeanOEM.Core.Theorems
 
