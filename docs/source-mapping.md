@@ -90,6 +90,19 @@
 
 - `weightedNormalMatrix_posDef`：正定观测权重和可辨识 Jacobian 给出正定 $K^\mathsf{T}SK$。
 
+### 非线性观测模型第一批映射
+
+- `ForwardModel.observe`：ARTS 无关的状态到观测函数 $F$，见 `LeanOEM/Core/ForwardModel.lean`；
+- `ForwardModel.linearizedObserve`：锚点线性化模型 $F(x_a)+K(x-x_a)$；
+- `ForwardModel.linearizationRemainder`：精确余项 $F(x)-F(x_a)-K(x-x_a)$；
+- `ForwardModel.linearizedOffset`：将锚点模型改写为偏置加 `Problem.predict` 的偏置项；
+- `ForwardModel.HasJacobianAt`：连续 Fréchet 导数由 `K : m × n` 表示的规格；
+- `ForwardModel.JacobianSpec`：把连续线性导数和矩阵表示一起保存的结构；
+- `ForwardModel.matrixDerivative`：有限函数基下的矩阵到连续线性映射转换。
+
+第一批只证明代数恒等式和导数表示契约。它没有引入辐射传输方程、单位、ARTS 数据或浮点
+误差界；标量平方模型位于 `LeanOEM/Tests/ForwardModel.lean`，用于检查非线性导数和二阶余项。
+
 ## 独立数值证据
 
 `scripts/validate_oem_numeric.py` 使用 Python 标准库 `fractions.Fraction` 独立实现小型矩阵运算，避免依赖 Lean、Mathlib、NumPy 或 SciPy。它核对：
@@ -109,7 +122,7 @@ python3 scripts/validate_oem_numeric.py
 
 ## 计划中的正演和算法映射
 
-后续形式化不把 ARTS 代码直接导入 Lean，而是先建立独立的数学规格：
+P9 的第一批已经完成：后续形式化仍不把 ARTS 代码直接导入 Lean，而是继续建立独立的数学规格：
 
 - `ForwardModel`：状态到观测的函数 $F : X \to Y$；
 - `JacobianSpec`：$K(x)$ 作为 $F$ 的导数矩阵、导数的近似，或带明确误差界的数值构造；
@@ -130,6 +143,6 @@ python3 scripts/validate_oem_numeric.py
 - 没有把随机变量、概率测度、期望或统计协方差引入核心；当前 `Covariance` 是带正定性假设的矩阵。
 - 没有给浮点实现、条件数、舍入误差或迭代求解器建立误差界。
 - 没有把 Python、ARTS 代码、运行数据、观测数据库或具体场景输出作为 Lean 依赖。
-- 没有把连续辐射传输方程、有限层离散化、Doppler 频移、通道响应或非线性 Gauss–Newton 迭代形式化；这些属于路线 P9–P14。
+- 没有把连续辐射传输方程、有限层离散化、Doppler 频移、通道响应或非线性 Gauss–Newton 迭代形式化；这些属于路线 P10–P14。
 - DOFS 的上下界、谱半径和特征值结论尚未加入；当前只定义 trace 并验证其代数性质。
 - Rodgers 的教材支持术语和公式来源，不自动支持某个现实场景中的参数、先验或误差模型。

@@ -170,15 +170,21 @@ ARTS、Python、单位系统、传感器响应、非线性 Jacobian、概率测�
 
 ## 阶段 P9：通用正演模型和 Jacobian 契约
 
-这是下一批编码前的设计阶段，目标是在不依赖 ARTS 的前提下，把 OEM 所需的正演对象和 Jacobian 关系说清楚。
+第一批已完成：在不依赖 ARTS 的前提下，建立了 OEM 所需的正演对象和 Jacobian 关系契约。
+
+- `LeanOEM/Core/ForwardModel.lean` 定义 `ForwardModel`、`HasJacobianAt`、`JacobianSpec`、
+  `matrixDerivative`、锚点线性化、余项和 `Problem.predict` 连接；
+- `LeanOEM/Tests/ForwardModel.lean` 用标量平方模型证明非线性 Jacobian，并证明锚点余项是二阶项；
+- `LeanOEM/Tests/Axioms.lean` 已纳入新公开定理的公理记录。
 
 - 定义 ARTS 无关的 `ForwardModel` 抽象：状态到观测的函数 `F`，并记录观测维度、状态维度和上下文参数；
 - 定义 Jacobian 规格 `K(x)`，明确它是 `F` 的导数、导数的矩阵表示，还是独立给出的近似；
 - 形式化锚点线性化 `F(x) = F(xₐ) + K(xₐ)(x-xₐ) + r(x)` 的余项接口；
 - 证明线性化模型与现有 `Problem`/OEM 核心的连接，保持 `K : m × n` 的方向契约；
-- 先用低维实数例子和简单多层模型验收，不在这一阶段引入 ARTS、单位数据库或浮点误差。
+- 低维实数例子已经完成；简单多层模型、辐射传输和有限差分误差留在 P10/P12，不在本批次引入 ARTS、单位数据库或浮点误差。
 
-验收标准：抽象接口可以被 OEM 核心调用；至少一个非线性函数有可检查的导数/Jacobian 例子；所有线性化定理的余项和适用条件显式写出。
+验收标准已达到：抽象接口可以被 OEM 核心调用；至少一个非线性函数有可检查的导数/Jacobian
+例子；线性化余项以精确定义保存。余项的范数界和适用条件属于 P12。
 
 ## 阶段 P10：最小辐射传输理论模型
 

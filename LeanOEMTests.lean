@@ -2,3 +2,4 @@ module
 
 import LeanOEM.Tests.Basic
 import LeanOEM.Tests.Examples
+import LeanOEM.Tests.ForwardModel

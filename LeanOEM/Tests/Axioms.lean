@@ -21,3 +21,9 @@ public import LeanOEM
 #print axioms LeanOEM.posteriorCovariance_posDef
 #print axioms LeanOEM.posteriorCovariance_inv_eq_informationMatrix
 #print axioms LeanOEM.retrievalError_decomposition
+#print axioms LeanOEM.ForwardModel.observe_eq_linearized_add_remainder
+#print axioms LeanOEM.ForwardModel.linearizedObserve_eq_offset_add
+#print axioms LeanOEM.ForwardModel.linearizedObserve_eq_problem_predict_add_offset
+#print axioms LeanOEM.ForwardModel.JacobianSpec.hasJacobianAt
+#print axioms LeanOEM.ForwardModel.matrixDerivative_apply
+#print axioms LeanOEM.ForwardModel.hasJacobianAt_of_hasFDerivAt_matrix

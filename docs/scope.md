@@ -27,10 +27,16 @@
   \hat{x}-x=(I-A)(x_a-x)+g\varepsilon.
   $$
 
+当前还实现了一个与 ARTS 无关的非线性观测模型契约：`ForwardModel`、`HasJacobianAt`、
+`JacobianSpec`、锚点线性化、线性化余项，以及它们与现有 `Problem.predict` 的连接。
+测试中的标量平方模型验证了一个非线性 Jacobian 和二阶锚点余项；这仍是数学接口示例，
+不是辐射传输模型。
+
 测试模块包含一维精确数值、秩亏 `2 × 1` 观测和非法协方差边界；自动审计脚本位于
 `scripts/run_audit.sh`，独立数值核对位于 `scripts/validate_oem_numeric.py`，定义和证据映射见
 `docs/source-mapping.md`。当前没有把这些定义解释为某个具体 ARTS 配置、真实观测或有限精度程序的事实。
-概率测度、非线性 Jacobian、单位系统、传感器响应和 ARTS 连接属于后续模块。
+概率测度、辐射传输、单位系统、传感器响应和 ARTS 连接属于后续模块；当前非线性 Jacobian
+只实现了 ARTS 无关的抽象契约和小型示例。
 
 ## 后续形式化边界
 
