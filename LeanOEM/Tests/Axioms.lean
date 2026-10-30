@@ -27,3 +27,8 @@ public import LeanOEM
 #print axioms LeanOEM.ForwardModel.JacobianSpec.hasJacobianAt
 #print axioms LeanOEM.ForwardModel.matrixDerivative_apply
 #print axioms LeanOEM.ForwardModel.hasJacobianAt_of_hasFDerivAt_matrix
+#print axioms LeanOEM.RadiativeTransfer.Layer.Valid.propagate_nonneg
+#print axioms LeanOEM.RadiativeTransfer.Layer.Valid.propagate_le_of_le
+#print axioms LeanOEM.RadiativeTransfer.propagateLayers_nonneg
+#print axioms LeanOEM.RadiativeTransfer.propagateLayers_bounds
+#print axioms LeanOEM.RadiativeTransfer.propagateTwo_eq

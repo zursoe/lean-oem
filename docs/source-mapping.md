@@ -103,6 +103,24 @@
 第一批只证明代数恒等式和导数表示契约。它没有引入辐射传输方程、单位、ARTS 数据或浮点
 误差界；标量平方模型位于 `LeanOEM/Tests/ForwardModel.lean`，用于检查非线性导数和二阶余项。
 
+### 有限层辐射传输第一批映射
+
+- `RadiativeTransfer.Layer.transmissivity`：归一化层透过率 $\tau$；
+- `RadiativeTransfer.Layer.source`：归一化层源项 $S$；
+- `RadiativeTransfer.Layer.propagate`：单层递推
+
+  $$
+  I_{out}=\tau I_{in}+(1-\tau)S;
+  $$
+
+- `RadiativeTransfer.Layer.Valid`：$0\leq\tau\leq1$ 且 $S\geq0$ 的形式假设；
+- `RadiativeTransfer.propagateLayers`：有限层列表的顺序传播；
+- `RadiativeTransfer.propagateLayers_nonneg` 和 `propagateLayers_bounds`：传播过程的非负性和上界保持；
+- `RadiativeTransfer.propagateTwo_eq`：两层递推的显式组合公式。
+
+这些定理只负责归一化有限层模型的数学性质，不负责谱线参数、Planck 函数、单位转换、ARTS
+数值误差或真实大气有效性。测试例子位于 `LeanOEM/Tests/FiniteLayer.lean`。
+
 ## 独立数值证据
 
 `scripts/validate_oem_numeric.py` 使用 Python 标准库 `fractions.Fraction` 独立实现小型矩阵运算，避免依赖 Lean、Mathlib、NumPy 或 SciPy。它核对：
