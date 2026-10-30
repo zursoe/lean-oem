@@ -7,7 +7,7 @@
 - [x] `lake-manifest.json` 记录 Mathlib 和传递依赖提交。
 - [x] `.lake`、编译产物和本机规则文件没有进入 Git。
 - [x] `scripts/run_audit.sh` 和 `scripts/validate_oem_numeric.py` 在 Git 中保留执行位。
-- [x] 本地分支 `api/linear-core` 从远端 `main` 建立，远端主线未修改。
+- [x] `api/linear-core` 从远端 `main` 建立，并已通过 PR #1 合并到远端主线。
 - [x] 版本说明、范围说明和来源映射已写入 `docs/`。
 - [x] `.github/workflows/ci.yml` 已固定 action 提交，并覆盖构建、审计和精确数值校验。
 
@@ -37,5 +37,5 @@
 - [x] 检查总函数矩阵逆的使用条件。
 - [x] 检查后验、Joseph 和信息形式的适用假设。
 - [x] 检查数值脚本没有成为 Lean 证明的隐含依据。
-- [x] 在远端 GitHub runner 上完成首次 CI 运行并检查日志；push 和 PR 事件两次运行均通过。
-- [ ] 维护者审阅 draft PR #1，并决定是否合并或继续修改。
+- [x] 在远端 GitHub runner 上完成 CI 运行并检查日志；push、PR 和合并到 `main` 的运行均通过。
+- [x] 线性核心实现已完成审阅并合并到 `main`；后续正演和辐射传输模块按新路线单独审阅。

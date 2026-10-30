@@ -1,8 +1,8 @@
 # lean-oem 0.1.0 候选版本说明
 
-状态：本地候选版本，等待远端审查。当前分支为 `api/linear-core`，尚未推送到 `origin/main`。
+状态：线性核心候选版本已合并到远端 `main`。合并提交为 `1fd31f1`，`api/linear-core` 分支保留为实现历史。
 
-核心实现审查基线：`120583e`（2026-10-30）。当前分支还包含发布材料、审计记录和脚本执行位修正提交；远端初始提交为 `8582a46`。
+核心实现审查基线：`1fd31f1`（2026-10-30）。合并前的实现、发布材料、审计记录和脚本执行位修正均包含在该提交历史中；远端初始提交为 `8582a46`。
 
 ## 本版本内容
 
@@ -33,7 +33,7 @@ python3 scripts/validate_oem_numeric.py
 
 依赖版本由 `lean-toolchain`、`lakefile.toml` 和 `lake-manifest.json` 固定。Mathlib 源码和 `.lake` 编译缓存不进入 Git。
 
-GitHub Actions 工作流位于 `.github/workflows/ci.yml`，在 `push`、`pull_request` 和手动触发时运行同一组检查。当前 push 和 PR 事件触发的远端运行均已通过，审查分支已推送并建立 [draft PR #1](https://github.com/zursoe/lean-oem/pull/1)，等待维护者审阅。
+GitHub Actions 工作流位于 `.github/workflows/ci.yml`，在 `push`、`pull_request` 和手动触发时运行同一组检查。push、PR 和合并到 `main` 的远端运行均已通过；审查记录见 [PR #1](https://github.com/zursoe/lean-oem/pull/1)。
 
 干净 checkout 已重新物化锁定依赖并完成 3166 个构建目标，详细记录见 [`docs/audit/build-report.md`](audit/build-report.md)。
 

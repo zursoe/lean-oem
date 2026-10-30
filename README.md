@@ -31,6 +31,10 @@ Mathlib 的版本和提交由 `lean-toolchain`、`lakefile.toml` 与 `lake-manif
 
 形式定理只说明给定定义和显式假设下的数学性质。它们不自动证明某个 ARTS 配置、观测数据、数据库参数或有限精度程序符合这些假设。范围、信任边界、来源映射和后续路线见 [`docs/scope.md`](docs/scope.md)、[`docs/source-mapping.md`](docs/source-mapping.md) 与 [`docs/roadmap.md`](docs/roadmap.md)。
 
+## 后续方向
+
+本库将保持与 ARTS 解耦。后续先定义通用 `ForwardModel`、Jacobian 和线性化契约，再形式化有限层辐射传输、Doppler 频移、通道响应和非线性 Gauss–Newton OEM 的可复用数学部分。ARTS/Python 作为具体实现和外部数值证据，通过版本固定的 fixture 与误差报告接入，不作为 Lean 包依赖。
+
 ## 许可证
 
 本项目使用 Apache License 2.0，见 [`LICENSE`](LICENSE)。
