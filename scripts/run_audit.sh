@@ -16,6 +16,9 @@ if [[ "$run_build" == true ]]; then
   lake build
 fi
 
+printf '%s\n' '-- 数值交叉验证 --'
+python3 scripts/validate_oem_numeric.py
+
 printf '%s\n' '-- 公理审计 --'
 axiom_output="$(lake env lean LeanOEM/Tests/Axioms.lean 2>&1)"
 printf '%s\n' "$axiom_output"

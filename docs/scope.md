@@ -28,5 +28,6 @@
   $$
 
 测试模块包含一维精确数值、秩亏 `2 × 1` 观测和非法协方差边界；自动审计脚本位于
-`scripts/run_audit.sh`。当前没有把这些定义解释为某个具体 ARTS 配置、真实观测或有限精度程序的事实。
+`scripts/run_audit.sh`，独立数值核对位于 `scripts/validate_oem_numeric.py`，定义和证据映射见
+`docs/source-mapping.md`。当前没有把这些定义解释为某个具体 ARTS 配置、真实观测或有限精度程序的事实。
 概率测度、非线性 Jacobian、单位系统、传感器响应和 ARTS 连接属于后续模块。

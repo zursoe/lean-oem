@@ -11,6 +11,7 @@
 ```bash
 lake build
 scripts/run_audit.sh
+python3 scripts/validate_oem_numeric.py
 ```
 
 Mathlib 的版本和提交由 `lean-toolchain`、`lakefile.toml` 与 `lake-manifest.json` 共同固定。`.lake` 目录是本机缓存和编译产物，不属于源代码发布内容。
@@ -28,7 +29,7 @@ Mathlib 的版本和提交由 `lean-toolchain`、`lakefile.toml` 与 `lake-manif
 - averaging kernel 的 DOFS trace 定义和静态可辨识性接口。
 - 信息矩阵、Woodbury 后验公式和后验逆矩阵恒等式。
 
-形式定理只说明给定定义和显式假设下的数学性质。它们不自动证明某个 ARTS 配置、观测数据、数据库参数或有限精度程序符合这些假设。范围、信任边界和后续路线见 [`docs/scope.md`](docs/scope.md) 与 [`docs/roadmap.md`](docs/roadmap.md)。
+形式定理只说明给定定义和显式假设下的数学性质。它们不自动证明某个 ARTS 配置、观测数据、数据库参数或有限精度程序符合这些假设。范围、信任边界、来源映射和后续路线见 [`docs/scope.md`](docs/scope.md)、[`docs/source-mapping.md`](docs/source-mapping.md) 与 [`docs/roadmap.md`](docs/roadmap.md)。
 
 ## 许可证
 
