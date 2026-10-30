@@ -157,17 +157,17 @@ ARTS、Python、单位系统、传感器响应、非线性 Jacobian、概率测�
 
 ## 阶段 P8：CI 和远端审查
 
-当前状态：本地 `api/linear-core` 已完成构建、公理、数值和干净 checkout 审计；已新增固定 action 提交的 `.github/workflows/ci.yml`，并在本地按 CI 顺序复现通过；远端 `main` 仍为初始骨架，尚未运行远端 CI、推送审查分支或建立 PR。
+当前状态：本地 `api/linear-core` 已完成构建、公理、数值和干净 checkout 审计；已新增固定 action 提交的 `.github/workflows/ci.yml`，本地等价检查和远端 push/PR 两次 CI 均已通过；审查分支已推送，draft PR 已建立，远端 `main` 仍未修改。
 
 后续按以下顺序推进：
 
 1. **已完成**：新增 GitHub Actions 工作流，在 `push`、`pull_request` 和手动触发时运行构建、审计和精确数值校验；
 2. **已完成**：使用 `leanprover/lean-action` 的 Mathlib 缓存和 axiom audit，并将 `actions/checkout` 与 `leanprover/lean-action` 固定到已核对的完整提交；
 3. **已完成**：在本地重新运行工作流等价命令，确认脚本不依赖 WSL 私有路径、代理、缓存或登录态；
-4. 维护者审阅 `docs/review/linear-core-review.md` 后，再把 `api/linear-core` 推送为远端审查分支并建立 draft PR；
+4. **已完成**：已将 `api/linear-core` 推送为远端审查分支并建立 [draft PR #1](https://github.com/zursoe/lean-oem/pull/1)；下一步等待维护者审阅 `docs/review/linear-core-review.md`；
 5. 根据审查结果冻结 API 名称、矩阵方向和假设边界，再决定是否打 `0.1.0` 标签。
 
-这一阶段的验收标准是：干净 GitHub runner 可以完成构建和审计；远端审查分支可复现；没有把 `.lake`、Mathlib 源码、科研数据或凭据提交到仓库。推送、建立 PR 和合并属于外部仓库写操作，保持为独立授权步骤。
+这一阶段的验收标准是：干净 GitHub runner 可以完成构建和审计；远端审查分支可复现；没有把 `.lake`、Mathlib 源码、科研数据或凭据提交到仓库。合并和打标签仍属于外部仓库写操作，保持为独立授权步骤。
 
 ## 阶段 P9：审查后的两条研发路线
 

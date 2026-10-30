@@ -33,7 +33,7 @@ python3 scripts/validate_oem_numeric.py
 
 依赖版本由 `lean-toolchain`、`lakefile.toml` 和 `lake-manifest.json` 固定。Mathlib 源码和 `.lake` 编译缓存不进入 Git。
 
-GitHub Actions 工作流位于 `.github/workflows/ci.yml`，在 `push`、`pull_request` 和手动触发时运行同一组检查。当前仅完成本地等价验证，远端首次运行和审查分支仍待维护者授权。
+GitHub Actions 工作流位于 `.github/workflows/ci.yml`，在 `push`、`pull_request` 和手动触发时运行同一组检查。当前 push 和 PR 事件触发的远端运行均已通过，审查分支已推送并建立 [draft PR #1](https://github.com/zursoe/lean-oem/pull/1)，等待维护者审阅。
 
 干净 checkout 已重新物化锁定依赖并完成 3166 个构建目标，详细记录见 [`docs/audit/build-report.md`](audit/build-report.md)。
 
