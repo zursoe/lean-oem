@@ -230,6 +230,18 @@ P9 的第一批已经完成：后续形式化仍不把 ARTS 代码直接导入 L
 不证明 ARTS、谱线数据库或真实大气自动满足驻点、余项和逆作用界。独立有理数复算
 覆盖特殊平方模型；一般驻点分解的形式测试位于同一测试模块。
 
+P12 第一批位于 `LeanOEM/Core/DiscretizationError.lean`：
+
+- `WeightedJacobianErrorBound` 把近似 Jacobian 与理想 Jacobian 的加权作用差异记为 $\epsilon$；
+- `weightedJacobianActionBound_of_error` 将作用常数从 $\beta$ 增加到 $\beta+\epsilon$；
+- `normalRhs_norm_le_of_weightedJacobianError` 说明目标残差界 $\sigma$ 会产生
+  不超过 $\epsilon\sigma$ 的目标正规方程残差；
+- `normalDefect_additive_bound_of_stationarity_residual` 和
+  `gaussNewtonUpdate_error_le_of_inverse_and_additive_defect` 将这个误差传到正规缺陷和更新误差。
+
+中心差分的具体代数界仍位于 `LeanOEM/Physics/Discretization.lean`，三次函数 fixture 位于
+`LeanOEM/Tests/DiscretizationError.lean`。该映射不包含浮点舍入、条件数估计或 ARTS 符合性。
+
 ## 当前边界
 
 - 形式化核心没有单位系统；公式中的每个量默认已经在同一组一致单位下表达。

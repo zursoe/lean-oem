@@ -240,15 +240,34 @@ def local_contraction_case() -> None:
         raise AssertionError("平方模型迭代没有改善初始误差")
 
 
+def discretization_error_case() -> None:
+    """独立复算中心差分误差如何进入目标正规方程残差。"""
+    step = F(1, 10)
+    derivative = F(3)
+    central = ((1 + step) ** 3 - (1 - step) ** 3) / (2 * step)
+    jacobian_error = abs(central - derivative)
+    target_residual = F(1, 10)
+    normal_rhs_error = jacobian_error * target_residual
+
+    if central != F(301, 100):
+        raise AssertionError("三次函数中心差分值不一致")
+    if jacobian_error != F(1, 100) or jacobian_error > step**2:
+        raise AssertionError("中心差分 Jacobian 误差界不满足")
+    if normal_rhs_error != F(1, 1000):
+        raise AssertionError("离散化 Jacobian 对目标正规方程残差的影响不一致")
+
+
 def main() -> None:
     scalar_case()
     rank_deficient_case()
     iteration_cases()
     local_contraction_case()
+    discretization_error_case()
     print("一维精确 OEM 交叉验证：通过")
     print("秩亏二维 OEM 交叉验证：通过")
     print("Gauss–Newton 轨迹与停滞反例交叉验证：通过")
     print("平方模型局部收缩契约交叉验证：通过")
+    print("中心差分离散化误差交叉验证：通过")
     print("所有独立有理数交叉验证：通过")
 
 

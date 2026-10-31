@@ -208,6 +208,100 @@ theorem normalDefectBound_of_stationary_target
     _ = (delta * sigma + beta * rho * radius) * ‖x - target‖ := by
       ring
 
+/--
+当目标只满足近似驻点时，驻点残差以加性项进入正规缺陷界。
+`tau` 可以记录 Jacobian 离散化、目标残差或其他一阶条件误差。
+-/
+theorem normalDefect_additive_bound_of_stationarity_residual
+    (p : NonlinearProblem n m) (x target : State n)
+    (k kTarget : Jacobian n m)
+    {delta sigma beta rho radius tau : ℝ}
+    (hDelta : 0 ≤ delta)
+    (hBeta : 0 ≤ beta)
+    (hRho : 0 ≤ rho)
+    (hRadius : ‖x - target‖ ≤ radius)
+    (hResidual : ‖p.residual target‖ ≤ sigma)
+    (hVariation : p.JacobianVariationActionBound x target k kTarget delta)
+    (hAction : p.WeightedJacobianActionBound k beta)
+    (hRemainder : p.model.QuadraticRemainderBound x target k rho)
+    (hStationarityResidual : ‖p.normalRhs target kTarget‖ ≤ tau) :
+    ‖p.normalDefect x target k‖ ≤
+      (delta * sigma + beta * rho * radius) * ‖x - target‖ + tau := by
+  rw [normalDefect_eq_jacobianVariation_add_remainder_add_stationarity
+    p x target k kTarget]
+  unfold ForwardModel.QuadraticRemainderBound at hRemainder
+  have hRemainder' :
+      ‖p.model.linearizationRemainder x target k‖ ≤
+        rho * ‖x - target‖ ^ 2 := by
+    simpa only [norm_sub_rev] using hRemainder
+  have hSquare : ‖x - target‖ ^ 2 ≤ radius * ‖x - target‖ := by
+    rw [pow_two]
+    exact mul_le_mul_of_nonneg_right hRadius (norm_nonneg _)
+  have hVariationTerm :
+      ‖k.conjTranspose.mulVec (p.observationWeight.mulVec (p.residual target)) -
+          kTarget.conjTranspose.mulVec (p.observationWeight.mulVec
+            (p.residual target))‖ ≤
+        delta * sigma * ‖x - target‖ := by
+    calc
+      ‖k.conjTranspose.mulVec (p.observationWeight.mulVec (p.residual target)) -
+          kTarget.conjTranspose.mulVec (p.observationWeight.mulVec
+            (p.residual target))‖ ≤
+          delta * ‖x - target‖ * ‖p.residual target‖ := hVariation _
+      _ ≤ delta * ‖x - target‖ * sigma := by
+        exact mul_le_mul_of_nonneg_left hResidual
+          (mul_nonneg hDelta (norm_nonneg _))
+      _ = delta * sigma * ‖x - target‖ := by ring
+  have hRemainderTerm :
+      ‖k.conjTranspose.mulVec
+          (p.observationWeight.mulVec
+            (p.model.linearizationRemainder x target k))‖ ≤
+        beta * rho * radius * ‖x - target‖ := by
+    calc
+      ‖k.conjTranspose.mulVec
+          (p.observationWeight.mulVec
+            (p.model.linearizationRemainder x target k))‖ ≤
+          beta * ‖p.model.linearizationRemainder x target k‖ := hAction _
+      _ ≤ beta * (rho * ‖x - target‖ ^ 2) :=
+        mul_le_mul_of_nonneg_left hRemainder' hBeta
+      _ ≤ beta * (rho * (radius * ‖x - target‖)) := by
+        exact mul_le_mul_of_nonneg_left
+          (mul_le_mul_of_nonneg_left hSquare hRho) hBeta
+      _ = beta * rho * radius * ‖x - target‖ := by ring
+  calc
+    ‖k.conjTranspose.mulVec (p.observationWeight.mulVec (p.residual target)) -
+          kTarget.conjTranspose.mulVec (p.observationWeight.mulVec
+            (p.residual target))
+        + k.conjTranspose.mulVec
+          (p.observationWeight.mulVec
+            (p.model.linearizationRemainder x target k))
+        + p.normalRhs target kTarget‖ ≤
+        delta * sigma * ‖x - target‖ +
+          beta * rho * radius * ‖x - target‖ + tau := by
+            exact (norm_add_le _ _).trans <| add_le_add
+              ((norm_add_le _ _).trans
+                (add_le_add hVariationTerm hRemainderTerm))
+              hStationarityResidual
+    _ = (delta * sigma + beta * rho * radius) * ‖x - target‖ + tau := by
+      ring
+
+/-- 加性正规缺陷界导致带误差底的单步更新界。 -/
+theorem gaussNewtonUpdate_error_le_of_inverse_and_additive_defect
+    (p : NonlinearProblem n m) (x target : State n) (k : Jacobian n m)
+    {gamma eta tau : ℝ} (hNormal : IsUnit (p.normalMatrix x k))
+    (hGamma : 0 ≤ gamma)
+    (hInverse : p.InverseActionBound x k gamma)
+    (hDefect : ‖p.normalDefect x target k‖ ≤
+      eta * ‖x - target‖ + tau) :
+    ‖p.gaussNewtonUpdate x k - target‖ ≤
+      gamma * eta * ‖x - target‖ + gamma * tau := by
+  rw [p.gaussNewtonUpdate_sub_target_eq_inverse_normalDefect x target k hNormal]
+  calc
+    ‖(p.normalMatrix x k)⁻¹.mulVec (p.normalDefect x target k)‖ ≤
+        gamma * ‖p.normalDefect x target k‖ := hInverse _
+    _ ≤ gamma * (eta * ‖x - target‖ + tau) :=
+      mul_le_mul_of_nonneg_left hDefect hGamma
+    _ = gamma * eta * ‖x - target‖ + gamma * tau := by ring
+
 /-! ## 从逐步界到轨迹收缩 -/
 
 /-- 每一步的逆作用界和正规缺陷界可直接组成沿轨迹的收缩契约。 -/

@@ -6,6 +6,7 @@ public import LeanOEM.Core.ForwardModel
 public import LeanOEM.Core.NonlinearOEM
 public import LeanOEM.Core.Iteration
 public import LeanOEM.Core.LocalContraction
+public import LeanOEM.Core.DiscretizationError
 public import LeanOEM.Physics.FiniteLayer
 public import LeanOEM.Physics.Spectral
 public import LeanOEM.Physics.Discretization
