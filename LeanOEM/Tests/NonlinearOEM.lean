@@ -39,6 +39,11 @@ example (weight : Square 1) (v h : State 1) :
         + quadraticForm weight h :=
   quadraticForm_add weight v h
 
+example (H : Square 1) (b d h : State 1) (hSymmetric : H.transpose = H) :
+    quadraticSubproblem H b (d + h) - quadraticSubproblem H b d =
+      dotProduct h (H.mulVec d - b) + (1 / 2 : ℝ) * quadraticForm H h :=
+  quadraticSubproblem_add H b d h hSymmetric
+
 example : squareProblem.normalRhs (![1] : State 1) squareJacobian = (![5] : State 1) := by
   funext i
   fin_cases i

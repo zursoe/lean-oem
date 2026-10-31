@@ -72,6 +72,22 @@ theorem quadraticForm_add {n : ℕ} (weight : Square n) (v h : State n) :
   rw [dotProduct_add]
   ring
 
+/-- 线性化二次子问题：正规矩阵 `H`、右端项 `b` 和增量 `d`。 -/
+def quadraticSubproblem {n : ℕ} (H : Square n) (b d : State n) : ℝ :=
+  (1 / 2 : ℝ) * quadraticForm H d - dotProduct b d
+
+/-- 对称正规矩阵下二次子问题的增量展开。 -/
+theorem quadraticSubproblem_add {n : ℕ} (H : Square n) (b d h : State n)
+    (hSymmetric : H.transpose = H) :
+    quadraticSubproblem H b (d + h) - quadraticSubproblem H b d =
+      dotProduct h (H.mulVec d - b) + (1 / 2 : ℝ) * quadraticForm H h := by
+  unfold quadraticSubproblem
+  rw [quadraticForm_add H d h]
+  rw [dotProduct_add]
+  simp [quadraticGradient, hSymmetric, Matrix.add_mulVec, dotProduct_add]
+  rw [dotProduct_comm b h]
+  ring
+
 /-- 带先验约束的非线性 MAP 目标函数。 -/
 def objective (p : NonlinearProblem n m) (x : State n) : ℝ :=
   (1 / 2 : ℝ) * quadraticForm p.observationWeight (p.residual x)

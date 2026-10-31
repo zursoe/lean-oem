@@ -230,7 +230,8 @@ ARTS、Python、单位系统、传感器响应、非线性 Jacobian、概率测�
 - 测试覆盖线性一步解、刷新/冻结轨迹差异、负容差、空状态，以及真实导数和可逆正规矩阵下零步长却非最优的反例。
 
 第三批补充了 `quadraticGradient` / `quadraticForm_add` 的二次型一阶项和显式二阶余项，
-并用 `residual_hasFDerivAt_of_hasJacobianAt` 把 ForwardModel 的 Jacobian 导数传到残差。
+并用 `quadraticSubproblem_add` 描述对称正规矩阵子问题的增量；同时用
+`residual_hasFDerivAt_of_hasJacobianAt` 把 ForwardModel 的 Jacobian 导数传到残差。
 当前仍未把完整目标的 Fréchet 梯度、模型余项和正规矩阵逆界组合成局部收缩因子。
 
 规格见 [iteration.md](iteration.md)。第二批是条件定理：收缩假设尚未从模型导数和余项推出，

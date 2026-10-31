@@ -67,6 +67,7 @@ lake env lean LeanOEM/Tests/Axioms.lean
 - `NonlinearProblem.normalMatrix_posDef`；
 - `NonlinearProblem.normalMatrix_isUnit`；
 - `NonlinearProblem.quadraticForm_add`；
+- `NonlinearProblem.quadraticSubproblem_add`；
 - `NonlinearProblem.gaussNewtonUpdate_linearizedGradient_eq_zero`；
 - `NonlinearProblem.residual_hasFDerivAt_of_hasJacobianAt`；
 - `NonlinearProblem.gaussNewtonIterate_zero`；
