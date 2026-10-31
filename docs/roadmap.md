@@ -237,8 +237,21 @@ ARTS、Python、单位系统、传感器响应、非线性 Jacobian、概率测�
 单步误差收缩因子为 `γ·η`。当前仍未从具体模型的 Jacobian、线性化余项和权重条件自动推出
 这些界。
 
-规格见 [iteration.md](iteration.md)。第二批是条件定理：收缩假设尚未从模型导数和余项推出，
-目标点最优性、阻尼、首次停止与最大步数求解器、浮点误差仍未实现。P11 整体尚未完成。
+第五批新增 `LeanOEM/Core/LocalContraction.lean`，完成了第一条可实例化的局部收缩桥接：
+
+- `ForwardModel.QuadraticRemainderBound` 显式记录二次线性化余项界；
+- `WeightedJacobianActionBound` 记录观测权重与 Jacobian 的组合算子界；
+- `normalDefect_eq_weighted_linearizationRemainder` 在无噪声且先验均值等于目标状态的条件下，
+  将正规方程缺陷化为加权 Jacobian 作用在线性化余项上；
+- `normalDefectBound_of_quadraticRemainder` 将余项界转成 `η = β·ρ·r` 的相对缺陷界；
+- `contractsTowardAlong_of_inverse_and_defect` 将逐步 `γ`、`η` 界自动组合成收缩契约。
+
+`LeanOEM/Tests/LocalContraction.lean` 对标量平方模型完成了正规矩阵逆作用界、邻域不变性、
+单步误差界和 `q = 1/2` 下的轨迹收敛证明。该例子是精确实数数学 fixture，不代表一般
+辐射传输模型已经满足这些假设；`HasJacobianAt` 仍不被解释为自动提供二次余项界。
+
+规格见 [iteration.md](iteration.md)。P11 当前完成了一个局部收缩垂直切片；一般 MAP 目标的
+驻点条件、阻尼、首次停止与最大步数求解器、浮点误差仍未实现。
 
 ## 阶段 P12：数值 Jacobian、离散化和误差契约
 
@@ -290,4 +303,6 @@ SciLean 继续暂缓：其当前主分支工具链仍为 Lean `v4.28.0-rc1`，�
 - README、范围文档和来源映射明确写出“已证明范围”和“尚未证明范围”；
 - 干净 checkout 可以在锁定工具链和 `lake-manifest.json` 下完成构建。
 
-下一次实际编码批次继续 P11：把 `HasJacobianAt`、正定权重和线性化余项连接到目标函数的一阶条件，再从模型余项和正规矩阵逆界推导可验证的局部收缩条件。阻尼和浮点停止规则单独处理。
+下一次实际编码批次进入 P11 的一般化：去掉“观测等于目标正演输出、先验均值等于目标状态”
+的特殊条件，引入一般非线性 MAP 目标的驻点和残差项，再研究 Jacobian 变化如何进入正规缺陷。
+阻尼和浮点停止规则继续单独处理。

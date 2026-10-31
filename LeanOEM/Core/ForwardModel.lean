@@ -35,6 +35,14 @@ def linearizationRemainder (f : ForwardModel n m) (xa x : State n)
     (k : Jacobian n m) : Observation m :=
   f.observe x - f.observe xa - k.mulVec (x - xa)
 
+/--
+局部二次余项契约。`k` 可以是 `f` 在 `xa` 处的精确 Jacobian，也可以是
+调用者另外验证过的近似 Jacobian；本定义只记录余项界，不把导数性质隐含进去。
+-/
+def QuadraticRemainderBound (f : ForwardModel n m) (xa x : State n)
+    (k : Jacobian n m) (rho : ℝ) : Prop :=
+  ‖f.linearizationRemainder xa x k‖ ≤ rho * ‖x - xa‖ ^ 2
+
 /-- 使锚点线性化可以使用 `Problem.predict` 的仿射偏置。 -/
 def linearizedOffset (f : ForwardModel n m) (xa : State n)
     (k : Jacobian n m) : Observation m :=

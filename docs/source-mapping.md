@@ -211,6 +211,22 @@ P9 的第一批已经完成：后续形式化仍不把 ARTS 代码直接导入 L
 `gaussNewtonUpdate_error_le_of_inverse_and_defect` 把正规方程缺陷和逆作用界连接成单步
 局部收缩界。它们需要调用者显式提供正规矩阵可逆、$\gamma$ 逆作用界和 $\eta$ 缺陷界。
 
+当前新增的局部收缩桥接位于 `LeanOEM/Core/LocalContraction.lean`：
+
+- `ForwardModel.QuadraticRemainderBound` 是显式的二次线性化余项假设；
+- `WeightedJacobianActionBound` 是观测权重与 Jacobian 组合的范数作用界；
+- `normalDefect_eq_weighted_linearizationRemainder` 只在
+  $y=F(x_\star)$ 且先验均值为 $x_\star$ 时成立；
+- `normalDefectBound_of_quadraticRemainder` 在邻域半径 $r$ 内给出
+  $\eta=\beta\rho r$；
+- `contractsTowardAlong_of_inverse_and_defect` 给出收缩因子
+  $q=\gamma\eta$。
+
+标量平方模型的形式 fixture 取 $F(x)=x^2$、目标和先验均值为零、两个权重为一，
+在 $|x|\leq1/2$ 内得到 $q=1/2$。该结果证明的是指定数学模型和显式契约，
+不证明 ARTS、谱线数据库或真实大气自动满足余项和逆作用界。独立有理数复算
+已加入 `scripts/validate_oem_numeric.py`。
+
 ## 当前边界
 
 - 形式化核心没有单位系统；公式中的每个量默认已经在同一组一致单位下表达。

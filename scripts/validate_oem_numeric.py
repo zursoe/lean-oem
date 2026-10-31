@@ -203,13 +203,52 @@ def iteration_cases() -> None:
         raise AssertionError("零步长非最优反例未复现")
 
 
+def local_contraction_case() -> None:
+    """独立复算标量平方模型的余项、正规缺陷和局部收缩界。"""
+    state = F(1, 2)
+    radius = F(1, 2)
+    jacobian = 2 * state
+    normal = jacobian * jacobian + 1
+    remainder = (0 - state * state - jacobian * (0 - state))
+    defect = jacobian * remainder
+    update_error = defect / normal
+    gamma = F(1)
+    beta = F(1)
+    rho = F(1)
+    eta = beta * rho * radius
+    q = gamma * eta
+
+    if remainder != state * state:
+        raise AssertionError("平方模型线性化余项不一致")
+    if defect != 2 * state**3:
+        raise AssertionError("平方模型正规缺陷不一致")
+    if abs(jacobian) > beta:
+        raise AssertionError("局部邻域内的加权 Jacobian 作用界不满足")
+    if abs(defect) > eta * abs(state):
+        raise AssertionError("平方模型正规缺陷界不满足")
+    if abs(update_error) > q * abs(state):
+        raise AssertionError("平方模型局部收缩界不满足")
+    if not (0 <= q < 1):
+        raise AssertionError("平方模型收缩因子不在收敛范围内")
+
+    for _ in range(6):
+        if abs(state) > radius:
+            raise AssertionError("平方模型轨迹没有保持在局部邻域内")
+        state = state + (-state * (2 * state * state + 1)) / (4 * state * state + 1)
+
+    if abs(state) >= radius:
+        raise AssertionError("平方模型迭代没有改善初始误差")
+
+
 def main() -> None:
     scalar_case()
     rank_deficient_case()
     iteration_cases()
+    local_contraction_case()
     print("一维精确 OEM 交叉验证：通过")
     print("秩亏二维 OEM 交叉验证：通过")
     print("Gauss–Newton 轨迹与停滞反例交叉验证：通过")
+    print("平方模型局部收缩契约交叉验证：通过")
     print("所有独立有理数交叉验证：通过")
 
 

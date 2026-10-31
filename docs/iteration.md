@@ -85,8 +85,62 @@ $$
 $$
 
 这把模型余项、权重和正规矩阵条件留在显式契约中；本模块没有声称具体辐射传输模型
-自动满足 $\gamma$、$\eta$ 界。下一步才是从 `HasJacobianAt`、线性化余项和权重正定性
-推导这些界。
+自动满足 $\gamma$、$\eta$ 界。当前批次已经在显式二次余项契约下完成了第一条推导链；
+一般 MAP 目标和非零观测残差仍留在后续模块。
+
+## 余项到正规缺陷
+
+`ForwardModel.QuadraticRemainderBound` 显式记录锚点线性化的二次余项界：
+
+$$
+\|F(x)-F(x_a)-K(x-x_a)\|
+\leq \rho\|x-x_a\|^2.
+$$
+
+该契约不把 `HasJacobianAt` 当作二阶误差保证。导数存在只说明一阶线性化成立；
+二次界还需要 Lipschitz Jacobian、二阶导数界或调用者提供的独立余项证明。
+
+在观测满足 $y=F(x_\star)$、先验均值满足 $x_a=x_\star$ 时，
+`normalDefect_eq_weighted_linearizationRemainder` 证明：
+
+$$
+d(x)=K(x)^\mathsf{T}W_y
+\bigl(F(x_\star)-F(x)-K(x)(x_\star-x)\bigr).
+$$
+
+若加权 Jacobian 的作用界为 $\beta$，余项系数为 $\rho$，且当前点位于
+$\|x-x_\star\|\leq r$ 的邻域，则
+`normalDefectBound_of_quadraticRemainder` 给出
+
+$$
+\|d(x)\|\leq \beta\rho r\|x-x_\star\|.
+$$
+
+再结合逆作用界 $\gamma$，单步收缩因子为
+
+$$
+q=\gamma\beta\rho r.
+$$
+
+`contractsTowardAlong_of_inverse_and_defect` 将每一步的这些显式界直接组合成
+`ContractsTowardAlong`，随后可以复用本模块已有的几何收敛和停止误差定理。
+
+## 标量平方模型闭环
+
+测试模块 `LeanOEM/Tests/LocalContraction.lean` 使用
+$F(x)=x^2$、目标 $x_\star=0$、单位先验权重和单位观测权重，取邻域
+$|x|\leq 1/2$。该模型满足
+
+$$
+K(x)=2x,\qquad
+r(x)=x^2,\qquad
+d(x)=2x^3,\qquad
+H(x)=4x^2+1.
+$$
+
+在该邻域内可以取 $\beta=1$、$\rho=1$、$r=1/2$ 和 $\gamma=1$，所以
+$q=1/2<1$。Lean 已检查邻域不变性、单步误差界和迭代收敛；
+这只是精确实数的数学 fixture，不是具体 ARTS 场景或现实观测结论。
 
 ## 例子与反例
 

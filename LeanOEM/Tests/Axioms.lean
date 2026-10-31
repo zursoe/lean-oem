@@ -68,3 +68,6 @@ public import LeanOEM
 #print axioms LeanOEM.NonlinearProblem.eventually_stoppedAt
 #print axioms LeanOEM.NonlinearProblem.gaussNewtonUpdate_sub_target_eq_inverse_normalDefect
 #print axioms LeanOEM.NonlinearProblem.gaussNewtonUpdate_error_le_of_inverse_and_defect
+#print axioms LeanOEM.NonlinearProblem.normalDefect_eq_weighted_linearizationRemainder
+#print axioms LeanOEM.NonlinearProblem.normalDefectBound_of_quadraticRemainder
+#print axioms LeanOEM.NonlinearProblem.contractsTowardAlong_of_inverse_and_defect
