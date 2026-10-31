@@ -51,6 +51,7 @@ public import LeanOEM
 #print axioms LeanOEM.NonlinearProblem.normalMatrix_posDef
 #print axioms LeanOEM.NonlinearProblem.normalMatrix_isUnit
 #print axioms LeanOEM.NonlinearProblem.gaussNewtonUpdate_linearizedGradient_eq_zero
+#print axioms LeanOEM.NonlinearProblem.residual_hasFDerivAt_of_hasJacobianAt
 #print axioms LeanOEM.NonlinearProblem.gaussNewtonIterate_zero
 #print axioms LeanOEM.NonlinearProblem.gaussNewtonIterate_succ
 #print axioms LeanOEM.NonlinearProblem.gaussNewtonIterate_succ_sub

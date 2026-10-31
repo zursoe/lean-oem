@@ -1,6 +1,7 @@
 module
 
 public import LeanOEM.Core.NonlinearOEM
+public import LeanOEM.Tests.ForwardModel
 public import Mathlib.LinearAlgebra.Matrix.Notation
 public import Mathlib.Tactic
 
@@ -13,11 +14,8 @@ open LeanOEM.NonlinearProblem
 
 noncomputable section
 
-private def squareModel : ForwardModel 1 1 where
-  observe := fun x => ![(x 0) ^ 2]
-
 private def squareProblem : NonlinearProblem 1 1 where
-  model := squareModel
+  model := LeanOEM.Tests.ForwardModel.squareForward
   observation := ![4]
   priorMean := ![0]
   priorWeight := !![1]
@@ -39,7 +37,8 @@ example : squareProblem.normalRhs (![1] : State 1) squareJacobian = (![5] : Stat
   funext i
   fin_cases i
   norm_num [NonlinearProblem.normalRhs, NonlinearProblem.residual, squareProblem,
-    squareModel, squareJacobian, Problem.predict, Matrix.mulVec, Matrix.vecHead,
+    squareJacobian, LeanOEM.Tests.ForwardModel.squareForward, Problem.predict,
+    Matrix.mulVec, Matrix.vecHead,
     dotProduct, Fin.sum_univ_succ]
 
 /-- 正规矩阵可逆时，Gauss–Newton 步满足正规方程。 -/
@@ -74,6 +73,21 @@ example (p : Problem 1 1) (y : Observation 1) (x : State 1) :
 example (p : Problem 1 1) (y : Observation 1) (x : State 1) :
     (p.toNonlinear y).normalMatrix x p.jacobian = informationMatrix p :=
   Problem.toNonlinear_normalMatrix_eq_informationMatrix p y x
+
+/-- ForwardModel 的 Jacobian 条件沿残差映射传播为负 Jacobian。 -/
+example :
+    ∃ derivative : State 1 →L[ℝ] Observation 1,
+      HasFDerivAt (fun z => squareProblem.residual z) derivative (![1] : State 1) ∧
+        ∀ h, derivative h = -(squareJacobian.mulVec h) := by
+  have hK : squareJacobian = LeanOEM.Tests.ForwardModel.squareJacobian (![1] : State 1) := by
+    ext i j
+    fin_cases i
+    fin_cases j
+    norm_num [squareJacobian, LeanOEM.Tests.ForwardModel.squareJacobian]
+  rw [hK]
+  apply residual_hasFDerivAt_of_hasJacobianAt
+  simpa [squareProblem]
+    using LeanOEM.Tests.ForwardModel.square_hasJacobianAt (![1] : State 1)
 
 end
 end LeanOEM.Tests.NonlinearOEM

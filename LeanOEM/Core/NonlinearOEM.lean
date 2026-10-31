@@ -4,6 +4,7 @@ public import LeanOEM.Core.ForwardModel
 public import LeanOEM.Core.Information
 public import LeanOEM.Core.Observability
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+public import Mathlib.Analysis.Calculus.FDeriv.Add
 
 @[expose] public section
 
@@ -33,6 +34,19 @@ namespace NonlinearProblem
 /-- 非线性观测残差。 -/
 def residual (p : NonlinearProblem n m) (x : State n) : Observation m :=
   p.observation - p.model.observe x
+
+/-- Jacobian 契约沿残差映射传播：残差导数是负的观测 Jacobian。 -/
+theorem residual_hasFDerivAt_of_hasJacobianAt
+    (p : NonlinearProblem n m) (x : State n) (k : Jacobian n m)
+    (hJacobian : p.model.HasJacobianAt x k) :
+    ∃ derivative : State n →L[ℝ] Observation m,
+      HasFDerivAt (fun z => p.residual z) derivative x ∧
+        ∀ h, derivative h = -(k.mulVec h) := by
+  rcases hJacobian with ⟨derivative, hDerivative, hMatrix⟩
+  refine ⟨-derivative, ?_, ?_⟩
+  · simpa [residual] using hDerivative.const_sub p.observation
+  · intro h
+    simp [hMatrix]
 
 /-- 矩阵权重下的二次型。 -/
 def quadraticForm {n : ℕ} (weight : Square n) (v : State n) : ℝ :=
