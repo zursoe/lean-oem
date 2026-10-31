@@ -245,6 +245,50 @@ example (x : State 1) :
     Matrix.conjTranspose, Matrix.transpose, dotProduct]
   ring
 
+/-! ## 非零目标残差与非零先验偏差的驻点模型 -/
+
+private def squareStationaryProblem : NonlinearProblem 1 1 where
+  model := { observe := fun x => ![(x 0) ^ 2] }
+  observation := ![(11 / 10 : ℝ)]
+  priorMean := ![0]
+  priorWeight := !![(1 / 5 : ℝ)]
+  observationWeight := !![1]
+
+private def squareStationaryTarget : State 1 := ![1]
+
+private def squareStationaryJacobianAt (x : State 1) : Jacobian 1 1 :=
+  !![2 * x 0]
+
+private def squareStationaryJacobianTarget : Jacobian 1 1 := !![2]
+
+private lemma square_stationary_target :
+    squareStationaryProblem.TargetStationary squareStationaryTarget
+      squareStationaryJacobianTarget := by
+  unfold TargetStationary normalRhs NonlinearProblem.residual
+  funext i
+  fin_cases i
+  norm_num [squareStationaryProblem, squareStationaryTarget,
+    squareStationaryJacobianTarget, Matrix.mul_apply, Matrix.mulVec,
+    Matrix.conjTranspose, Matrix.transpose, Matrix.vecHead, dotProduct]
+
+example (x : State 1) :
+    squareStationaryProblem.normalDefect x squareStationaryTarget
+        (squareStationaryJacobianAt x) =
+      (squareStationaryJacobianAt x).conjTranspose.mulVec
+          (squareStationaryProblem.observationWeight.mulVec
+            (squareStationaryProblem.residual squareStationaryTarget)) -
+        squareStationaryJacobianTarget.conjTranspose.mulVec
+          (squareStationaryProblem.observationWeight.mulVec
+            (squareStationaryProblem.residual squareStationaryTarget)) +
+        (squareStationaryJacobianAt x).conjTranspose.mulVec
+          (squareStationaryProblem.observationWeight.mulVec
+            (ForwardModel.linearizationRemainder squareStationaryProblem.model x
+              squareStationaryTarget (squareStationaryJacobianAt x))) := by
+  exact normalDefect_eq_jacobianVariation_add_remainder_of_stationary
+    squareStationaryProblem x squareStationaryTarget
+      (squareStationaryJacobianAt x) squareStationaryJacobianTarget
+      square_stationary_target
+
 end
 end LeanOEM.Tests.LocalContraction
 

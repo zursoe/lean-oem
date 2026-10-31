@@ -25,6 +25,18 @@ def WeightedJacobianActionBound (p : NonlinearProblem n m) (k : Jacobian n m)
     (beta : ℝ) : Prop :=
   ∀ v, ‖k.conjTranspose.mulVec (p.observationWeight.mulVec v)‖ ≤ beta * ‖v‖
 
+/-- 给定目标 Jacobian 时，目标状态满足非线性 MAP 一阶驻点的契约。 -/
+def TargetStationary (p : NonlinearProblem n m) (target : State n)
+    (kTarget : Jacobian n m) : Prop :=
+  p.normalRhs target kTarget = 0
+
+/-- Jacobian 变化对目标残差的加权作用界。 -/
+def JacobianVariationActionBound (p : NonlinearProblem n m)
+    (x target : State n) (k kTarget : Jacobian n m) (delta : ℝ) : Prop :=
+  ∀ v, ‖k.conjTranspose.mulVec (p.observationWeight.mulVec v) -
+      kTarget.conjTranspose.mulVec (p.observationWeight.mulVec v)‖ ≤
+    delta * ‖x - target‖ * ‖v‖
+
 /-
 在观测等于目标状态的正演输出、先验均值等于目标状态时，
 正规方程缺陷正好是加权 Jacobian 作用在线性化余项上。
@@ -81,6 +93,119 @@ theorem normalDefectBound_of_quadraticRemainder
       exact mul_le_mul_of_nonneg_left
         (mul_le_mul_of_nonneg_left hSquare hRho) hBeta
     _ = beta * rho * radius * ‖x - target‖ := by
+      ring
+
+/-! ## 一般驻点目标与 Jacobian 变化 -/
+
+/--
+正规缺陷的一般分解：目标驻点残差、Jacobian 变化和当前线性化余项分别出现。
+该恒等式本身不要求目标驻点；最后一项保留目标处的正规方程右端。
+-/
+theorem normalDefect_eq_jacobianVariation_add_remainder_add_stationarity
+    (p : NonlinearProblem n m) (x target : State n)
+    (k kTarget : Jacobian n m) :
+    p.normalDefect x target k =
+      k.conjTranspose.mulVec (p.observationWeight.mulVec (p.residual target)) -
+          kTarget.conjTranspose.mulVec (p.observationWeight.mulVec (p.residual target))
+        + k.conjTranspose.mulVec
+          (p.observationWeight.mulVec
+            (p.model.linearizationRemainder x target k))
+        + p.normalRhs target kTarget := by
+  simp [normalDefect, normalRhs, normalMatrix, residual,
+    ForwardModel.linearizationRemainder, Matrix.mulVec_mulVec,
+    Matrix.mulVec_add,
+    Matrix.add_mulVec, Matrix.mul_assoc, sub_eq_add_neg,
+    Matrix.mulVec_neg]
+  abel
+
+/-- 目标满足驻点契约时，正规缺陷只剩 Jacobian 变化项和线性化余项。 -/
+theorem normalDefect_eq_jacobianVariation_add_remainder_of_stationary
+    (p : NonlinearProblem n m) (x target : State n)
+    (k kTarget : Jacobian n m)
+    (hStationary : p.TargetStationary target kTarget) :
+    p.normalDefect x target k =
+      k.conjTranspose.mulVec (p.observationWeight.mulVec (p.residual target)) -
+          kTarget.conjTranspose.mulVec (p.observationWeight.mulVec (p.residual target))
+        + k.conjTranspose.mulVec
+          (p.observationWeight.mulVec
+            (p.model.linearizationRemainder x target k)) := by
+  rw [normalDefect_eq_jacobianVariation_add_remainder_add_stationarity
+    p x target k kTarget]
+  change p.normalRhs target kTarget = 0 at hStationary
+  rw [hStationary, add_zero]
+
+/--
+一般驻点目标下，Jacobian 变化项和线性化余项共同给出正规缺陷的相对界。
+`delta` 控制 Jacobian 变化，`sigma` 控制目标残差，`beta` 和 `rho` 控制当前
+线性化余项；所有量都保持为显式契约。
+-/
+theorem normalDefectBound_of_stationary_target
+    (p : NonlinearProblem n m) (x target : State n)
+    (k kTarget : Jacobian n m)
+    {delta sigma beta rho radius : ℝ}
+    (hStationary : p.TargetStationary target kTarget)
+    (hDelta : 0 ≤ delta)
+    (hBeta : 0 ≤ beta)
+    (hRho : 0 ≤ rho)
+    (hRadius : ‖x - target‖ ≤ radius)
+    (hResidual : ‖p.residual target‖ ≤ sigma)
+    (hVariation : p.JacobianVariationActionBound x target k kTarget delta)
+    (hAction : p.WeightedJacobianActionBound k beta)
+    (hRemainder : p.model.QuadraticRemainderBound x target k rho) :
+    p.NormalDefectBound x target k (delta * sigma + beta * rho * radius) := by
+  unfold NormalDefectBound
+  rw [normalDefect_eq_jacobianVariation_add_remainder_of_stationary
+    p x target k kTarget hStationary]
+  unfold ForwardModel.QuadraticRemainderBound at hRemainder
+  have hRemainder' :
+      ‖p.model.linearizationRemainder x target k‖ ≤
+        rho * ‖x - target‖ ^ 2 := by
+    simpa only [norm_sub_rev] using hRemainder
+  have hSquare : ‖x - target‖ ^ 2 ≤ radius * ‖x - target‖ := by
+    rw [pow_two]
+    exact mul_le_mul_of_nonneg_right hRadius (norm_nonneg _)
+  have hVariationTerm :
+      ‖k.conjTranspose.mulVec (p.observationWeight.mulVec (p.residual target)) -
+          kTarget.conjTranspose.mulVec (p.observationWeight.mulVec
+            (p.residual target))‖ ≤
+        delta * sigma * ‖x - target‖ := by
+    calc
+      ‖k.conjTranspose.mulVec (p.observationWeight.mulVec (p.residual target)) -
+          kTarget.conjTranspose.mulVec (p.observationWeight.mulVec
+            (p.residual target))‖ ≤
+          delta * ‖x - target‖ * ‖p.residual target‖ := hVariation _
+      _ ≤ delta * ‖x - target‖ * sigma := by
+        exact mul_le_mul_of_nonneg_left hResidual
+          (mul_nonneg hDelta (norm_nonneg _))
+      _ = delta * sigma * ‖x - target‖ := by ring
+  have hRemainderTerm :
+      ‖k.conjTranspose.mulVec
+          (p.observationWeight.mulVec
+            (p.model.linearizationRemainder x target k))‖ ≤
+        beta * rho * radius * ‖x - target‖ := by
+    calc
+      ‖k.conjTranspose.mulVec
+          (p.observationWeight.mulVec
+            (p.model.linearizationRemainder x target k))‖ ≤
+          beta * ‖p.model.linearizationRemainder x target k‖ := hAction _
+      _ ≤ beta * (rho * ‖x - target‖ ^ 2) :=
+        mul_le_mul_of_nonneg_left hRemainder' hBeta
+      _ ≤ beta * (rho * (radius * ‖x - target‖)) := by
+        exact mul_le_mul_of_nonneg_left
+          (mul_le_mul_of_nonneg_left hSquare hRho) hBeta
+      _ = beta * rho * radius * ‖x - target‖ := by ring
+  calc
+    ‖k.conjTranspose.mulVec (p.observationWeight.mulVec (p.residual target)) -
+          kTarget.conjTranspose.mulVec (p.observationWeight.mulVec
+            (p.residual target))
+        + k.conjTranspose.mulVec
+          (p.observationWeight.mulVec
+            (p.model.linearizationRemainder x target k))‖ ≤
+        delta * sigma * ‖x - target‖ +
+          beta * rho * radius * ‖x - target‖ := by
+            exact (norm_add_le _ _).trans
+              (add_le_add hVariationTerm hRemainderTerm)
+    _ = (delta * sigma + beta * rho * radius) * ‖x - target‖ := by
       ring
 
 /-! ## 从逐步界到轨迹收缩 -/

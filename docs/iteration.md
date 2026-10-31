@@ -142,6 +142,47 @@ $$
 $q=1/2<1$。Lean 已检查邻域不变性、单步误差界和迭代收敛；
 这只是精确实数的数学 fixture，不是具体 ARTS 场景或现实观测结论。
 
+## 一般非线性 MAP 驻点
+
+为去掉“观测正好等于目标正演输出、先验均值等于目标状态”的特殊条件，
+`TargetStationary p target kTarget` 定义目标处的正规梯度驻点：
+
+$$
+k_\star^\mathsf{T}W_y\bigl(y-F(x_\star)\bigr)
+-W_a(x_\star-x_a)=0.
+$$
+
+在该条件下，`normalDefect_eq_jacobianVariation_add_remainder_of_stationary` 将正规缺陷写成
+
+$$
+d(x)=
+\bigl(K(x)^\mathsf{T}-K(x_\star)^\mathsf{T}\bigr)W_y r(x_\star)
++K(x)^\mathsf{T}W_y R(x,x_\star).
+$$
+
+其中第一项来自 Jacobian 变化与目标残差的乘积，第二项来自当前点的线性化余项。
+如果显式提供
+
+$$
+\begin{aligned}
+\|\bigl(K(x)^\mathsf{T}-K(x_\star)^\mathsf{T}\bigr)W_yv\|
+  &\leq \delta\|x-x_\star\|\|v\|,\\
+\|r(x_\star)\|&\leq\sigma,
+\end{aligned}
+$$
+
+则 `normalDefectBound_of_stationary_target` 给出
+
+$$
+\eta=\delta\sigma+\beta\rho r.
+$$
+
+这说明非零目标残差会通过 Jacobian 变化项直接进入收缩常数。目标 Jacobian 是实际导数、
+其变化界如何由二阶光滑性得到，以及目标驻点是否对应现实 MAP 解，仍需调用者或后续物理模型证明。
+
+`LeanOEM/Tests/LocalContraction.lean` 还包含一个平方模型的非零残差、非零先验偏差驻点，
+用于检查上述分解的适用边界。
+
 ## 例子与反例
 
 `LeanOEM/Tests/Iteration.lean` 包含：

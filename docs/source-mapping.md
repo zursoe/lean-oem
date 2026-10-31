@@ -219,13 +219,16 @@ P9 的第一批已经完成：后续形式化仍不把 ARTS 代码直接导入 L
   $y=F(x_\star)$ 且先验均值为 $x_\star$ 时成立；
 - `normalDefectBound_of_quadraticRemainder` 在邻域半径 $r$ 内给出
   $\eta=\beta\rho r$；
+- `TargetStationary`、`normalDefect_eq_jacobianVariation_add_remainder_of_stationary` 和
+  `normalDefectBound_of_stationary_target` 处理一般非线性 MAP 驻点；目标残差界 $\sigma$
+  与 Jacobian 变化界 $\delta$ 贡献 $\delta\sigma$；
 - `contractsTowardAlong_of_inverse_and_defect` 给出收缩因子
   $q=\gamma\eta$。
 
 标量平方模型的形式 fixture 取 $F(x)=x^2$、目标和先验均值为零、两个权重为一，
 在 $|x|\leq1/2$ 内得到 $q=1/2$。该结果证明的是指定数学模型和显式契约，
-不证明 ARTS、谱线数据库或真实大气自动满足余项和逆作用界。独立有理数复算
-已加入 `scripts/validate_oem_numeric.py`。
+不证明 ARTS、谱线数据库或真实大气自动满足驻点、余项和逆作用界。独立有理数复算
+覆盖特殊平方模型；一般驻点分解的形式测试位于同一测试模块。
 
 ## 当前边界
 
