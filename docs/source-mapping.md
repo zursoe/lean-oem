@@ -134,6 +134,23 @@
 这些结果见 `LeanOEM/Physics/Spectral.lean`。它们没有引入单位、真实谱线参数、ARTS 采样或
 浮点误差界；测试例子位于 `LeanOEM/Tests/Spectral.lean`。
 
+### 两层有限层离散化映射
+
+- `TwoLayerSourceParameters`：固定两层透过率和入射辐亮度；
+- `twoLayerSourceObserve` / `twoLayerSourceModel`：共同层源项作为一维状态的有限层正演；
+- `twoLayerSourceJacobian`：正演关于共同源项的显式一行 Jacobian；
+- `twoLayerSource_hasJacobianAt`：在精确实数函数空间中证明 Jacobian 导数契约；
+- `transmissivity_product_error_le`：逐层透过率误差到乘积误差的界；
+- `twoLayerSourceJacobian_coefficient_error_le`：乘积误差到整体 Jacobian 系数误差的界；
+- `twoLayerSource_weightedJacobianErrorBound_of_unitWeight`：在单位观测权重下接入通用
+  `WeightedJacobianErrorBound`；
+- `twoLayerSource_forward_error_le`：在入射辐亮度和状态有界时给出正演误差界。
+
+该模块是离散误差传播的数学 fixture。它没有声称透过率误差来自某个具体网格、吸收数据库或
+ARTS 运行，也没有把共同源项直接解释为温度、风速或其他现实状态量。对应测试和独立有理数
+复算分别位于 `LeanOEM/Tests/FiniteLayerDiscretization.lean` 和
+`scripts/validate_oem_numeric.py`。
+
 ## 独立数值证据
 
 `scripts/validate_oem_numeric.py` 使用 Python 标准库 `fractions.Fraction` 独立实现小型矩阵运算，避免依赖 Lean、Mathlib、NumPy 或 SciPy。它核对：

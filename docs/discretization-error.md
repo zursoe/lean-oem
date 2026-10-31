@@ -63,3 +63,59 @@ $$
 $1/100$；目标残差取 $1/10$ 时，目标正规方程残差界为 $1/1000$。
 
 这些数字是可复现的有理数 fixture，不是浮点误差统计，也不代表真实 ARTS 配置。
+
+## 两层有限层 fixture
+
+`LeanOEM/Physics/FiniteLayerDiscretization.lean` 把归一化两层递推实例化为一维状态和一维观测。
+两层共享状态源项 $x$，透过率和入射辐亮度属于固定模型参数：
+
+$$
+F(x)=	au_2	au_1 I_0+
+\bigl(\tau_2(1-\tau_1)+(1-\tau_2)\bigr)x.
+$$
+
+因此 Jacobian 是常数
+
+$$
+K=1-	au_1	au_2.
+$$
+
+`twoLayerSource_hasJacobianAt` 在有限维函数空间中证明了这个 Jacobian 的导数契约。
+若精确透过率和离散透过率分别满足
+
+$$
+|\widehat\tau_1-\tau_1|\leq e_1,
+\qquad
+|\widehat\tau_2-\tau_2|\leq e_2,
+$$
+
+并且两组透过率都位于 $[0,1]$，则
+
+$$
+|\widehat\tau_1\widehat\tau_2-	au_1\tau_2|
+\leq e_1+e_2.
+$$
+
+该乘积界给出整体 Jacobian 系数误差，并通过
+`twoLayerSource_weightedJacobianErrorBound_of_unitWeight` 接入已有的
+`WeightedJacobianErrorBound`。在 $|I_0|\leq B_I$、$|x|\leq B_x$ 时，正演误差满足
+
+$$
+\|F_h(x)-F(x)\|
+\leq (e_1+e_2)(B_I+B_x).
+$$
+
+测试 fixture 取
+
+$$
+(\tau_1,\tau_2,I_0)=\left(\frac12,\frac34,2\right),
+\qquad
+(\widehat\tau_1,\widehat\tau_2,I_0)=\left(\frac35,\frac7{10},2\right).
+$$
+
+精确和近似 Jacobian 系数分别为 $5/8$ 和 $29/50$，透过率误差预算为
+$e_1+e_2=3/20$。在 $x=1/2$ 时，正演误差为 $27/400$；目标残差取 $1/10$ 时，
+正规方程残差为 $9/2000$，并由 OEM 误差定理传到更新误差底。
+
+这些结论是显式范围假设下的精确实数定理。它们没有引入连续频率积分、单位转换、浮点舍入、
+谱线数据库或 ARTS 代码依赖。

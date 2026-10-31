@@ -278,6 +278,20 @@ P12 第一批已完成：
 
 验收标准：至少一个简化模型有有限差分误差界和独立数值验证；误差界的假设、范数和适用范围可读且可复现。
 
+P12 第二批已完成第一条具体有限层垂直切片：
+
+- `LeanOEM/Physics/FiniteLayerDiscretization.lean` 定义两层共同源项正演模型、显式 Jacobian
+  和透过率乘积误差界；
+- `twoLayerSource_hasJacobianAt` 证明该有限层模型的 Jacobian 是正演函数的导数表示；
+- 逐层透过率误差被传播为整体 Jacobian 系数误差，再提升为单位观测权重下的
+  `WeightedJacobianErrorBound`；
+- 有界入射辐亮度和状态下，正演误差也有显式上界；
+- `LeanOEM/Tests/FiniteLayerDiscretization.lean` 验证有限层正演、Jacobian、正规方程残差和
+  Gauss–Newton 更新误差底；`scripts/validate_oem_numeric.py` 用独立有理数复算同一 fixture。
+
+该切片只把共同源项作为一维状态，透过率作为固定模型参数。它验证的是离散误差传播链，
+不等同于温度、吸收系数或风速已经完成物理参数化。
+
 ## 阶段 P13：ARTS/Python 符合性桥接
 
 ARTS 在这一阶段作为实现和数据证据，不作为 Lean 包依赖。
@@ -316,5 +330,5 @@ SciLean 继续暂缓：其当前主分支工具链仍为 Lean `v4.28.0-rc1`，�
 - README、范围文档和来源映射明确写出“已证明范围”和“尚未证明范围”；
 - 干净 checkout 可以在锁定工具链和 `lake-manifest.json` 下完成构建。
 
-下一次实际编码批次进入 P12：把有限差分、有限层递推和通道离散化的误差转成
-`F_h`、`K_h` 对正规矩阵、正规缺陷和收缩常数的影响。阻尼和浮点停止规则继续单独处理。
+下一次实际编码批次进入 P12-C：把有限频率网格和通道响应权重误差转成观测输出和 Jacobian
+误差，再与本批两层有限层模型组合。阻尼和浮点停止规则继续单独处理。

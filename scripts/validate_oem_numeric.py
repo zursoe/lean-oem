@@ -257,17 +257,66 @@ def discretization_error_case() -> None:
         raise AssertionError("离散化 Jacobian 对目标正规方程残差的影响不一致")
 
 
+def finite_layer_discretization_case() -> None:
+    """独立复算两层有限层模型的正演和 Jacobian 离散化误差。"""
+    exact_t1 = F(1, 2)
+    exact_t2 = F(3, 4)
+    approximate_t1 = F(3, 5)
+    approximate_t2 = F(7, 10)
+    incoming = F(2)
+    state = F(1, 2)
+
+    exact_coefficient = 1 - exact_t1 * exact_t2
+    approximate_coefficient = 1 - approximate_t1 * approximate_t2
+    exact_forward = exact_t2 * exact_t1 * incoming + exact_coefficient * state
+    approximate_forward = (
+        approximate_t2 * approximate_t1 * incoming
+        + approximate_coefficient * state
+    )
+    first_error = abs(approximate_t1 - exact_t1)
+    second_error = abs(approximate_t2 - exact_t2)
+    coefficient_error = abs(approximate_coefficient - exact_coefficient)
+    epsilon = first_error + second_error
+
+    if exact_coefficient != F(5, 8):
+        raise AssertionError("两层有限层精确 Jacobian 系数不一致")
+    if approximate_coefficient != F(29, 50):
+        raise AssertionError("两层有限层近似 Jacobian 系数不一致")
+    if coefficient_error != F(9, 200) or coefficient_error > epsilon:
+        raise AssertionError("两层有限层 Jacobian 误差界不满足")
+    if exact_forward != F(17, 16) or approximate_forward != F(113, 100):
+        raise AssertionError("两层有限层正演值不一致")
+
+    forward_error = abs(approximate_forward - exact_forward)
+    forward_bound = epsilon * (abs(incoming) + abs(state))
+    if forward_error != F(27, 400) or forward_error > forward_bound:
+        raise AssertionError("两层有限层正演误差界不满足")
+
+    target_residual = F(1, 10)
+    normal_rhs_error = coefficient_error * target_residual
+    normal_rhs_bound = epsilon * target_residual
+    if normal_rhs_error != F(9, 2000) or normal_rhs_error > normal_rhs_bound:
+        raise AssertionError("两层有限层正规方程误差界不满足")
+
+    approximate_normal = approximate_coefficient**2 + 1
+    update_error = normal_rhs_error / approximate_normal
+    if update_error > epsilon * target_residual:
+        raise AssertionError("两层有限层更新误差底不满足")
+
+
 def main() -> None:
     scalar_case()
     rank_deficient_case()
     iteration_cases()
     local_contraction_case()
     discretization_error_case()
+    finite_layer_discretization_case()
     print("一维精确 OEM 交叉验证：通过")
     print("秩亏二维 OEM 交叉验证：通过")
     print("Gauss–Newton 轨迹与停滞反例交叉验证：通过")
     print("平方模型局部收缩契约交叉验证：通过")
     print("中心差分离散化误差交叉验证：通过")
+    print("两层有限层离散化误差交叉验证：通过")
     print("所有独立有理数交叉验证：通过")
 
 
