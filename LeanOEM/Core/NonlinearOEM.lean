@@ -2,6 +2,7 @@ module
 
 public import LeanOEM.Core.ForwardModel
 public import LeanOEM.Core.Information
+public import LeanOEM.Core.Observability
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 
 @[expose] public section
@@ -21,6 +22,11 @@ structure NonlinearProblem (n m : ℕ) where
   priorMean : State n
   priorWeight : Square n
   observationWeight : Square m
+
+/-- 非线性 OEM 权重的正定性假设。 -/
+structure WeightWellPosed (p : NonlinearProblem n m) : Prop where
+  prior_posDef : p.priorWeight.PosDef
+  observation_posDef : p.observationWeight.PosDef
 
 namespace NonlinearProblem
 
@@ -48,6 +54,27 @@ def normalRhs (p : NonlinearProblem n m) (x : State n)
   k.conjTranspose.mulVec (p.observationWeight.mulVec (p.residual x))
     - p.priorWeight.mulVec (x - p.priorMean)
 
+/-- 正定权重和可观测 Jacobian 给出的正规矩阵正定性。 -/
+theorem normalMatrix_posDef (p : NonlinearProblem n m) (x : State n)
+    (k : Jacobian n m) (hWeights : WeightWellPosed p) (hObservable : Observable k) :
+    (p.normalMatrix x k).PosDef := by
+  unfold normalMatrix
+  exact Matrix.PosDef.add
+    (weightedNormalMatrix_posDef k p.observationWeight
+      hWeights.observation_posDef hObservable)
+    hWeights.prior_posDef
+
+/-- 正规矩阵正定性足以得到其总函数逆的可逆条件。 -/
+theorem normalMatrix_isUnit (p : NonlinearProblem n m) (x : State n)
+    (k : Jacobian n m) (hWeights : WeightWellPosed p) (hObservable : Observable k) :
+    IsUnit (p.normalMatrix x k) :=
+  (p.normalMatrix_posDef x k hWeights hObservable).isUnit
+
+/-- 线性化子问题的正规梯度表达式；其零点就是 Gauss–Newton 正规方程。 -/
+def linearizedGradient (p : NonlinearProblem n m) (x : State n)
+    (k : Jacobian n m) (z : State n) : State n :=
+  (p.normalMatrix x k).mulVec (z - x) - p.normalRhs x k
+
 /-- 可逆正规矩阵条件下的 Gauss–Newton 状态增量。 -/
 def gaussNewtonStep (p : NonlinearProblem n m) (x : State n)
     (k : Jacobian n m) : State n :=
@@ -66,6 +93,14 @@ theorem normalMatrix_mulVec_gaussNewtonStep
   rw [Matrix.mulVec_mulVec]
   rw [Matrix.mul_nonsing_inv _
     ((Matrix.isUnit_iff_isUnit_det _).mp hNormal), Matrix.one_mulVec]
+
+theorem gaussNewtonUpdate_linearizedGradient_eq_zero
+    (p : NonlinearProblem n m) (x : State n) (k : Jacobian n m)
+    (hNormal : IsUnit (p.normalMatrix x k)) :
+    p.linearizedGradient x k (p.gaussNewtonUpdate x k) = 0 := by
+  unfold linearizedGradient gaussNewtonUpdate
+  rw [add_sub_cancel_left, p.normalMatrix_mulVec_gaussNewtonStep x k hNormal]
+  simp
 
 end NonlinearProblem
 

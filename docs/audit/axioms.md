@@ -64,6 +64,9 @@ lake env lean LeanOEM/Tests/Axioms.lean
 - `NonlinearProblem.normalMatrix_mulVec_gaussNewtonStep`；
 - `Problem.toNonlinear_residual_eq_innovation`；
 - `Problem.toNonlinear_normalMatrix_eq_informationMatrix`；
+- `NonlinearProblem.normalMatrix_posDef`；
+- `NonlinearProblem.normalMatrix_isUnit`；
+- `NonlinearProblem.gaussNewtonUpdate_linearizedGradient_eq_zero`；
 - `NonlinearProblem.gaussNewtonIterate_zero`；
 - `NonlinearProblem.gaussNewtonIterate_succ`；
 - `NonlinearProblem.gaussNewtonIterate_succ_sub`；

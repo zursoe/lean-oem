@@ -51,6 +51,20 @@ example :
   rw [squareProblem_normalMatrix_eq]
   norm_num [Matrix.isUnit_iff_isUnit_det]
 
+/-- 正规矩阵可逆时，Gauss–Newton 更新是线性化正规梯度的零点。 -/
+example :
+    squareProblem.linearizedGradient (![1] : State 1) squareJacobian
+      (squareProblem.gaussNewtonUpdate (![1] : State 1) squareJacobian) = 0 := by
+  apply gaussNewtonUpdate_linearizedGradient_eq_zero
+  rw [squareProblem_normalMatrix_eq]
+  norm_num [Matrix.isUnit_iff_isUnit_det]
+
+/-- 正定权重和可观测 Jacobian 给出正定正规矩阵。 -/
+example (p : NonlinearProblem 1 1) (x : State 1) (k : Jacobian 1 1)
+    (hWeights : WeightWellPosed p) (hObservable : Observable k) :
+    (p.normalMatrix x k).PosDef :=
+  normalMatrix_posDef p x k hWeights hObservable
+
 /-- 线性问题在非线性规格中的残差仍是原 OEM 创新。 -/
 example (p : Problem 1 1) (y : Observation 1) (x : State 1) :
     (p.toNonlinear y).residual x = p.innovation x y :=

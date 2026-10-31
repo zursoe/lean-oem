@@ -179,7 +179,11 @@ P9 的第一批已经完成：后续形式化仍不把 ARTS 代码直接导入 L
 - `NonlinearProblem.gaussNewtonStep`：正规矩阵总函数逆定义的状态增量；
 - `normalMatrix_mulVec_gaussNewtonStep`：在正规矩阵可逆条件下，增量满足正规方程；
 - `Problem.toNonlinear`：线性 `Problem` 到非线性规格的权重形式映射；
-- `Problem.toNonlinear_normalMatrix_eq_informationMatrix`：该映射的正规矩阵退化为信息矩阵。
+- `Problem.toNonlinear_normalMatrix_eq_informationMatrix`：该映射的正规矩阵退化为信息矩阵；
+- `WeightWellPosed`：先验权重和观测权重的正定性假设；
+- `normalMatrix_posDef` / `normalMatrix_isUnit`：正定权重与可观测 Jacobian 给出的正规矩阵条件；
+- `linearizedGradient`：线性化子问题的正规梯度表达式；
+- `gaussNewtonUpdate_linearizedGradient_eq_zero`：可逆正规矩阵下更新点满足该正规梯度为零。
 
 当前批次只证明代数规格和可逆性条件，不证明非线性迭代的全局收敛、阻尼策略或现实正演有效性。
 

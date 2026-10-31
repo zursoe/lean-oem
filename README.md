@@ -33,6 +33,7 @@ Mathlib 的版本和提交由 `lean-toolchain`、`lakefile.toml` 与 `lake-manif
 - 归一化 Planck 函数、Doppler 频移和非负归一化通道响应的基本性质。
 - 非线性 MAP 目标、Gauss–Newton 正规方程规格，以及与线性 OEM 信息形式的连接。
 - Gauss–Newton 迭代轨迹、步长停止判据，以及显式收缩条件下的收敛和停止误差界。
+- 正定权重下的正规矩阵性质，以及线性化正规梯度的一阶驻点规格。
 
 形式定理只说明给定定义和显式假设下的数学性质。它们不自动证明某个 ARTS 配置、观测数据、数据库参数或有限精度程序符合这些假设。范围、信任边界、来源映射和后续路线见 [`docs/scope.md`](docs/scope.md)、[`docs/source-mapping.md`](docs/source-mapping.md) 与 [`docs/roadmap.md`](docs/roadmap.md)。
 
