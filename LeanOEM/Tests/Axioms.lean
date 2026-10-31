@@ -66,3 +66,5 @@ public import LeanOEM
 #print axioms LeanOEM.NonlinearProblem.stoppedAt_error_le
 #print axioms LeanOEM.NonlinearProblem.gaussNewtonIterate_step_le
 #print axioms LeanOEM.NonlinearProblem.eventually_stoppedAt
+#print axioms LeanOEM.NonlinearProblem.gaussNewtonUpdate_sub_target_eq_inverse_normalDefect
+#print axioms LeanOEM.NonlinearProblem.gaussNewtonUpdate_error_le_of_inverse_and_defect

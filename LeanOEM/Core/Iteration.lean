@@ -68,6 +68,53 @@ def StoppedAt (p : NonlinearProblem n m)
   p.StepSmall (p.gaussNewtonIterate jacobian initial i)
     (jacobian i (p.gaussNewtonIterate jacobian initial i)) tolerance
 
+/-- 给定目标状态时的正规方程缺陷。 -/
+def normalDefect (p : NonlinearProblem n m) (x target : State n)
+    (k : Jacobian n m) : State n :=
+  p.normalRhs x k - (p.normalMatrix x k).mulVec (target - x)
+
+/-- 正规矩阵逆作用在状态范数下的显式界。 -/
+def InverseActionBound (p : NonlinearProblem n m) (x : State n)
+    (k : Jacobian n m) (gamma : ℝ) : Prop :=
+  ∀ v, ‖(p.normalMatrix x k)⁻¹.mulVec v‖ ≤ gamma * ‖v‖
+
+/-- 给定目标时正规方程缺陷的局部界。 -/
+def NormalDefectBound (p : NonlinearProblem n m) (x target : State n)
+    (k : Jacobian n m) (eta : ℝ) : Prop :=
+  ‖p.normalDefect x target k‖ ≤ eta * ‖x - target‖
+
+/-- 可逆正规矩阵下，更新误差正好等于逆矩阵作用于正规方程缺陷。 -/
+theorem gaussNewtonUpdate_sub_target_eq_inverse_normalDefect
+    (p : NonlinearProblem n m) (x target : State n) (k : Jacobian n m)
+    (hNormal : IsUnit (p.normalMatrix x k)) :
+    p.gaussNewtonUpdate x k - target =
+      (p.normalMatrix x k)⁻¹.mulVec (p.normalDefect x target k) := by
+  unfold gaussNewtonUpdate gaussNewtonStep normalDefect
+  have hDet : IsUnit (p.normalMatrix x k).det :=
+    (Matrix.isUnit_iff_isUnit_det _).mp hNormal
+  have hInv : (p.normalMatrix x k)⁻¹.mulVec
+      ((p.normalMatrix x k).mulVec (target - x)) = target - x := by
+    rw [Matrix.mulVec_mulVec, Matrix.nonsing_inv_mul _ hDet, Matrix.one_mulVec]
+  rw [Matrix.mulVec_sub, hInv]
+  abel
+
+/-- 逆作用界和正规方程缺陷界给出单步的误差界。 -/
+theorem gaussNewtonUpdate_error_le_of_inverse_and_defect
+    (p : NonlinearProblem n m) (x target : State n) (k : Jacobian n m)
+    {gamma eta : ℝ} (hNormal : IsUnit (p.normalMatrix x k))
+    (hGamma : 0 ≤ gamma)
+    (hInverse : p.InverseActionBound x k gamma)
+    (hDefect : p.NormalDefectBound x target k eta) :
+    ‖p.gaussNewtonUpdate x k - target‖ ≤
+      gamma * eta * ‖x - target‖ := by
+  rw [p.gaussNewtonUpdate_sub_target_eq_inverse_normalDefect x target k hNormal]
+  calc
+    ‖(p.normalMatrix x k)⁻¹.mulVec (p.normalDefect x target k)‖ ≤
+        gamma * ‖p.normalDefect x target k‖ := hInverse _
+    _ ≤ gamma * (eta * ‖x - target‖) :=
+      mul_le_mul_of_nonneg_left hDefect hGamma
+    _ = gamma * eta * ‖x - target‖ := by ring
+
 /-- 可逆正规矩阵下，零增量恰好对应正规方程右端为零。 -/
 theorem gaussNewtonStep_eq_zero_iff (p : NonlinearProblem n m)
     (x : State n) (k : Jacobian n m) (hNormal : IsUnit (p.normalMatrix x k)) :

@@ -56,6 +56,38 @@ $$
 `LipschitzOnWith`。停止误差估计由三角不等式得到，与 Mathlib
 `Topology/MetricSpace/Contracting.lean` 的不动点距离估计一致。
 
+## 局部缺陷契约
+
+`normalDefect p x target k` 定义正规方程右端与目标位移的差：
+
+$$
+d(x)=b(x)-H(x)(x_\star-x).
+$$
+
+在正规矩阵可逆时，`gaussNewtonUpdate_sub_target_eq_inverse_normalDefect` 精确给出
+
+$$
+x^+-x_\star=H(x)^{-1}d(x).
+$$
+
+如果调用者能证明
+
+$$
+\|H(x)^{-1}v\|\leq\gamma\|v\|,
+\qquad
+\|d(x)\|\leq\eta\|x-x_\star\|,
+$$
+
+则 `gaussNewtonUpdate_error_le_of_inverse_and_defect` 给出
+
+$$
+\|x^+-x_\star\|\leq\gamma\eta\|x-x_\star\|.
+$$
+
+这把模型余项、权重和正规矩阵条件留在显式契约中；本模块没有声称具体辐射传输模型
+自动满足 $\gamma$、$\eta$ 界。下一步才是从 `HasJacobianAt`、线性化余项和权重正定性
+推导这些界。
+
 ## 例子与反例
 
 `LeanOEM/Tests/Iteration.lean` 包含：

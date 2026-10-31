@@ -207,6 +207,10 @@ P9 的第一批已经完成：后续形式化仍不把 ARTS 代码直接导入 L
 独立 Python 有理数复算覆盖相同案例。上述目标点的最优性、实际问题的收缩性质和浮点误差
 不由本批结果自动给出。
 
+`normalDefect`、`gaussNewtonUpdate_sub_target_eq_inverse_normalDefect` 和
+`gaussNewtonUpdate_error_le_of_inverse_and_defect` 把正规方程缺陷和逆作用界连接成单步
+局部收缩界。它们需要调用者显式提供正规矩阵可逆、$\gamma$ 逆作用界和 $\eta$ 缺陷界。
+
 ## 当前边界
 
 - 形式化核心没有单位系统；公式中的每个量默认已经在同一组一致单位下表达。

@@ -232,7 +232,10 @@ ARTS、Python、单位系统、传感器响应、非线性 Jacobian、概率测�
 第三批补充了 `quadraticGradient` / `quadraticForm_add` 的二次型一阶项和显式二阶余项，
 并用 `quadraticSubproblem_add` 描述对称正规矩阵子问题的增量；同时用
 `residual_hasFDerivAt_of_hasJacobianAt` 把 ForwardModel 的 Jacobian 导数传到残差。
-当前仍未把完整目标的 Fréchet 梯度、模型余项和正规矩阵逆界组合成局部收缩因子。
+第四批补充了 `normalDefect`、`gaussNewtonUpdate_sub_target_eq_inverse_normalDefect` 和
+`gaussNewtonUpdate_error_le_of_inverse_and_defect`：在显式逆作用界 `γ` 与缺陷界 `η` 下，
+单步误差收缩因子为 `γ·η`。当前仍未从具体模型的 Jacobian、线性化余项和权重条件自动推出
+这些界。
 
 规格见 [iteration.md](iteration.md)。第二批是条件定理：收缩假设尚未从模型导数和余项推出，
 目标点最优性、阻尼、首次停止与最大步数求解器、浮点误差仍未实现。P11 整体尚未完成。
