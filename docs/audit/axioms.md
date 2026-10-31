@@ -1,8 +1,8 @@
 # 公理审计记录
 
-审计日期：2026-10-31
+审计日期：2026-11-01
 
-审计提交：`e803313`
+审计提交：`061ac50`
 
 执行命令：
 
@@ -97,5 +97,16 @@ P12 新增公开定理：
 - `NonlinearProblem.gaussNewtonUpdate_error_le_of_inverse_and_additive_defect`；
 - `NonlinearProblem.weightedJacobianActionBound_of_error`；
 - `NonlinearProblem.normalRhs_norm_le_of_weightedJacobianError`。
+
+P12-B 新增公开定理：
+
+- `RadiativeTransfer.twoLayerSourceCoefficient_eq_one_sub_product`；
+- `RadiativeTransfer.twoLayerSourceObserve_eq_propagateTwo`；
+- `RadiativeTransfer.twoLayerSource_hasJacobianAt`；
+- `RadiativeTransfer.transmissivity_product_error_le`；
+- `RadiativeTransfer.twoLayerSourceJacobian_coefficient_error_le`；
+- `RadiativeTransfer.twoLayerSource_weightedJacobianErrorBound_unit`；
+- `RadiativeTransfer.twoLayerSource_weightedJacobianErrorBound_of_unitWeight`；
+- `RadiativeTransfer.twoLayerSource_forward_error_le`。
 
 另行执行的源代码扫描没有发现 `sorry`、`admit`、`sorryAx` 或未登记自定义 `axiom`。
