@@ -2,7 +2,7 @@
 
 审计日期：2026-10-31
 
-审计提交：`f27e444`
+审计提交：`e803313`
 
 执行命令：
 
@@ -90,5 +90,12 @@ lake env lean LeanOEM/Tests/Axioms.lean
 - `NonlinearProblem.normalDefect_eq_jacobianVariation_add_remainder_of_stationary`；
 - `NonlinearProblem.normalDefectBound_of_stationary_target`；
 - `NonlinearProblem.contractsTowardAlong_of_inverse_and_defect`。
+
+P12 新增公开定理：
+
+- `NonlinearProblem.normalDefect_additive_bound_of_stationarity_residual`；
+- `NonlinearProblem.gaussNewtonUpdate_error_le_of_inverse_and_additive_defect`；
+- `NonlinearProblem.weightedJacobianActionBound_of_error`；
+- `NonlinearProblem.normalRhs_norm_le_of_weightedJacobianError`。
 
 另行执行的源代码扫描没有发现 `sorry`、`admit`、`sorryAx` 或未登记自定义 `axiom`。
