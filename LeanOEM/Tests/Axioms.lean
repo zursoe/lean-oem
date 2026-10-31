@@ -49,6 +49,7 @@ public import LeanOEM
 #print axioms LeanOEM.Problem.toNonlinear_residual_eq_innovation
 #print axioms LeanOEM.Problem.toNonlinear_normalMatrix_eq_informationMatrix
 #print axioms LeanOEM.NonlinearProblem.normalMatrix_posDef
+#print axioms LeanOEM.NonlinearProblem.quadraticForm_add
 #print axioms LeanOEM.NonlinearProblem.normalMatrix_isUnit
 #print axioms LeanOEM.NonlinearProblem.gaussNewtonUpdate_linearizedGradient_eq_zero
 #print axioms LeanOEM.NonlinearProblem.residual_hasFDerivAt_of_hasJacobianAt

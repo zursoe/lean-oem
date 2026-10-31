@@ -52,6 +52,26 @@ theorem residual_hasFDerivAt_of_hasJacobianAt
 def quadraticForm {n : ℕ} (weight : Square n) (v : State n) : ℝ :=
   dotProduct v (weight.mulVec v)
 
+/-- 二次型的一阶系数：实数矩阵情形使用 `W + Wᵀ`。 -/
+def quadraticGradient {n : ℕ} (weight : Square n) (v : State n) : State n :=
+  (weight + weight.transpose).mulVec v
+
+/-- 二次型的精确展开，末项是二阶余项。 -/
+theorem quadraticForm_add {n : ℕ} (weight : Square n) (v h : State n) :
+    quadraticForm weight (v + h) =
+      quadraticForm weight v + dotProduct h (quadraticGradient weight v)
+        + quadraticForm weight h := by
+  unfold quadraticForm quadraticGradient
+  rw [Matrix.mulVec_add]
+  simp only [add_dotProduct, dotProduct_add]
+  have hcross : dotProduct v (weight.mulVec h) =
+      dotProduct h (weight.transpose.mulVec v) := by
+    simpa using (Matrix.dotProduct_transpose_mulVec weight.transpose v h)
+  rw [hcross]
+  rw [Matrix.add_mulVec]
+  rw [dotProduct_add]
+  ring
+
 /-- 带先验约束的非线性 MAP 目标函数。 -/
 def objective (p : NonlinearProblem n m) (x : State n) : ℝ :=
   (1 / 2 : ℝ) * quadraticForm p.observationWeight (p.residual x)

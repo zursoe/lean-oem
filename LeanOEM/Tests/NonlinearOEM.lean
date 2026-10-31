@@ -33,6 +33,12 @@ private lemma squareProblem_normalMatrix_eq :
     Matrix.mul_apply, Matrix.vecMul, Matrix.vecHead, dotProduct,
     Matrix.conjTranspose]
 
+example (weight : Square 1) (v h : State 1) :
+    quadraticForm weight (v + h) =
+      quadraticForm weight v + dotProduct h (quadraticGradient weight v)
+        + quadraticForm weight h :=
+  quadraticForm_add weight v h
+
 example : squareProblem.normalRhs (![1] : State 1) squareJacobian = (![5] : State 1) := by
   funext i
   fin_cases i
