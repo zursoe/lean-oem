@@ -2,7 +2,7 @@
 
 审计日期：2026-10-31
 
-审计提交：`58fcdf1`
+审计提交：`1210fcc`
 
 执行命令：
 
@@ -81,6 +81,11 @@ lake env lean LeanOEM/Tests/Axioms.lean
 - `NonlinearProblem.error_le_step_div_one_sub`；
 - `NonlinearProblem.stoppedAt_error_le`；
 - `NonlinearProblem.gaussNewtonIterate_step_le`；
-- `NonlinearProblem.eventually_stoppedAt`。
+- `NonlinearProblem.eventually_stoppedAt`；
+- `NonlinearProblem.gaussNewtonUpdate_sub_target_eq_inverse_normalDefect`；
+- `NonlinearProblem.gaussNewtonUpdate_error_le_of_inverse_and_defect`；
+- `NonlinearProblem.normalDefect_eq_weighted_linearizationRemainder`；
+- `NonlinearProblem.normalDefectBound_of_quadraticRemainder`；
+- `NonlinearProblem.contractsTowardAlong_of_inverse_and_defect`。
 
 另行执行的源代码扫描没有发现 `sorry`、`admit`、`sorryAx` 或未登记自定义 `axiom`。
