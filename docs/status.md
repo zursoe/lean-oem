@@ -6,6 +6,8 @@
 应以最后一次 `lake build`、`scripts/run_audit.sh --no-build` 和
 `python3 scripts/validate_oem_numeric.py` 的现场输出作为最终验证记录。
 
+本轮代码已在提交 `365067d` 收口；远端尚未推送或创建 Release。
+
 ## 已完成基线
 
 - 有限维、实数、矩阵表示的线性 OEM 核心；

@@ -61,3 +61,5 @@ Physics 的情况下验证稳定核心，公理审计则显式分别导入 `Lean
 当前批次进一步新增 `LeanOEM.Core.SpectralDiagnostics`，用 Hermitian 谱分解建立半正定矩阵
 乘积迹的非负性，并证明正定先验/观测误差下最优增益的 DOFS 总迹界。完整工作区构建完成
 3366 个目标；新增公理审计目标仍只报告 `propext`、`Classical.choice` 和 `Quot.sound`。
+
+最终代码收口提交：`365067d`。提交内容对应上述构建、公理审计、占位扫描和独立精确数值验证结果。
