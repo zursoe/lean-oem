@@ -151,6 +151,21 @@ ARTS 运行，也没有把共同源项直接解释为温度、风速或其他现
 复算分别位于 `LeanOEM/Tests/FiniteLayerDiscretization.lean` 和
 `scripts/validate_oem_numeric.py`。
 
+### 有限通道响应离散化映射
+
+- `ChannelResponse.weightL1Error`：两个有限通道权重的 `L¹` 误差；
+- `ChannelResponse.apply_error_le_of_weightL1`：固定谱值界下的权重误差；
+- `ChannelResponse.apply_error_le_of_value_error`：固定通道权重下的逐点谱值误差；
+- `ChannelResponse.apply_error_le_of_weight_and_value`：权重和谱值误差的组合界；
+- `channelJacobian`：将有限频率灵敏度加权为一行标量 Jacobian；
+- `channelJacobian_coefficient_error_le`：通道 Jacobian 系数的组合误差；
+- `channelJacobian_weightedErrorBound_unit` / `channelJacobian_weightedErrorBound_of_unitWeight`：
+  将系数误差接入通用 OEM Jacobian 误差契约。
+
+测试中的频率值和灵敏度来自两层有限层有理数 fixture，但通道模块本身只依赖有限样本和
+显式误差界。它不把权重解释为连续积分的自动求积结果；网格步长、求积规则和误差阶数属于
+后续 P12-C-2。
+
 ## 独立数值证据
 
 `scripts/validate_oem_numeric.py` 使用 Python 标准库 `fractions.Fraction` 独立实现小型矩阵运算，避免依赖 Lean、Mathlib、NumPy 或 SciPy。它核对：

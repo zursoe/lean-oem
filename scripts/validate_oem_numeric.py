@@ -304,6 +304,57 @@ def finite_layer_discretization_case() -> None:
         raise AssertionError("两层有限层更新误差底不满足")
 
 
+def channel_discretization_case() -> None:
+    """独立复算两频率通道响应与有限层谱值/Jacobian 的组合误差。"""
+    exact_weights = [F(3, 4), F(1, 4)]
+    approximate_weights = [F(7, 10), F(3, 10)]
+    exact_values = [F(17, 16), F(49, 50)]
+    approximate_values = [F(113, 100), F(41, 40)]
+    exact_sensitivities = [F(5, 8), F(17, 25)]
+    approximate_sensitivities = [F(29, 50), F(13, 20)]
+
+    def apply(weights: Sequence[Fraction], values: Sequence[Fraction]) -> Fraction:
+        return sum(weight * value for weight, value in zip(weights, values))
+
+    weight_l1_error = sum(
+        abs(approximate - exact)
+        for approximate, exact in zip(approximate_weights, exact_weights)
+    )
+    value_error = [
+        abs(approximate - exact)
+        for approximate, exact in zip(approximate_values, exact_values)
+    ]
+    sensitivity_error = [
+        abs(approximate - exact)
+        for approximate, exact in zip(approximate_sensitivities, exact_sensitivities)
+    ]
+
+    exact_output = apply(exact_weights, exact_values)
+    approximate_output = apply(approximate_weights, approximate_values)
+    output_error = abs(approximate_output - exact_output)
+    output_bound = F(6, 5) * weight_l1_error + F(7, 100)
+
+    exact_jacobian = apply(exact_weights, exact_sensitivities)
+    approximate_jacobian = apply(approximate_weights, approximate_sensitivities)
+    jacobian_error = abs(approximate_jacobian - exact_jacobian)
+    jacobian_bound = F(1) * weight_l1_error + F(1, 5)
+
+    if weight_l1_error != F(1, 10):
+        raise AssertionError("通道权重 L1 误差不一致")
+    if max(value_error) > F(7, 100):
+        raise AssertionError("有限层谱值误差预算不满足")
+    if max(sensitivity_error) > F(1, 5):
+        raise AssertionError("有限层 Jacobian 灵敏度误差预算不满足")
+    if exact_output != F(1667, 1600) or approximate_output != F(2197, 2000):
+        raise AssertionError("通道输出值不一致")
+    if output_error != F(453, 8000) or output_error > output_bound:
+        raise AssertionError("通道输出组合误差界不满足")
+    if exact_jacobian != F(511, 800) or approximate_jacobian != F(601, 1000):
+        raise AssertionError("通道 Jacobian 系数不一致")
+    if jacobian_error != F(151, 4000) or jacobian_error > jacobian_bound:
+        raise AssertionError("通道 Jacobian 组合误差界不满足")
+
+
 def main() -> None:
     scalar_case()
     rank_deficient_case()
@@ -311,12 +362,14 @@ def main() -> None:
     local_contraction_case()
     discretization_error_case()
     finite_layer_discretization_case()
+    channel_discretization_case()
     print("一维精确 OEM 交叉验证：通过")
     print("秩亏二维 OEM 交叉验证：通过")
     print("Gauss–Newton 轨迹与停滞反例交叉验证：通过")
     print("平方模型局部收缩契约交叉验证：通过")
     print("中心差分离散化误差交叉验证：通过")
     print("两层有限层离散化误差交叉验证：通过")
+    print("通道响应离散化误差交叉验证：通过")
     print("所有独立有理数交叉验证：通过")
 
 

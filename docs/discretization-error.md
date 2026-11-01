@@ -119,3 +119,51 @@ $e_1+e_2=3/20$。在 $x=1/2$ 时，正演误差为 $27/400$；目标残差取 $1
 
 这些结论是显式范围假设下的精确实数定理。它们没有引入连续频率积分、单位转换、浮点舍入、
 谱线数据库或 ARTS 代码依赖。
+
+## 有限通道响应 fixture
+
+`LeanOEM/Physics/ChannelDiscretization.lean` 将两个有限通道响应之间的权重差定义为
+
+$$
+E_w=\sum_i|\widehat w_i-w_i|.
+$$
+
+若有限频率样本满足 $|v_i|\leq B$，则
+
+$$
+|C_{\widehat w}(v)-C_w(v)|\leq B E_w.
+$$
+
+若谱值本身也有逐点误差 $|\widehat v_i-v_i|\leq E_v$，则组合界为
+
+$$
+|C_{\widehat w}(\widehat v)-C_w(v)|
+\leq B E_w+E_v.
+$$
+
+`channelJacobian` 对有限频率灵敏度执行同样的加权求和，因此该组合界可以直接转为
+一行 Jacobian 的系数误差，并通过 `channelJacobian_weightedErrorBound_of_unitWeight`
+接入 `WeightedJacobianErrorBound`。
+
+测试使用两频率响应
+
+$$
+w=\left(\frac34,\frac14\right),
+\qquad
+\widehat w=\left(\frac7{10},\frac3{10}\right),
+$$
+
+并把两层有限层输出分别取为
+
+$$
+v=\left(\frac{17}{16},\frac{49}{50}\right),
+\qquad
+\widehat v=\left(\frac{113}{100},\frac{41}{40}\right).
+$$
+
+此时 $E_w=1/10$，输出误差为 $453/8000$，在 $B=6/5$、$E_v=7/100$ 下满足
+$B E_w+E_v=19/100$。对应的通道 Jacobian 系数误差为 $151/4000$，测试使用
+$3/10$ 的组合预算接入 OEM 契约。
+
+该结果只证明有限样本和显式误差预算下的加权和界。它没有证明连续频率积分、具体求积
+规则的 $h^p$ 阶数，也没有引入单位、谱线数据库或 ARTS 输出。

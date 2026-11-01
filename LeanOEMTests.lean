@@ -5,6 +5,7 @@ import LeanOEM.Tests.Examples
 import LeanOEM.Tests.ForwardModel
 import LeanOEM.Tests.FiniteLayer
 import LeanOEM.Tests.FiniteLayerDiscretization
+import LeanOEM.Tests.ChannelDiscretization
 import LeanOEM.Tests.Spectral
 import LeanOEM.Tests.Discretization
 import LeanOEM.Tests.NonlinearOEM
