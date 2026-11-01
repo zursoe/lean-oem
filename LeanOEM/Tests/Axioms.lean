@@ -15,6 +15,9 @@ public import LeanOEM.Physics
 #print axioms LeanOEM.prior_minus_posterior_posSemidef
 #print axioms LeanOEM.posteriorCovariance_posSemidef
 #print axioms LeanOEM.dofs_add_left
+#print axioms LeanOEM.dofs_nonneg_of_averagingKernel_posSemidef
+#print axioms LeanOEM.dofs_le_dim_of_complement_posSemidef
+#print axioms LeanOEM.dofs_bounds_of_averagingKernel_posSemidef
 #print axioms LeanOEM.observable_iff_kernel_eq_zero
 #print axioms LeanOEM.weightedNormalMatrix_posDef
 #print axioms LeanOEM.informationMatrix_posDef
@@ -43,6 +46,9 @@ public import LeanOEM.Physics
 #print axioms LeanOEM.RadiativeTransfer.gaussianLineProfile_pos
 #print axioms LeanOEM.RadiativeTransfer.gaussianLineProfile_center
 #print axioms LeanOEM.RadiativeTransfer.gaussianLineProfile_symmetric
+#print axioms LeanOEM.RadiativeTransfer.GaussianLineParameters.Valid.width_ne_zero
+#print axioms LeanOEM.RadiativeTransfer.GaussianLineParameters.profile_pos
+#print axioms LeanOEM.RadiativeTransfer.GaussianLineParameters.profile_center
 #print axioms LeanOEM.RadiativeTransfer.lineResponse_nonneg
 #print axioms LeanOEM.RadiativeTransfer.centralDifference_eq_derivative_add_remainder
 #print axioms LeanOEM.RadiativeTransfer.centralDifference_error_bound

@@ -27,4 +27,10 @@ example {n m : ℕ} (p : Problem n m)
     (informationMatrix p).PosDef := by
   exact informationMatrix_posDef p hPrior hObservation
 
+example {n m : ℕ} (g : Matrix (Fin n) (Fin m) ℝ) (k : Jacobian n m)
+    (hA : (averagingKernel g k).PosSemidef)
+    (hComplement : ((1 : Square n) - averagingKernel g k).PosSemidef) :
+    0 ≤ dofs g k ∧ dofs g k ≤ (n : ℝ) := by
+  exact dofs_bounds_of_averagingKernel_posSemidef g k hA hComplement
+
 end LeanOEM.Tests.CoreEntry

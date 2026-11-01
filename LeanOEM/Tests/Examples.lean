@@ -132,6 +132,38 @@ example : scalarProblem.dofs = (12 / 17 : ℝ) := by
   rw [Matrix.trace_fin_one]
   norm_num [scalarProblem, Matrix.mul_apply, Matrix.vecMul, Matrix.vecHead, dotProduct]
 
+/-- 一维最优增益例子的 DOFS 满足矩阵序条件下的上下界。 -/
+example : 0 ≤ scalarProblem.dofs ∧ scalarProblem.dofs ≤ (1 : ℝ) := by
+  unfold Problem.dofs
+  have hAK : averagingKernel scalarProblem.gain scalarProblem.jacobian =
+      Matrix.diagonal ![(12 / 17 : ℝ)] := by
+    unfold averagingKernel
+    rw [scalarProblem_gain_eq]
+    ext i j
+    fin_cases i
+    fin_cases j
+    norm_num [scalarProblem, Matrix.mul_apply, Matrix.vecMul, Matrix.vecHead,
+      dotProduct, Matrix.diagonal, Matrix.conjTranspose]
+  have hA : (averagingKernel scalarProblem.gain scalarProblem.jacobian).PosSemidef := by
+    rw [hAK]
+    apply diag1_posSemidef
+    norm_num
+  have hIminus :
+      ((1 : Square 1) - Matrix.diagonal ![(12 / 17 : ℝ)]) =
+        Matrix.diagonal ![(5 / 17 : ℝ)] := by
+    ext i j
+    fin_cases i
+    fin_cases j
+    norm_num [Matrix.one_apply, Matrix.diagonal]
+  have hComplement :
+      ((1 : Square 1) - averagingKernel scalarProblem.gain scalarProblem.jacobian).PosSemidef := by
+    rw [hAK, hIminus]
+    apply diag1_posSemidef
+    norm_num
+  have hBounds := dofs_bounds_of_averagingKernel_posSemidef
+    scalarProblem.gain scalarProblem.jacobian hA hComplement
+  simpa using hBounds
+
 /-- 一维精确例子的信息矩阵为 `17 / 15`。 -/
 example : informationMatrix scalarProblem = !![(17 / 15 : ℝ)] := by
   unfold informationMatrix

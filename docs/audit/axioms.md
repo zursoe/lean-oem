@@ -1,8 +1,8 @@
 # 公理审计记录
 
-审计日期：2026-11-01
+审计日期：2026-11-02
 
-审计基线：起始提交 `23c6473` 加当前未提交工作区修改。
+审计基线：提交 `6e53d62` 加当前 DOFS 条件界和 Physics 参数有效性工作区修改。
 
 执行命令：
 
@@ -30,6 +30,9 @@ lake env lean LeanOEM/Tests/Axioms.lean
 - `prior_minus_posterior_posSemidef`；
 - `posteriorCovariance_posSemidef`；
 - `dofs_add_left`；
+- `dofs_nonneg_of_averagingKernel_posSemidef`；
+- `dofs_le_dim_of_complement_posSemidef`；
+- `dofs_bounds_of_averagingKernel_posSemidef`；
 - `observable_iff_kernel_eq_zero`；
 - `weightedNormalMatrix_posDef`；
 - `informationMatrix_posDef`；

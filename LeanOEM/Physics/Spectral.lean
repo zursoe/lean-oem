@@ -52,6 +52,35 @@ theorem gaussianLineProfile_symmetric (center width offset : ℝ) :
   congr 1
   ring
 
+/-- Gaussian 谱线中心和线宽的参数包；有效性单独要求线宽严格为正。 -/
+structure GaussianLineParameters where
+  center : ℝ
+  width : ℝ
+
+namespace GaussianLineParameters
+
+/-- Gaussian 线宽的数学有效性条件。 -/
+structure Valid (parameters : GaussianLineParameters) : Prop where
+  width_pos : 0 < parameters.width
+
+/-- 有效参数包对应的 Gaussian 谱线函数。 -/
+def profile (parameters : GaussianLineParameters) (frequency : ℝ) : ℝ :=
+  gaussianLineProfile frequency parameters.center parameters.width
+
+theorem Valid.width_ne_zero {parameters : GaussianLineParameters}
+    (hParameters : parameters.Valid) : parameters.width ≠ 0 :=
+  ne_of_gt hParameters.width_pos
+
+theorem profile_pos (parameters : GaussianLineParameters) (frequency : ℝ) :
+    0 < parameters.profile frequency := by
+  exact gaussianLineProfile_pos frequency parameters.center parameters.width
+
+theorem profile_center (parameters : GaussianLineParameters) :
+    parameters.profile parameters.center = 1 := by
+  exact gaussianLineProfile_center parameters.center parameters.width
+
+end GaussianLineParameters
+
 /-- 带线强度的归一化 Gaussian 谱线响应。 -/
 def lineResponse (strength frequency center width : ℝ) : ℝ :=
   strength * gaussianLineProfile frequency center width

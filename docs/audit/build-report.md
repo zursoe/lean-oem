@@ -54,3 +54,6 @@ Build completed successfully (3270 jobs).
 本轮随后收紧入口边界：`LeanOEM` 只导出 `LeanOEM.Core`，`LeanOEM.Tests.CoreEntry` 在不导入
 Physics 的情况下验证稳定核心，公理审计则显式分别导入 `LeanOEM.Core` 和 `LeanOEM.Physics`。
 重新构建完成 3270 个目标，审计和独立精确数值验证均通过。
+
+随后新增 DOFS 的显式矩阵序条件上下界、对应的一维最优增益合成例子，以及
+`GaussianLineParameters.Valid` 线宽正性接口；这些增量目标已分别通过定向构建。

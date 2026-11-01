@@ -27,14 +27,14 @@ Mathlib 的版本和提交由 `lean-toolchain`、`lakefile.toml` 与 `lake-manif
 - 良定性假设、创新协方差的逆矩阵性质和增益规格；
 - 标准后验协方差、Joseph 协方差及其半正定性。
 - 精确的一维和秩亏二维测试例子，以及非法协方差边界测试。
-- averaging kernel 的 DOFS trace 定义和静态可辨识性接口。
+- averaging kernel 的 DOFS trace 定义、显式矩阵序条件下的上下界和静态可辨识性接口。
 - 信息矩阵、Woodbury 后验公式和后验逆矩阵恒等式。
 - 通用 `ForwardModel`、Jacobian 导数规格、锚点线性化余项和 `Problem.predict` 连接。
 - 最小有限层无散射辐射传输递推，以及非负性、上界保持和两层组合性质。
 - 两层共同源项有限层正演、显式 Jacobian，以及透过率离散误差到 OEM 更新误差底的传播。
 - 两通道、两状态有限层正演模型及其显式 Jacobian 导数契约。
 - 有限通道响应权重和谱值误差界，以及通道 Jacobian 到 OEM 误差契约的连接。
-- 归一化 Planck 函数、Doppler 频移和非负归一化通道响应的基本性质。
+- 归一化 Planck 函数、带正线宽参数包的 Gaussian 谱线、Doppler 频移和非负归一化通道响应的基本性质。
 - 非线性 MAP 目标、Gauss–Newton 正规方程规格，以及与线性 OEM 信息形式的连接。
 - Gauss–Newton 迭代轨迹、步长停止判据，以及显式收缩条件下的收敛和停止误差界。
 - 正定权重下的正规矩阵性质，以及线性化正规梯度的一阶驻点规格。

@@ -7,12 +7,13 @@
 
 - 有限维、实数、矩阵表示的线性 OEM 问题规格；
 - 预测、创新、创新协方差、增益、后验协方差、Joseph 形式和信息形式；
-- averaging kernel、DOFS trace、静态可辨识性和确定性检索误差；
+- averaging kernel、DOFS trace、显式矩阵序条件下的上下界、静态可辨识性和确定性检索误差；
 - `ForwardModel`、Jacobian 导数规格、二次余项和局部收缩契约；
 - 非线性 Gauss–Newton 轨迹、停止判据和条件误差界；
 - Jacobian、有限层和通道离散化误差契约；
 - 前向模型/Jacobian 联合误差到正规方程和一步更新误差的传播；
-- 归一化有限层、谱线、Doppler、通道响应和两通道两状态有限层 fixture；
+- 归一化有限层、带正线宽参数包的谱线、Doppler、通道响应和两通道两状态有限层 fixture；
+- 显式矩阵序条件下的 DOFS 上下界，以及 Gaussian 线宽有效性接口；
 - `LeanOEM.Core` 稳定聚合入口和 `LeanOEM.Physics` 实验聚合入口；
 - 精确有理数交叉验证、公理审计和 GitHub Actions CI。
 

@@ -27,6 +27,24 @@ example (center width offset : ℝ) :
       gaussianLineProfile (center - offset) center width :=
   gaussianLineProfile_symmetric center width offset
 
+private def validGaussian : GaussianLineParameters :=
+  { center := 0
+    width := 2 }
+
+private lemma validGaussian_valid : validGaussian.Valid := by
+  constructor
+  norm_num [validGaussian]
+
+/-- Gaussian 参数包明确拒绝零线宽，并保留中心值和正性定理。 -/
+example : validGaussian.width ≠ 0 :=
+  validGaussian_valid.width_ne_zero
+
+example : validGaussian.profile validGaussian.center = 1 :=
+  validGaussian.profile_center
+
+example : 0 < validGaussian.profile 1 :=
+  validGaussian.profile_pos 1
+
 /-- 非负线强度给出非负谱线响应。 -/
 example : 0 ≤ lineResponse 3 1 0 2 := by
   apply lineResponse_nonneg

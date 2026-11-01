@@ -35,5 +35,31 @@ theorem dofs_eq_trace_averagingKernel {n m : ℕ}
     (g : Matrix (Fin n) (Fin m) ℝ) (k : Jacobian n m) :
     dofs g k = Matrix.trace (averagingKernel g k) := rfl
 
+/-- 半正定 averaging kernel 的 DOFS 非负。 -/
+theorem dofs_nonneg_of_averagingKernel_posSemidef {n m : ℕ}
+    (g : Matrix (Fin n) (Fin m) ℝ) (k : Jacobian n m)
+    (hA : (averagingKernel g k).PosSemidef) :
+    0 ≤ dofs g k := by
+  exact hA.trace_nonneg
+
+/-- `I - A` 半正定时，averaging kernel 的 DOFS 不超过状态维数。 -/
+theorem dofs_le_dim_of_complement_posSemidef {n m : ℕ}
+    (g : Matrix (Fin n) (Fin m) ℝ) (k : Jacobian n m)
+    (hComplement : ((1 : Square n) - averagingKernel g k).PosSemidef) :
+    dofs g k ≤ (n : ℝ) := by
+  have hTrace : 0 ≤ Matrix.trace ((1 : Square n) - averagingKernel g k) :=
+    hComplement.trace_nonneg
+  rw [Matrix.trace_sub, Matrix.trace_one] at hTrace
+  simpa [dofs] using hTrace
+
+/-- 在 `0 ≤ A ≤ I` 的矩阵序条件下，DOFS 落在 `[0, n]`。 -/
+theorem dofs_bounds_of_averagingKernel_posSemidef {n m : ℕ}
+    (g : Matrix (Fin n) (Fin m) ℝ) (k : Jacobian n m)
+    (hA : (averagingKernel g k).PosSemidef)
+    (hComplement : ((1 : Square n) - averagingKernel g k).PosSemidef) :
+    0 ≤ dofs g k ∧ dofs g k ≤ (n : ℝ) :=
+  ⟨dofs_nonneg_of_averagingKernel_posSemidef g k hA,
+    dofs_le_dim_of_complement_posSemidef g k hComplement⟩
+
 end
 end LeanOEM

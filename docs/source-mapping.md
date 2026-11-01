@@ -40,6 +40,9 @@
 
 - `averagingKernel`：$A=GK$。
 - `dofs`：$\operatorname{trace}(A)$。
+- `dofs_nonneg_of_averagingKernel_posSemidef`：$A$ 半正定时给出 $0\leq\operatorname{DOFS}$；
+- `dofs_le_dim_of_complement_posSemidef`：$I-A$ 半正定时给出
+  $\operatorname{DOFS}\leq n$；两者合并为 `dofs_bounds_of_averagingKernel_posSemidef`。
 - `posteriorCovariance`：
 
   $$
@@ -124,6 +127,8 @@
 
 - `planckRadiance`：带显式常数和正参数假设的归一化 Planck 函数；
 - `planckRadiance_pos`：正频率、正温度和正物理常数下辐亮度为正；
+- `GaussianLineParameters.Valid`：显式要求 Gaussian 线宽严格为正；`profile`、`profile_pos` 和
+  `profile_center` 将该参数包连接到裸 Gaussian 定义；
 - `dopplerShift`：一阶无量纲 Doppler 频移；
 - `dopplerShift_zero`、`dopplerShift_expand`、`dopplerShift_pos`：零速度、代数展开和正性结论；
 - `ChannelResponse`：非负且归一化的有限通道权重；
@@ -309,5 +314,6 @@ P12 第一批位于 `LeanOEM/Core/DiscretizationError.lean`：
 - 迭代误差界只在精确实数和显式收缩条件下成立；没有浮点、条件数或舍入误差保证。
 - 没有把外部工程代码、运行数据、观测数据库或具体场景输出作为 Lean 依赖。
 - 连续辐射传输方程、由光滑性导出有限差分余项界、非线性求解器阻尼及模型收缩条件仍待形式化；已有谱线、差分契约和条件迭代结果不替代这些工作。
-- DOFS 的上下界、谱半径和特征值结论尚未加入；当前只定义 trace 并验证其代数性质。
+- 当前 DOFS 上下界只在显式的 $A\succeq0$ 和 $I-A\succeq0$ 条件下成立；最优增益自动满足这些
+  条件的谱分解、谱半径和特征值结论仍待形式化。
 - Rodgers 的教材支持术语和公式来源，不自动支持某个现实场景中的参数、先验或误差模型。
