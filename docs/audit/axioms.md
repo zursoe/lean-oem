@@ -2,7 +2,7 @@
 
 审计日期：2026-11-01
 
-审计提交：`6c9e29f`
+审计提交：`92325a6`
 
 执行命令：
 
@@ -118,5 +118,11 @@ P12-C 新增公开定理：
 - `RadiativeTransfer.channelJacobian_coefficient_error_le`；
 - `RadiativeTransfer.channelJacobian_weightedErrorBound_unit`；
 - `RadiativeTransfer.channelJacobian_weightedErrorBound_of_unitWeight`。
+
+P12-C-2 新增公开定理：
+
+- `RadiativeTransfer.ChannelResponse.apply_error_le_of_valueStepError`；
+- `RadiativeTransfer.channelJacobian_coefficient_error_le_of_valueStepError`；
+- `RadiativeTransfer.channelJacobian_weightedErrorBound_of_valueStepError`。
 
 另行执行的源代码扫描没有发现 `sorry`、`admit`、`sorryAx` 或未登记自定义 `axiom`。
