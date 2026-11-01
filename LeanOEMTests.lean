@@ -1,6 +1,7 @@
 module
 
 import LeanOEM.Tests.Basic
+import LeanOEM.Tests.CoreEntry
 import LeanOEM.Tests.Examples
 import LeanOEM.Tests.ForwardModel
 import LeanOEM.Tests.FiniteLayer
@@ -12,3 +13,4 @@ import LeanOEM.Tests.NonlinearOEM
 import LeanOEM.Tests.Iteration
 import LeanOEM.Tests.LocalContraction
 import LeanOEM.Tests.DiscretizationError
+import LeanOEM.Tests.TwoLayerState

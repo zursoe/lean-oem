@@ -1,7 +1,7 @@
 # Jacobian 离散化误差规格
 
 本模块连接中心有限差分等数值 Jacobian 构造与非线性 OEM 的误差契约。
-所有结果都在精确实数和显式范数界下成立，不把浮点运行或 ARTS 输出自动解释为形式定理。
+所有结果都在精确实数和显式范数界下成立，不把浮点运行或 具体实现输出自动解释为形式定理。
 
 ## Jacobian 误差
 
@@ -62,7 +62,7 @@ $$
 测试进一步使用精确 Jacobian $3$、近似 Jacobian $301/100$，验证加权 Jacobian 误差为
 $1/100$；目标残差取 $1/10$ 时，目标正规方程残差界为 $1/1000$。
 
-这些数字是可复现的有理数 fixture，不是浮点误差统计，也不代表真实 ARTS 配置。
+这些数字是可复现的有理数 fixture，不是浮点误差统计，也不代表真实 具体工程配置。
 
 ## 两层有限层 fixture
 
@@ -118,7 +118,7 @@ $e_1+e_2=3/20$。在 $x=1/2$ 时，正演误差为 $27/400$；目标残差取 $1
 正规方程残差为 $9/2000$，并由 OEM 误差定理传到更新误差底。
 
 这些结论是显式范围假设下的精确实数定理。它们没有引入连续频率积分、单位转换、浮点舍入、
-谱线数据库或 ARTS 代码依赖。
+谱线数据库或外部工程代码依赖。
 
 ## 有限通道响应 fixture
 
@@ -166,7 +166,7 @@ $B E_w+E_v=19/100$。对应的通道 Jacobian 系数误差为 $151/4000$，测�
 $3/10$ 的组合预算接入 OEM 契约。
 
 该结果只证明有限样本和显式误差预算下的加权和界。它没有证明连续频率积分、具体求积
-规则的 $h^p$ 阶数，也没有引入单位、谱线数据库或 ARTS 输出。
+规则的 $h^p$ 阶数，也没有引入单位、谱线数据库或 具体实现输出。
 
 ## 步长误差提升
 
@@ -196,3 +196,56 @@ $$
 
 这里的逻辑方向是“外部或独立分析先给出点态 $C h^p$ 界，Lean 证明它如何沿通道和 OEM
 接口传播”。它没有从连续积分、网格几何或具体求积规则自动推导 $C$ 和 $p$。
+
+## 前向模型和 Jacobian 联合误差
+
+`ForwardModelErrorBound` 记录两个正演模型在给定状态处的观测空间误差：
+
+$$
+\|F_h(x)-F(x)\|\leq\varepsilon_F.
+$$
+
+`normalRhsFor_difference_eq` 将近似模型和精确模型的正规右端差异分成两项：
+
+$$
+b_h-b=(K_h^\mathsf{T}W-K^\mathsf{T}W)r
+      +K_h^\mathsf{T}W(F-F_h).
+$$
+
+如果 Jacobian 误差为 $\varepsilon_K$，近似 Jacobian 的加权作用常数为 $\beta_h$，
+精确模型在目标状态的残差不超过 $\sigma$，则
+`normalRhsFor_difference_norm_le_of_forward_and_jacobian_error` 给出
+
+$$
+\|b_h-b\|\leq \varepsilon_K\sigma+\beta_h\varepsilon_F.
+$$
+
+在精确目标满足正规驻点、近似正规矩阵可逆且逆作用界为 $\gamma$ 时，
+`gaussNewtonUpdate_error_le_of_forward_and_jacobian_error` 给出同一目标处的一步更新误差底：
+
+$$
+\|x_h^+-x_\star\|
+\leq \gamma(\varepsilon_K\sigma+\beta_h\varepsilon_F).
+$$
+
+该定理只比较一个状态处的一步更新。把它扩展到沿轨迹的误差传播，还需要正规矩阵变化界、
+邻域不变性和收缩条件。
+
+## 两层两状态 fixture
+
+`LeanOEM.Physics.TwoLayerState` 定义两个通道、两个独立层源项的归一化模型：
+
+$$
+y_j=\tau_{2,j}\tau_{1,j}I_{0,j}
+ +\tau_{2,j}(1-\tau_{1,j})S_1
+ +(1-\tau_{2,j})S_2.
+$$
+
+每个通道的 Jacobian 行为
+
+$$
+K_j=\bigl[\tau_{2,j}(1-\tau_{1,j}),\;1-\tau_{2,j}\bigr].
+$$
+
+`LeanOEM/Tests/TwoLayerState.lean` 使用精确有理数验证显式 Jacobian、正演导数契约和
+透过率扰动的前向误差，并作为后续通道响应与 OEM 更新误差桥接的最小物理切片。

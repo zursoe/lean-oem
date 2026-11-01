@@ -1,6 +1,7 @@
 module
 
-public import LeanOEM
+public import LeanOEM.Core
+public import LeanOEM.Physics
 
 #print axioms LeanOEM.innovationCovariance_posDef
 #print axioms LeanOEM.innovationCovariance_isUnit
@@ -53,6 +54,7 @@ public import LeanOEM
 #print axioms LeanOEM.RadiativeTransfer.twoLayerSource_weightedJacobianErrorBound_unit
 #print axioms LeanOEM.RadiativeTransfer.twoLayerSource_weightedJacobianErrorBound_of_unitWeight
 #print axioms LeanOEM.RadiativeTransfer.twoLayerSource_forward_error_le
+#print axioms LeanOEM.RadiativeTransfer.twoLayerState_hasJacobianAt
 #print axioms LeanOEM.RadiativeTransfer.ChannelResponse.weightL1Error_self
 #print axioms LeanOEM.RadiativeTransfer.ChannelResponse.apply_error_le_of_weightL1
 #print axioms LeanOEM.RadiativeTransfer.ChannelResponse.apply_error_le_of_value_error
@@ -96,3 +98,7 @@ public import LeanOEM
 #print axioms LeanOEM.NonlinearProblem.gaussNewtonUpdate_error_le_of_inverse_and_additive_defect
 #print axioms LeanOEM.NonlinearProblem.weightedJacobianActionBound_of_error
 #print axioms LeanOEM.NonlinearProblem.normalRhs_norm_le_of_weightedJacobianError
+#print axioms LeanOEM.NonlinearProblem.normalRhsFor_difference_eq
+#print axioms LeanOEM.NonlinearProblem.normalRhsFor_difference_norm_le_of_forward_and_jacobian_error
+#print axioms LeanOEM.NonlinearProblem.normalRhsFor_norm_le_of_forward_and_jacobian_error
+#print axioms LeanOEM.NonlinearProblem.gaussNewtonUpdate_error_le_of_forward_and_jacobian_error

@@ -1,5 +1,8 @@
 # 0.1.0 候选版本发布检查清单
 
+当前状态：尚未发布。线性核心的历史审查已经完成，但当前主线还包含实验性 Physics 模块和
+前向/Jacobian 联合误差扩展；以下清单需要针对完整主线重新执行。
+
 ## 仓库和版本
 
 - [x] `lean-toolchain` 固定 Lean `v4.35.0`。
@@ -9,6 +12,8 @@
 - [x] `scripts/run_audit.sh` 和 `scripts/validate_oem_numeric.py` 在 Git 中保留执行位。
 - [x] `api/linear-core` 从远端 `main` 建立，并已通过 PR #1 合并到远端主线。
 - [x] 版本说明、范围说明和来源映射已写入 `docs/`。
+- [x] 稳定 `LeanOEM.Core` 与实验 `LeanOEM.Physics` 的入口边界已由独立 `CoreEntry` 和显式 Physics 导入示例验证。
+- [ ] 当前主线已有与代码范围一致的版本说明和审计提交号。
 - [x] `.github/workflows/ci.yml` 已固定 action 提交，并覆盖构建、审计和精确数值校验。
 
 ## 构建和测试
@@ -39,3 +44,6 @@
 - [x] 检查数值脚本没有成为 Lean 证明的隐含依据。
 - [x] 在远端 GitHub runner 上完成 CI 运行并检查日志；push、PR 和合并到 `main` 的运行均通过。
 - [x] 线性核心实现已完成审阅并合并到 `main`；后续正演和辐射传输模块按新路线单独审阅。
+- [ ] 前向模型/Jacobian 联合误差和两状态有限层 fixture 已完成独立审阅。
+- [ ] Physics 模块的参数有效性、合成例子和形式边界已完成审阅。
+- [ ] 创建与发布说明一致的 Git tag 和 GitHub Release。

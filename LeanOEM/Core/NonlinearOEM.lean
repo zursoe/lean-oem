@@ -35,6 +35,19 @@ namespace NonlinearProblem
 def residual (p : NonlinearProblem n m) (x : State n) : Observation m :=
   p.observation - p.model.observe x
 
+/-- 用指定正演模型计算残差，供比较精确模型和近似模型的误差契约使用。 -/
+def residualFor (p : NonlinearProblem n m) (model : ForwardModel n m)
+    (x : State n) : Observation m :=
+  p.observation - model.observe x
+
+@[simp] theorem residualFor_model (p : NonlinearProblem n m) (x : State n) :
+    p.residualFor p.model x = p.residual x := rfl
+
+/-- 将同一观测、先验和权重规格换成另一个正演模型。 -/
+def withModel (p : NonlinearProblem n m) (model : ForwardModel n m) :
+    NonlinearProblem n m :=
+  { p with model := model }
+
 /-- Jacobian 契约沿残差映射传播：残差导数是负的观测 Jacobian。 -/
 theorem residual_hasFDerivAt_of_hasJacobianAt
     (p : NonlinearProblem n m) (x : State n) (k : Jacobian n m)
@@ -99,26 +112,49 @@ def normalMatrix (p : NonlinearProblem n m) (_x : State n)
   k.conjTranspose * p.observationWeight * k + p.priorWeight
 
 /-- 当前状态和 Jacobian 下的 Gauss–Newton 右端项。 -/
+def normalRhsFor (p : NonlinearProblem n m) (model : ForwardModel n m) (x : State n)
+    (k : Jacobian n m) : State n :=
+  k.conjTranspose.mulVec (p.observationWeight.mulVec (p.residualFor model x))
+    - p.priorWeight.mulVec (x - p.priorMean)
+
+/-- 当前问题正演模型对应的 Gauss–Newton 右端项。 -/
 def normalRhs (p : NonlinearProblem n m) (x : State n)
     (k : Jacobian n m) : State n :=
   k.conjTranspose.mulVec (p.observationWeight.mulVec (p.residual x))
     - p.priorWeight.mulVec (x - p.priorMean)
 
-/-- 正定权重和可观测 Jacobian 给出的正规矩阵正定性。 -/
+theorem normalRhsFor_model (p : NonlinearProblem n m) (x : State n)
+    (k : Jacobian n m) :
+    p.normalRhsFor p.model x k = p.normalRhs x k := rfl
+
+/-- 正定先验权重和半正定观测权重给出的正规矩阵正定性。
+
+带正定先验的 MAP 子问题即使 Jacobian 秩亏也有正定正规矩阵；观测可辨识性
+是独立的诊断性质，不是该可解性结论的必要条件。 -/
 theorem normalMatrix_posDef (p : NonlinearProblem n m) (x : State n)
-    (k : Jacobian n m) (hWeights : WeightWellPosed p) (hObservable : Observable k) :
+    (k : Jacobian n m) (hWeights : WeightWellPosed p) :
     (p.normalMatrix x k).PosDef := by
   unfold normalMatrix
-  exact Matrix.PosDef.add
-    (weightedNormalMatrix_posDef k p.observationWeight
-      hWeights.observation_posDef hObservable)
-    hWeights.prior_posDef
+  simpa [add_comm] using hWeights.prior_posDef.add_posSemidef
+    (Matrix.PosSemidef.conjTranspose_mul_mul_same
+      hWeights.observation_posDef.posSemidef k)
 
 /-- 正规矩阵正定性足以得到其总函数逆的可逆条件。 -/
 theorem normalMatrix_isUnit (p : NonlinearProblem n m) (x : State n)
-    (k : Jacobian n m) (hWeights : WeightWellPosed p) (hObservable : Observable k) :
+    (k : Jacobian n m) (hWeights : WeightWellPosed p) :
     IsUnit (p.normalMatrix x k) :=
-  (p.normalMatrix_posDef x k hWeights hObservable).isUnit
+  (p.normalMatrix_posDef x k hWeights).isUnit
+
+/-- 兼容旧调用方式的辅助定理；可辨识性假设在这里不参与正规矩阵正定性证明。 -/
+theorem normalMatrix_posDef_of_observable (p : NonlinearProblem n m) (x : State n)
+    (k : Jacobian n m) (hWeights : WeightWellPosed p) (_hObservable : Observable k) :
+    (p.normalMatrix x k).PosDef :=
+  p.normalMatrix_posDef x k hWeights
+
+theorem normalMatrix_isUnit_of_observable (p : NonlinearProblem n m) (x : State n)
+    (k : Jacobian n m) (hWeights : WeightWellPosed p) (_hObservable : Observable k) :
+    IsUnit (p.normalMatrix x k) :=
+  p.normalMatrix_isUnit x k hWeights
 
 /-- 线性化子问题的正规梯度表达式；其零点就是 Gauss–Newton 正规方程。 -/
 def linearizedGradient (p : NonlinearProblem n m) (x : State n)

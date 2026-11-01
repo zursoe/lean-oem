@@ -257,6 +257,40 @@ def discretization_error_case() -> None:
         raise AssertionError("离散化 Jacobian 对目标正规方程残差的影响不一致")
 
 
+def forward_jacobian_joint_error_case() -> None:
+    """独立复算前向误差和 Jacobian 误差共同形成的 OEM 更新误差底。"""
+    exact_forward = F(1)
+    approximate_forward = F(101, 100)
+    observation = F(11, 10)
+    target_residual = observation - exact_forward
+    approximate_residual = observation - approximate_forward
+    exact_jacobian = F(3)
+    approximate_jacobian = F(301, 100)
+    prior_weight = F(3, 10)
+    jacobian_error = abs(approximate_jacobian - exact_jacobian)
+    forward_error = abs(approximate_forward - exact_forward)
+    beta = approximate_jacobian
+    sigma = abs(target_residual)
+    rhs_exact = exact_jacobian * target_residual - prior_weight
+    rhs_approximate = approximate_jacobian * approximate_residual - prior_weight
+    error_bound = jacobian_error * sigma + beta * forward_error
+    approximate_normal = approximate_jacobian**2 + prior_weight
+    update_error = abs(rhs_approximate) / approximate_normal
+
+    if target_residual != F(1, 10) or approximate_residual != F(9, 100):
+        raise AssertionError("联合误差 fixture 的残差不一致")
+    if jacobian_error != F(1, 100) or forward_error != F(1, 100):
+        raise AssertionError("联合误差 fixture 的两类误差不一致")
+    if rhs_exact != 0 or abs(rhs_approximate) != F(291, 10000):
+        raise AssertionError("联合误差 fixture 的正规右端不一致")
+    if error_bound != F(311, 10000) or abs(rhs_approximate) > error_bound:
+        raise AssertionError("联合误差正规右端界不满足")
+    if approximate_normal != F(93601, 10000):
+        raise AssertionError("联合误差 fixture 的正规矩阵不一致")
+    if not update_error <= error_bound:
+        raise AssertionError("联合误差更新误差底不满足")
+
+
 def finite_layer_discretization_case() -> None:
     """独立复算两层有限层模型的正演和 Jacobian 离散化误差。"""
     exact_t1 = F(1, 2)
@@ -386,6 +420,7 @@ def main() -> None:
     iteration_cases()
     local_contraction_case()
     discretization_error_case()
+    forward_jacobian_joint_error_case()
     finite_layer_discretization_case()
     channel_discretization_case()
     channel_step_order_case()
@@ -394,6 +429,7 @@ def main() -> None:
     print("Gauss–Newton 轨迹与停滞反例交叉验证：通过")
     print("平方模型局部收缩契约交叉验证：通过")
     print("中心差分离散化误差交叉验证：通过")
+    print("前向/Jacobian 联合误差交叉验证：通过")
     print("两层有限层离散化误差交叉验证：通过")
     print("通道响应离散化误差交叉验证：通过")
     print("通道中心差分 h² 误差交叉验证：通过")

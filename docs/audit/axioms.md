@@ -2,7 +2,7 @@
 
 审计日期：2026-11-01
 
-审计提交：`92325a6`
+审计基线：起始提交 `23c6473` 加当前未提交工作区修改。
 
 执行命令：
 
@@ -97,6 +97,17 @@ P12 新增公开定理：
 - `NonlinearProblem.gaussNewtonUpdate_error_le_of_inverse_and_additive_defect`；
 - `NonlinearProblem.weightedJacobianActionBound_of_error`；
 - `NonlinearProblem.normalRhs_norm_le_of_weightedJacobianError`。
+
+P12-C-3 新增公开定理：
+
+- `NonlinearProblem.normalRhsFor_difference_eq`；
+- `NonlinearProblem.normalRhsFor_difference_norm_le_of_forward_and_jacobian_error`；
+- `NonlinearProblem.normalRhsFor_norm_le_of_forward_and_jacobian_error`；
+- `NonlinearProblem.gaussNewtonUpdate_error_le_of_forward_and_jacobian_error`。
+
+P12-C-4 新增公开定理：
+
+- `RadiativeTransfer.twoLayerState_hasJacobianAt`。
 
 P12-B 新增公开定理：
 

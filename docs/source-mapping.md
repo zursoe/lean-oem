@@ -1,6 +1,6 @@
-# Lean OEM 定义、定理和外部证据映射
+# Lean OEM 定义、定理和证据映射
 
-本文档把 Lean 中的形式对象、形式假设、形式定理、独立数值验证和外部科研来源分开记录。外部来源用于说明术语、公式和应用背景，不作为 Lean 内核的证明输入。
+本文档把 Lean 中的形式对象、形式假设、形式定理和独立数值验证分开记录。文献来源用于说明术语和公式背景，不作为 Lean 内核的证明输入。
 
 ## 公式来源
 
@@ -92,7 +92,7 @@
 
 ### 非线性观测模型第一批映射
 
-- `ForwardModel.observe`：ARTS 无关的状态到观测函数 $F$，见 `LeanOEM/Core/ForwardModel.lean`；
+- `ForwardModel.observe`：抽象的状态到观测函数 $F$，见 `LeanOEM/Core/ForwardModel.lean`；
 - `ForwardModel.linearizedObserve`：锚点线性化模型 $F(x_a)+K(x-x_a)$；
 - `ForwardModel.linearizationRemainder`：精确余项 $F(x)-F(x_a)-K(x-x_a)$；
 - `ForwardModel.linearizedOffset`：将锚点模型改写为偏置加 `Problem.predict` 的偏置项；
@@ -100,7 +100,7 @@
 - `ForwardModel.JacobianSpec`：把连续线性导数和矩阵表示一起保存的结构；
 - `ForwardModel.matrixDerivative`：有限函数基下的矩阵到连续线性映射转换。
 
-第一批只证明代数恒等式和导数表示契约。它没有引入辐射传输方程、单位、ARTS 数据或浮点
+第一批只证明代数恒等式和导数表示契约。它没有引入辐射传输方程、单位、外部数据或浮点
 误差界；标量平方模型位于 `LeanOEM/Tests/ForwardModel.lean`，用于检查非线性导数和二阶余项。
 
 ### 有限层辐射传输第一批映射
@@ -118,8 +118,7 @@
 - `RadiativeTransfer.propagateLayers_nonneg` 和 `propagateLayers_bounds`：传播过程的非负性和上界保持；
 - `RadiativeTransfer.propagateTwo_eq`：两层递推的显式组合公式。
 
-这些定理只负责归一化有限层模型的数学性质，不负责谱线参数、Planck 函数、单位转换、ARTS
-数值误差或真实大气有效性。测试例子位于 `LeanOEM/Tests/FiniteLayer.lean`。
+这些定理只负责归一化有限层模型的数学性质，不负责谱线参数、Planck 函数、单位转换、数值误差或现实系统有效性。测试例子位于 `LeanOEM/Tests/FiniteLayer.lean`。
 
 ### 频谱和通道响应第一批映射
 
@@ -131,8 +130,7 @@
 - `ChannelResponse.apply`：通道加权求和；
 - `ChannelResponse.apply_nonneg`、`apply_le_of_le`、`apply_const`：非负性、上界保持和常量保持。
 
-这些结果见 `LeanOEM/Physics/Spectral.lean`。它们没有引入单位、真实谱线参数、ARTS 采样或
-浮点误差界；测试例子位于 `LeanOEM/Tests/Spectral.lean`。
+这些结果见 `LeanOEM/Physics/Spectral.lean`。它们没有引入单位、真实谱线参数、具体采样或浮点误差界；测试例子位于 `LeanOEM/Tests/Spectral.lean`。
 
 ### 两层有限层离散化映射
 
@@ -147,7 +145,7 @@
 - `twoLayerSource_forward_error_le`：在入射辐亮度和状态有界时给出正演误差界。
 
 该模块是离散误差传播的数学 fixture。它没有声称透过率误差来自某个具体网格、吸收数据库或
-ARTS 运行，也没有把共同源项直接解释为温度、风速或其他现实状态量。对应测试和独立有理数
+外部工程运行，也没有把共同源项直接解释为温度、风速或其他现实状态量。对应测试和独立有理数
 复算分别位于 `LeanOEM/Tests/FiniteLayerDiscretization.lean` 和
 `scripts/validate_oem_numeric.py`。
 
@@ -171,6 +169,15 @@ ARTS 运行，也没有把共同源项直接解释为温度、风速或其他现
 显式误差界。它不把权重解释为连续积分的自动求积结果；网格步长、求积规则和误差阶数属于
 P12-C-2 的后续工作。
 
+### 两层两状态物理 fixture
+
+- `TwoLayerStateParameters`：两个通道的两层透过率和入射辐亮度；
+- `twoLayerStateObserve`：两个独立层源项作为状态的两通道有限层正演；
+- `twoLayerStateJacobian`：显式两行两列 Jacobian；
+- `twoLayerState_hasJacobianAt`：正演函数的 `ForwardModel` 导数契约。
+
+该 fixture 的源项是归一化数学变量，不自动对应温度、吸收系数或风速。
+
 ## 独立数值证据
 
 `scripts/validate_oem_numeric.py` 使用 Python 标准库 `fractions.Fraction` 独立实现小型矩阵运算，避免依赖 Lean、Mathlib、NumPy 或 SciPy。它核对：
@@ -180,6 +187,7 @@ P12-C-2 的后续工作。
 - Joseph 形式、信息矩阵 $17/15$、后验逆矩阵和确定性误差分解；
 - `2 × 1` 秩亏观测、不可观测状态方向和未收缩后验分量。
 - 线性问题一步到达正则化解、非线性刷新/冻结 Jacobian 轨迹，以及零步长但目标值非最优的反例。
+- 标量三次模型中前向模型误差和 Jacobian 误差共同形成正规方程残差及一步更新误差底。
 
 运行命令：
 
@@ -187,11 +195,11 @@ P12-C-2 的后续工作。
 python3 scripts/validate_oem_numeric.py
 ```
 
-这些结果是独立实现的精确有理数交叉验证，不能替代 Lean 证明，也不能证明 ARTS、观测数据库或有限精度程序满足模型假设。
+这些结果是独立实现的精确有理数交叉验证，不能替代 Lean 证明，也不能推出现实系统自动满足模型假设。
 
 ## 计划中的正演和算法映射
 
-P9 的第一批已经完成：后续形式化仍不把 ARTS 代码直接导入 Lean，而是继续建立独立的数学规格：
+P9 的第一批已经完成：后续形式化继续建立独立的数学规格：
 
 - `ForwardModel`：状态到观测的函数 $F : X \to Y$；
 - `JacobianSpec`：$K(x)$ 作为 $F$ 的导数矩阵、导数的近似，或带明确误差界的数值构造；
@@ -204,7 +212,7 @@ P9 的第一批已经完成：后续形式化仍不把 ARTS 代码直接导入 L
 - `F_h`、`K_h`：有限层、有限差分、频率求积或通道离散化产生的数值近似；
 - `GaussNewtonStep`：在非线性观测模型下使用 $F$、$K$、先验和观测误差的单步更新。
 
-这些对象的形式定理可以证明维度、导数关系、递推性质、线性化余项条件和局部误差结论。ARTS/Python fixture 则记录具体版本、配置、谱线库、单位、数组哈希和数值误差，用来支持“具体 ARTS 输出符合某个形式规格”的工程判断。该判断不会被写成无条件的 Lean 定理。
+这些对象的形式定理可以证明维度、导数关系、递推性质、线性化余项条件和局部误差结论。具体工程实现不属于本库的形式输入或发布验收。
 
 ### 非线性 OEM 第一批映射
 
@@ -213,12 +221,15 @@ P9 的第一批已经完成：后续形式化仍不把 ARTS 代码直接导入 L
 - `NonlinearProblem.objective`：带观测权重和先验权重的二次目标；
 - `NonlinearProblem.normalMatrix`：$K^\mathsf{T}W_yK+W_a$；
 - `NonlinearProblem.normalRhs`：$K^\mathsf{T}W_y(y-F(x))-W_a(x-x_a)$；
+- `NonlinearProblem.residualFor`、`normalRhsFor` 和 `withModel`：在相同观测、先验和权重
+  规格下替换正演模型，用于比较精确模型和离散近似模型；
 - `NonlinearProblem.gaussNewtonStep`：正规矩阵总函数逆定义的状态增量；
 - `normalMatrix_mulVec_gaussNewtonStep`：在正规矩阵可逆条件下，增量满足正规方程；
 - `Problem.toNonlinear`：线性 `Problem` 到非线性规格的权重形式映射；
 - `Problem.toNonlinear_normalMatrix_eq_informationMatrix`：该映射的正规矩阵退化为信息矩阵；
 - `WeightWellPosed`：先验权重和观测权重的正定性假设；
-- `normalMatrix_posDef` / `normalMatrix_isUnit`：正定权重与可观测 Jacobian 给出的正规矩阵条件；
+- `normalMatrix_posDef` / `normalMatrix_isUnit`：正定先验权重和半正定观测权重给出的正规
+  矩阵条件；观测可辨识性由 `Observable` 单独记录；
 - `linearizedGradient`：线性化子问题的正规梯度表达式；
 - `quadraticGradient` / `quadraticForm_add`：实数二次型的一阶系数与显式二阶余项展开；
 - `quadraticSubproblem` / `quadraticSubproblem_add`：对称正规矩阵线性化子问题的增量展开；
@@ -226,6 +237,18 @@ P9 的第一批已经完成：后续形式化仍不把 ARTS 代码直接导入 L
 - `residual_hasFDerivAt_of_hasJacobianAt`：`HasJacobianAt` 沿残差映射传播，残差导数为负 Jacobian。
 
 当前批次只证明代数规格和可逆性条件，不证明非线性迭代的全局收敛、阻尼策略或现实正演有效性。
+
+### 前向模型和 Jacobian 联合误差映射
+
+- `ForwardModelErrorBound`：给定状态处的正演输出误差契约；
+- `normalRhsFor_difference_eq`：把前向误差和 Jacobian 误差拆成正规右端的两项；
+- `normalRhsFor_difference_norm_le_of_forward_and_jacobian_error`：在残差界、加权 Jacobian
+  作用界和两类误差界下给出正规右端误差；
+- `normalRhsFor_norm_le_of_forward_and_jacobian_error`：精确目标正规驻点下的正规右端误差底；
+- `gaussNewtonUpdate_error_le_of_forward_and_jacobian_error`：在近似正规矩阵逆作用界下的
+  一步更新误差底。
+
+这些结果只证明显式精确实数契约，不证明具体离散程序或浮点实现自动满足契约。
 
 ### 迭代与停止映射
 
@@ -264,7 +287,7 @@ P9 的第一批已经完成：后续形式化仍不把 ARTS 代码直接导入 L
 
 标量平方模型的形式 fixture 取 $F(x)=x^2$、目标和先验均值为零、两个权重为一，
 在 $|x|\leq1/2$ 内得到 $q=1/2$。该结果证明的是指定数学模型和显式契约，
-不证明 ARTS、谱线数据库或真实大气自动满足驻点、余项和逆作用界。独立有理数复算
+不证明具体物理系统自动满足驻点、余项和逆作用界。独立有理数复算
 覆盖特殊平方模型；一般驻点分解的形式测试位于同一测试模块。
 
 P12 第一批位于 `LeanOEM/Core/DiscretizationError.lean`：
@@ -277,14 +300,14 @@ P12 第一批位于 `LeanOEM/Core/DiscretizationError.lean`：
   `gaussNewtonUpdate_error_le_of_inverse_and_additive_defect` 将这个误差传到正规缺陷和更新误差。
 
 中心差分的具体代数界仍位于 `LeanOEM/Physics/Discretization.lean`，三次函数 fixture 位于
-`LeanOEM/Tests/DiscretizationError.lean`。该映射不包含浮点舍入、条件数估计或 ARTS 符合性。
+`LeanOEM/Tests/DiscretizationError.lean`。该映射不包含浮点舍入或条件数估计。
 
 ## 当前边界
 
 - 形式化核心没有单位系统；公式中的每个量默认已经在同一组一致单位下表达。
 - 没有把随机变量、概率测度、期望或统计协方差引入核心；当前 `Covariance` 是带正定性假设的矩阵。
 - 迭代误差界只在精确实数和显式收缩条件下成立；没有浮点、条件数或舍入误差保证。
-- 没有把 Python、ARTS 代码、运行数据、观测数据库或具体场景输出作为 Lean 依赖。
+- 没有把外部工程代码、运行数据、观测数据库或具体场景输出作为 Lean 依赖。
 - 连续辐射传输方程、由光滑性导出有限差分余项界、非线性求解器阻尼及模型收缩条件仍待形式化；已有谱线、差分契约和条件迭代结果不替代这些工作。
 - DOFS 的上下界、谱半径和特征值结论尚未加入；当前只定义 trace 并验证其代数性质。
 - Rodgers 的教材支持术语和公式来源，不自动支持某个现实场景中的参数、先验或误差模型。

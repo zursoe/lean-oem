@@ -2,6 +2,10 @@
 
 核心采用有限维、实数、矩阵表示，包含线性 OEM 和非线性迭代的数学规格。
 
+稳定入口为 `LeanOEM.Core`；`LeanOEM.Physics` 聚合当前仍需物理参数审查的归一化模型和
+离散化 fixture。兼容根入口 `LeanOEM` 只导出稳定核心；使用实验性 Physics 时需要显式导入
+`LeanOEM.Physics`。
+
 状态向量属于 `Fin n → ℝ`，观测向量属于 `Fin m → ℝ`，Jacobian 是
 `Matrix (Fin m) (Fin n) ℝ`。`Problem n m` 保存 Jacobian、先验均值、先验协方差
 和观测误差协方差 `observationErrorCovariance`。
@@ -27,19 +31,19 @@
   \hat{x}-x=(I-A)(x_a-x)+g\varepsilon.
   $$
 
-当前还实现了一个与 ARTS 无关的非线性观测模型契约：`ForwardModel`、`HasJacobianAt`、
+当前还实现了一个抽象的非线性观测模型契约：`ForwardModel`、`HasJacobianAt`、
 `JacobianSpec`、锚点线性化、线性化余项，以及它们与现有 `Problem.predict` 的连接。
 测试中的标量平方模型验证了一个非线性 Jacobian 和二阶锚点余项；这仍是数学接口示例，
 不是辐射传输模型。
 
 P10 当前批次还实现了 `LeanOEM.Physics.FiniteLayer` 和 `LeanOEM.Physics.Spectral`：归一化的有限层、
 无散射传输递推、Planck 正性、Doppler 基本性质和通道响应范围性质。它们是独立数学模型，
-不代表 ARTS 的完整实现。
+不代表任何具体工程实现。
 
 测试模块包含一维精确数值、秩亏 `2 × 1` 观测和非法协方差边界；自动审计脚本位于
 `scripts/run_audit.sh`，独立数值核对位于 `scripts/validate_oem_numeric.py`，定义和证据映射见
-`docs/source-mapping.md`。当前没有把这些定义解释为某个具体 ARTS 配置、真实观测或有限精度程序的事实。
-概率测度、单位系统、完整传感器响应和 ARTS 连接属于后续模块；已有 Gaussian 简化谱线、
+`docs/source-mapping.md`。当前没有把这些定义解释为某个具体工程配置、真实观测或有限精度程序的事实。
+概率测度、单位系统和完整传感器响应属于后续纯数学模块；已有 Gaussian 简化谱线、
 显式余项条件下的标量中心差分误差契约和正定权重下的正规梯度规格。
 
 P11 还定义了正定权重、线性化正规梯度一阶驻点、按步选择 Jacobian 的精确实数轨迹和绝对步长停止判据，并在显式沿轨迹收缩条件下
@@ -58,16 +62,30 @@ P12-C 第一批进一步定义有限通道响应的权重 `L¹` 误差、谱值�
 并用两频率有限层 fixture 验证组合界；连续频率积分、求积阶数和网格细化误差仍未纳入核心。
 P12-C-2 第一批增加了显式 `C h^p` 点态误差到通道输出和 Jacobian 的传播定理，并用中心
 有限差分的 $h^2$ 误差作实例；这仍不证明具体积分规则自动满足该阶数。
+
+当前还增加了 `ForwardModelErrorBound`、`normalRhsFor` 和前向模型/Jacobian 联合误差定理。
+若近似前向模型的误差为 $\varepsilon_F$、近似 Jacobian 的加权误差为 $\varepsilon_K$、
+近似 Jacobian 的加权作用常数为 $\beta$，则目标处的正规右端误差满足
+
+$$
+\|b_h-b\|\leq \varepsilon_K\sigma+\beta\varepsilon_F,
+$$
+
+并可在显式逆作用界下传到一步 Gauss–Newton 更新误差。该结果仍是精确实数契约，
+不包含浮点舍入或具体工程符合性判断。
+
+`LeanOEM.Physics.TwoLayerState` 进一步定义两个通道、两个独立层源项的有限层模型，
+并证明其显式矩阵是 `ForwardModel` 的导数表示。源项仍是归一化模型变量，不自动代表
+温度、吸收系数或风速。
 零步长却非最优的平方模型反例见 [迭代规格](iteration.md)。
 
 ## 后续形式化边界
 
-后续模块遵循“理论和算法独立于 ARTS，实现和数据作为外部证据”的架构：
+后续模块遵循“纯 Lean 数学、显式假设和合成例子”的架构：
 
 - `ForwardModel` 抽象描述状态到观测的函数，Jacobian 作为导数的矩阵表示或带误差的近似规格；
 - 简化辐射传输、Doppler 频移、通道响应和有限层递推在独立数学模块中定义；
 - 非线性 Gauss–Newton OEM 已有目标、单步、权重正定性、正规梯度驻点、轨迹和有条件收敛结果；阻尼、模型条件到收缩条件的推导以及目标最优性属于后续工作；
-- ARTS/Python 只通过固定版本、配置、fixture 和误差报告与形式模型建立符合性证据；
-- 真实单位、谱线数据库、浮点误差和观测有效性保持为独立假设或工程证据。
+- 单位、谱线数据库、浮点误差和观测有效性保持为独立假设，不进入当前主线。
 
-完整 ARTS 代码、数据库和真实项目数据不进入 `lean-oem` 的核心依赖。只有当一个辐射传输模块拥有独立 API、非平凡定理、可复现 fixture 和完整审计后，才考虑建立独立公开包。
+外部边界：本库不依赖 ARTS、Python 工程、真实数据或 SCI 论文项目；这些内容属于库外使用场景。

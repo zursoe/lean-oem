@@ -47,7 +47,8 @@ example (H : Square 1) (b d h : State 1) (hSymmetric : H.transpose = H) :
 example : squareProblem.normalRhs (![1] : State 1) squareJacobian = (![5] : State 1) := by
   funext i
   fin_cases i
-  norm_num [NonlinearProblem.normalRhs, NonlinearProblem.residual, squareProblem,
+  norm_num [NonlinearProblem.normalRhs, NonlinearProblem.normalRhsFor,
+    NonlinearProblem.residualFor, NonlinearProblem.residual, squareProblem,
     squareJacobian, LeanOEM.Tests.ForwardModel.squareForward, Problem.predict,
     Matrix.mulVec, Matrix.vecHead,
     dotProduct, Fin.sum_univ_succ]
@@ -71,9 +72,9 @@ example :
 
 /-- 正定权重和可观测 Jacobian 给出正定正规矩阵。 -/
 example (p : NonlinearProblem 1 1) (x : State 1) (k : Jacobian 1 1)
-    (hWeights : WeightWellPosed p) (hObservable : Observable k) :
+    (hWeights : WeightWellPosed p) :
     (p.normalMatrix x k).PosDef :=
-  normalMatrix_posDef p x k hWeights hObservable
+  normalMatrix_posDef p x k hWeights
 
 /-- 线性问题在非线性规格中的残差仍是原 OEM 创新。 -/
 example (p : Problem 1 1) (y : Observation 1) (x : State 1) :

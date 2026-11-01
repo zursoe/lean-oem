@@ -25,6 +25,11 @@ def WeightedJacobianErrorBound (p : NonlinearProblem n m)
       exact.conjTranspose.mulVec (p.observationWeight.mulVec v)‖ ≤
     epsilon * ‖v‖
 
+/-- 指定状态处近似正演和精确正演之间的观测空间误差界。 -/
+def ForwardModelErrorBound (approximate exact : ForwardModel n m)
+    (x : State n) (epsilon : ℝ) : Prop :=
+  ‖approximate.observe x - exact.observe x‖ ≤ epsilon
+
 /-- Jacobian 离散化误差会把加权作用常数增加至 `beta + epsilon`。 -/
 theorem weightedJacobianActionBound_of_error
     (p : NonlinearProblem n m) (approx exact : Jacobian n m)
@@ -75,6 +80,128 @@ theorem normalRhs_norm_le_of_weightedJacobianError
         epsilon * ‖p.residual target‖ := hError _
     _ ≤ epsilon * sigma :=
       mul_le_mul_of_nonneg_left hResidual hEpsilon
+
+/-- 两个正演模型和两个 Jacobian 的正规方程右端差异恒等式。 -/
+theorem normalRhsFor_difference_eq
+    (p : NonlinearProblem n m) (x : State n)
+    (approximateModel exactModel : ForwardModel n m)
+    (approximate exact : Jacobian n m) :
+    p.normalRhsFor approximateModel x approximate -
+        p.normalRhsFor exactModel x exact =
+      (approximate.conjTranspose.mulVec
+          (p.observationWeight.mulVec
+            (p.residualFor exactModel x)) -
+        exact.conjTranspose.mulVec
+          (p.observationWeight.mulVec
+            (p.residualFor exactModel x))) +
+      approximate.conjTranspose.mulVec
+        (p.observationWeight.mulVec
+          (exactModel.observe x - approximateModel.observe x)) := by
+  simp [normalRhsFor, residualFor, Matrix.mulVec_sub]
+  abel
+
+/-- 前向模型误差和 Jacobian 误差共同给出正规方程右端误差界。 -/
+theorem normalRhsFor_difference_norm_le_of_forward_and_jacobian_error
+    (p : NonlinearProblem n m) (x : State n)
+    (approximateModel exactModel : ForwardModel n m)
+    (approximate exact : Jacobian n m)
+    {beta epsilonJacobian epsilonForward sigma : ℝ}
+    (hBeta : 0 ≤ beta)
+    (hEpsilonJacobian : 0 ≤ epsilonJacobian)
+    (hAction : p.WeightedJacobianActionBound approximate beta)
+    (hJacobian : p.WeightedJacobianErrorBound approximate exact epsilonJacobian)
+    (hForward : ForwardModelErrorBound approximateModel exactModel x epsilonForward)
+    (hResidual : ‖p.residualFor exactModel x‖ ≤ sigma) :
+    ‖p.normalRhsFor approximateModel x approximate -
+        p.normalRhsFor exactModel x exact‖ ≤
+      epsilonJacobian * sigma + beta * epsilonForward := by
+  rw [normalRhsFor_difference_eq p x approximateModel exactModel approximate exact]
+  have hForward' :
+      ‖exactModel.observe x - approximateModel.observe x‖ ≤ epsilonForward := by
+    simpa only [ForwardModelErrorBound, norm_sub_rev] using hForward
+  calc
+    ‖(approximate.conjTranspose.mulVec
+          (p.observationWeight.mulVec
+            (p.residualFor exactModel x)) -
+        exact.conjTranspose.mulVec
+          (p.observationWeight.mulVec
+            (p.residualFor exactModel x))) +
+      approximate.conjTranspose.mulVec
+        (p.observationWeight.mulVec
+          (exactModel.observe x - approximateModel.observe x))‖ ≤
+        epsilonJacobian * ‖p.residualFor exactModel x‖ +
+          beta * ‖exactModel.observe x - approximateModel.observe x‖ := by
+      exact (norm_add_le _ _).trans <|
+        add_le_add (hJacobian _) (hAction _)
+    _ ≤ epsilonJacobian * sigma + beta * epsilonForward := by
+      exact add_le_add
+        (mul_le_mul_of_nonneg_left hResidual hEpsilonJacobian)
+        (mul_le_mul_of_nonneg_left hForward' hBeta)
+
+/-- 精确模型在目标处满足正规驻点时，近似前向/Jacobian 的正规右端误差界。 -/
+theorem normalRhsFor_norm_le_of_forward_and_jacobian_error
+    (p : NonlinearProblem n m) (target : State n)
+    (approximateModel exactModel : ForwardModel n m)
+    (approximate exact : Jacobian n m)
+    {beta epsilonJacobian epsilonForward sigma : ℝ}
+    (hBeta : 0 ≤ beta)
+    (hEpsilonJacobian : 0 ≤ epsilonJacobian)
+    (hStationary : p.normalRhsFor exactModel target exact = 0)
+    (hAction : p.WeightedJacobianActionBound approximate beta)
+    (hJacobian : p.WeightedJacobianErrorBound approximate exact epsilonJacobian)
+    (hForward : ForwardModelErrorBound approximateModel exactModel target epsilonForward)
+    (hResidual : ‖p.residualFor exactModel target‖ ≤ sigma) :
+    ‖p.normalRhsFor approximateModel target approximate‖ ≤
+      epsilonJacobian * sigma + beta * epsilonForward := by
+  have hDifference := normalRhsFor_difference_norm_le_of_forward_and_jacobian_error
+    p target approximateModel exactModel approximate exact hBeta hEpsilonJacobian
+      hAction hJacobian hForward hResidual
+  have hIdentity :
+      p.normalRhsFor approximateModel target approximate =
+        (p.normalRhsFor approximateModel target approximate -
+          p.normalRhsFor exactModel target exact) +
+          p.normalRhsFor exactModel target exact := by
+    abel
+  rw [hIdentity, hStationary, add_zero]
+  simpa [hStationary] using hDifference
+
+/-- 在近似正规矩阵逆作用界下，前向/Jacobian 误差形成 Gauss–Newton 更新误差底。
+
+该结论比较的是同一目标处的一步更新；它不把近似模型误差解释成全局收敛保证。 -/
+theorem gaussNewtonUpdate_error_le_of_forward_and_jacobian_error
+    (p : NonlinearProblem n m) (target : State n)
+    (approximateModel exactModel : ForwardModel n m)
+    (approximate exact : Jacobian n m)
+    {beta epsilonJacobian epsilonForward sigma gamma : ℝ}
+    (hBeta : 0 ≤ beta)
+    (hEpsilonJacobian : 0 ≤ epsilonJacobian)
+    (hStationary : p.normalRhsFor exactModel target exact = 0)
+    (hAction : p.WeightedJacobianActionBound approximate beta)
+    (hJacobian : p.WeightedJacobianErrorBound approximate exact epsilonJacobian)
+    (hForward : ForwardModelErrorBound approximateModel exactModel target epsilonForward)
+    (hResidual : ‖p.residualFor exactModel target‖ ≤ sigma)
+    (hNormal : IsUnit ((p.withModel approximateModel).normalMatrix target approximate))
+    (hGamma : 0 ≤ gamma)
+    (hInverse : (p.withModel approximateModel).InverseActionBound target approximate gamma) :
+    ‖(p.withModel approximateModel).gaussNewtonUpdate target approximate - target‖ ≤
+      gamma * (epsilonJacobian * sigma + beta * epsilonForward) := by
+  let tau := epsilonJacobian * sigma + beta * epsilonForward
+  have hRhs :
+      ‖p.normalRhsFor approximateModel target approximate‖ ≤ tau := by
+    exact normalRhsFor_norm_le_of_forward_and_jacobian_error
+      p target approximateModel exactModel approximate exact hBeta hEpsilonJacobian
+        hStationary hAction hJacobian hForward hResidual
+  have hDefect :
+      ‖(p.withModel approximateModel).normalDefect target target approximate‖ ≤
+        (0 : ℝ) * ‖target - target‖ + tau := by
+    change ‖p.normalRhsFor approximateModel target approximate -
+      (p.normalMatrix target approximate).mulVec (target - target)‖ ≤ _
+    simpa using hRhs
+  have hUpdate := gaussNewtonUpdate_error_le_of_inverse_and_additive_defect
+    (p.withModel approximateModel) target target approximate
+    (gamma := gamma) (eta := (0 : ℝ)) (tau := tau)
+    hNormal hGamma hInverse hDefect
+  simpa [tau] using hUpdate
 
 end
 end LeanOEM.NonlinearProblem

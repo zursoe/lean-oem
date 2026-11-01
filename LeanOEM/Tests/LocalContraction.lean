@@ -9,7 +9,7 @@ import Mathlib.Tactic
 # 局部收缩契约测试
 
 这些测试使用无噪声标量平方模型检查余项表示和正规缺陷界。
-它们是精确实数的数学 fixture，不代表 ARTS 或真实观测场景。
+它们是精确实数的数学 fixture，不代表 具体工程或真实观测场景。
 -/
 
 @[expose] public section

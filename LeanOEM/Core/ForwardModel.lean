@@ -12,7 +12,7 @@ namespace LeanOEM
 noncomputable section
 
 /--
-与 ARTS 无关的非线性观测模型。
+与 外部工程无关的非线性观测模型。
 
 `observe` 将有限维状态映射到有限维观测。该结构不包含辐射传输实现、单位、
 数据文件或数值方法；这些内容属于此契约之上的独立层。

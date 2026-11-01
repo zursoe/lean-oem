@@ -31,3 +31,26 @@ Build completed successfully (3266 jobs).
 h² 误差交叉验证”。新的 `LeanOEM` 和 `LeanOEMTests` 目标均已纳入构建。
 
 此前历史记录中的临时 worktree 已删除；当前项目目录没有保留额外构建目录或后台进程。
+
+## 当前工作区验证
+
+验证日期：2026-11-02。
+
+本轮在起始提交 `23c6473` 的未提交工作区上完成了以下检查：
+
+```text
+Build completed successfully (3270 jobs).
+数值交叉验证：通过
+公理审计：通过
+占位证明扫描：通过
+编译产物跟踪检查：通过
+```
+
+本轮新增 `LeanOEM.Core` 和 `LeanOEM.Physics` 聚合入口、前向模型/Jacobian 联合误差契约、
+两通道两状态有限层模型及其精确有理数测试；独立 `Fraction` 脚本额外复算了前向/Jacobian
+联合误差到一步更新误差底的 fixture。公理输出仍只有
+`propext`、`Classical.choice` 和 `Quot.sound`。
+
+本轮随后收紧入口边界：`LeanOEM` 只导出 `LeanOEM.Core`，`LeanOEM.Tests.CoreEntry` 在不导入
+Physics 的情况下验证稳定核心，公理审计则显式分别导入 `LeanOEM.Core` 和 `LeanOEM.Physics`。
+重新构建完成 3270 个目标，审计和独立精确数值验证均通过。

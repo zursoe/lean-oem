@@ -1,27 +1,12 @@
 module
 
-public import LeanOEM.Core.Types
-public import LeanOEM.Core.LinearModel
-public import LeanOEM.Core.ForwardModel
-public import LeanOEM.Core.NonlinearOEM
-public import LeanOEM.Core.Iteration
-public import LeanOEM.Core.LocalContraction
-public import LeanOEM.Core.DiscretizationError
-public import LeanOEM.Physics.FiniteLayer
-public import LeanOEM.Physics.FiniteLayerDiscretization
-public import LeanOEM.Physics.ChannelDiscretization
-public import LeanOEM.Physics.Spectral
-public import LeanOEM.Physics.Discretization
-public import LeanOEM.Core.Estimator
-public import LeanOEM.Core.Assumptions
-public import LeanOEM.Core.Covariance
-public import LeanOEM.Core.Diagnostics
-public import LeanOEM.Core.Information
-public import LeanOEM.Core.Observability
-public import LeanOEM.Core.Theorems
+public import LeanOEM.Core
 
 /-!
 # Lean OEM
 
-线性逆问题和最优估计形式化的根模块。
+线性逆问题和最优估计形式化的兼容根入口。
+
+稳定核心通过 `LeanOEM.Core` 导出；实验性物理模型需要显式导入
+`LeanOEM.Physics`。
 -/
