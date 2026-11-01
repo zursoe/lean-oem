@@ -164,6 +164,12 @@ example : 0 ≤ scalarProblem.dofs ∧ scalarProblem.dofs ≤ (1 : ℝ) := by
     scalarProblem.gain scalarProblem.jacobian hA hComplement
   simpa using hBounds
 
+/-- 正定先验和观测误差下，最优增益 DOFS 的一般界在一维例子中直接成立。 -/
+example : 0 ≤ scalarProblem.dofs ∧ scalarProblem.dofs ≤ (1 : ℝ) := by
+  have hBounds := scalarProblem.dofs_bounds_of_posDef
+    (diag1_posDef 3 (by norm_num)) scalarProblem_observation_posDef
+  simpa using hBounds
+
 /-- 一维精确例子的信息矩阵为 `17 / 15`。 -/
 example : informationMatrix scalarProblem = !![(17 / 15 : ℝ)] := by
   unfold informationMatrix

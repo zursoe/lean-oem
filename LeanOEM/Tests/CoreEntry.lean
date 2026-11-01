@@ -33,4 +33,10 @@ example {n m : ℕ} (g : Matrix (Fin n) (Fin m) ℝ) (k : Jacobian n m)
     0 ≤ dofs g k ∧ dofs g k ≤ (n : ℝ) := by
   exact dofs_bounds_of_averagingKernel_posSemidef g k hA hComplement
 
+example {n m : ℕ} (p : Problem n m)
+    (hPrior : p.priorCovariance.PosDef)
+    (hObservation : p.observationErrorCovariance.PosDef) :
+    0 ≤ p.dofs ∧ p.dofs ≤ (n : ℝ) := by
+  exact p.dofs_bounds_of_posDef hPrior hObservation
+
 end LeanOEM.Tests.CoreEntry

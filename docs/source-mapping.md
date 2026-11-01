@@ -43,6 +43,10 @@
 - `dofs_nonneg_of_averagingKernel_posSemidef`：$A$ 半正定时给出 $0\leq\operatorname{DOFS}$；
 - `dofs_le_dim_of_complement_posSemidef`：$I-A$ 半正定时给出
   $\operatorname{DOFS}\leq n$；两者合并为 `dofs_bounds_of_averagingKernel_posSemidef`。
+- `trace_mul_nonneg_of_posSemidef`：用 Hermitian 谱分解证明两个半正定矩阵乘积的迹非负；
+- `Problem.dofs_nonneg_of_posDef`、`Problem.dofs_le_dim_of_posDef` 和
+  `Problem.dofs_bounds_of_posDef`：在正定先验和正定观测误差下，利用最优增益与后验协方差
+  恒等式证明 $0\leq\mathrm{DOFS}\leq n$。这些是总迹界，不等同于逐特征值界。
 - `posteriorCovariance`：
 
   $$
@@ -314,6 +318,6 @@ P12 第一批位于 `LeanOEM/Core/DiscretizationError.lean`：
 - 迭代误差界只在精确实数和显式收缩条件下成立；没有浮点、条件数或舍入误差保证。
 - 没有把外部工程代码、运行数据、观测数据库或具体场景输出作为 Lean 依赖。
 - 连续辐射传输方程、由光滑性导出有限差分余项界、非线性求解器阻尼及模型收缩条件仍待形式化；已有谱线、差分契约和条件迭代结果不替代这些工作。
-- 当前 DOFS 上下界只在显式的 $A\succeq0$ 和 $I-A\succeq0$ 条件下成立；最优增益自动满足这些
-  条件的谱分解、谱半径和特征值结论仍待形式化。
+- 当前逐特征值的 $[0,1]$ 界、谱半径和最优增益的相似变换解释仍待形式化；已有总迹界不替代这些
+  更强的谱结论。
 - Rodgers 的教材支持术语和公式来源，不自动支持某个现实场景中的参数、先验或误差模型。

@@ -18,6 +18,10 @@ public import LeanOEM.Physics
 #print axioms LeanOEM.dofs_nonneg_of_averagingKernel_posSemidef
 #print axioms LeanOEM.dofs_le_dim_of_complement_posSemidef
 #print axioms LeanOEM.dofs_bounds_of_averagingKernel_posSemidef
+#print axioms LeanOEM.trace_mul_nonneg_of_posSemidef
+#print axioms LeanOEM.Problem.dofs_nonneg_of_posDef
+#print axioms LeanOEM.Problem.dofs_le_dim_of_posDef
+#print axioms LeanOEM.Problem.dofs_bounds_of_posDef
 #print axioms LeanOEM.observable_iff_kernel_eq_zero
 #print axioms LeanOEM.weightedNormalMatrix_posDef
 #print axioms LeanOEM.informationMatrix_posDef

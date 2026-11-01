@@ -7,6 +7,7 @@ public import LeanOEM.Core.Assumptions
 public import LeanOEM.Core.Covariance
 public import LeanOEM.Core.Diagnostics
 public import LeanOEM.Core.Information
+public import LeanOEM.Core.SpectralDiagnostics
 public import LeanOEM.Core.Observability
 public import LeanOEM.Core.Theorems
 public import LeanOEM.Core.ForwardModel

@@ -57,3 +57,7 @@ Physics 的情况下验证稳定核心，公理审计则显式分别导入 `Lean
 
 随后新增 DOFS 的显式矩阵序条件上下界、对应的一维最优增益合成例子，以及
 `GaussianLineParameters.Valid` 线宽正性接口；这些增量目标已分别通过定向构建。
+
+当前批次进一步新增 `LeanOEM.Core.SpectralDiagnostics`，用 Hermitian 谱分解建立半正定矩阵
+乘积迹的非负性，并证明正定先验/观测误差下最优增益的 DOFS 总迹界。完整工作区构建完成
+3366 个目标；新增公理审计目标仍只报告 `propext`、`Classical.choice` 和 `Quot.sound`。

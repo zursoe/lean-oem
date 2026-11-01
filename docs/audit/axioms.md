@@ -2,7 +2,7 @@
 
 审计日期：2026-11-02
 
-审计基线：提交 `6e53d62` 加当前 DOFS 条件界和 Physics 参数有效性工作区修改。
+审计基线：提交 `6e53d62` 加当前 DOFS 条件界、最优增益迹界和 Physics 参数有效性工作区修改。
 
 执行命令：
 
@@ -33,6 +33,10 @@ lake env lean LeanOEM/Tests/Axioms.lean
 - `dofs_nonneg_of_averagingKernel_posSemidef`；
 - `dofs_le_dim_of_complement_posSemidef`；
 - `dofs_bounds_of_averagingKernel_posSemidef`；
+- `trace_mul_nonneg_of_posSemidef`；
+- `Problem.dofs_nonneg_of_posDef`；
+- `Problem.dofs_le_dim_of_posDef`；
+- `Problem.dofs_bounds_of_posDef`；
 - `observable_iff_kernel_eq_zero`；
 - `weightedNormalMatrix_posDef`；
 - `informationMatrix_posDef`；

@@ -27,7 +27,8 @@ Mathlib 的版本和提交由 `lean-toolchain`、`lakefile.toml` 与 `lake-manif
 - 良定性假设、创新协方差的逆矩阵性质和增益规格；
 - 标准后验协方差、Joseph 协方差及其半正定性。
 - 精确的一维和秩亏二维测试例子，以及非法协方差边界测试。
-- averaging kernel 的 DOFS trace 定义、显式矩阵序条件下的上下界和静态可辨识性接口。
+- averaging kernel 的 DOFS trace 定义、显式矩阵序条件下的上下界，以及正定先验/观测误差下
+  最优增益的 `0 ≤ DOFS ≤ n` 定理和静态可辨识性接口。
 - 信息矩阵、Woodbury 后验公式和后验逆矩阵恒等式。
 - 通用 `ForwardModel`、Jacobian 导数规格、锚点线性化余项和 `Problem.predict` 连接。
 - 最小有限层无散射辐射传输递推，以及非负性、上界保持和两层组合性质。
