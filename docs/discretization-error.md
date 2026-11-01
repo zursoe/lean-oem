@@ -167,3 +167,32 @@ $3/10$ 的组合预算接入 OEM 契约。
 
 该结果只证明有限样本和显式误差预算下的加权和界。它没有证明连续频率积分、具体求积
 规则的 $h^p$ 阶数，也没有引入单位、谱线数据库或 ARTS 输出。
+
+## 步长误差提升
+
+`ChannelResponse.ValueStepErrorBound` 记录有限频率样本的统一点态误差：
+
+$$
+|\widehat v_i-v_i|\leq C h^p.
+$$
+
+`apply_error_le_of_valueStepError` 直接给出
+
+$$
+|C(\widehat v)-C(v)|\leq C h^p,
+$$
+
+而 `channelJacobian_coefficient_error_le_of_valueStepError` 和
+`channelJacobian_weightedErrorBound_of_valueStepError` 将同一个界传到通道 Jacobian。
+
+测试令两个频率样本都使用 $f(x)=x^3$ 的中心有限差分，取 $x=1$、$h=1/10$。已有
+`centralDifference_error_bound` 提供每个样本的
+
+$$
+|D_hf(1)-f'(1)|\leq h^2=1/100,
+$$
+
+通道加权后仍得到 $1/100$ 的 Jacobian 系数误差界，并满足通用 OEM Jacobian 误差契约。
+
+这里的逻辑方向是“外部或独立分析先给出点态 $C h^p$ 界，Lean 证明它如何沿通道和 OEM
+接口传播”。它没有从连续积分、网格几何或具体求积规则自动推导 $C$ 和 $p$。

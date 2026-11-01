@@ -24,6 +24,11 @@ noncomputable section
 
 namespace ChannelResponse
 
+/-- 有限频率样本的统一步长误差契约：逐点误差不超过 `constant * step ^ order`。 -/
+def ValueStepErrorBound (approximate exact : Fin n → ℝ)
+    (constant step : ℝ) (order : ℕ) : Prop :=
+  ∀ i, |approximate i - exact i| ≤ constant * step ^ order
+
 /-- 两个有限通道响应权重的 `L¹` 误差。 -/
 def weightL1Error (approximate exact : ChannelResponse n) : ℝ :=
   ∑ i, |approximate.weights i - exact.weights i|
@@ -95,6 +100,16 @@ theorem apply_error_le_of_value_error
       rw [← Finset.sum_mul, response.normalized]
       ring
 
+/-- 将逐点 `C · h^p` 误差提升为通道输出的同阶误差。 -/
+theorem apply_error_le_of_valueStepError
+    (response : ChannelResponse n) (approximateValues exactValues : Fin n → ℝ)
+    (constant step : ℝ) (order : ℕ)
+    (hError : ValueStepErrorBound approximateValues exactValues constant step order) :
+    |response.apply approximateValues - response.apply exactValues| ≤
+      constant * step ^ order := by
+  unfold ValueStepErrorBound at hError
+  exact response.apply_error_le_of_value_error approximateValues exactValues hError
+
 /-- 权重误差和谱值误差的组合界。 -/
 theorem apply_error_le_of_weight_and_value
     (approximate exact : ChannelResponse n)
@@ -155,6 +170,21 @@ theorem channelJacobian_coefficient_error_le
     approximateSensitivities exactSensitivities
     hApproximateSensitivities hSensitivityError
 
+/-- 统一步长误差契约给出通道 Jacobian 的同阶系数误差。 -/
+theorem channelJacobian_coefficient_error_le_of_valueStepError
+    (response : ChannelResponse n)
+    (approximateSensitivities exactSensitivities : Fin n → ℝ)
+    (constant step : ℝ) (order : ℕ)
+    (hError : ChannelResponse.ValueStepErrorBound approximateSensitivities
+      exactSensitivities constant step order) :
+    |(channelJacobian response approximateSensitivities) 0 0 -
+      (channelJacobian response exactSensitivities) 0 0| ≤
+      constant * step ^ order := by
+  change |response.apply approximateSensitivities -
+    response.apply exactSensitivities| ≤ _
+  exact response.apply_error_le_of_valueStepError approximateSensitivities
+    exactSensitivities constant step order hError
+
 /-- 标量通道 Jacobian 系数误差给出单位观测权重下的作用界。 -/
 theorem channelJacobian_weightedErrorBound_unit
     (approximate exact : ChannelResponse n)
@@ -206,6 +236,23 @@ theorem channelJacobian_weightedErrorBound_of_unitWeight
   rw [hWeight]
   exact channelJacobian_weightedErrorBound_unit approximate exact
     approximateSensitivities exactSensitivities hCoefficient v
+
+/-- 将有限频率样本的步长误差直接提升为 OEM Jacobian 误差契约。 -/
+theorem channelJacobian_weightedErrorBound_of_valueStepError
+    (p : NonlinearProblem 1 1) (hWeight : p.observationWeight = !![1])
+    (response : ChannelResponse n)
+    (approximateSensitivities exactSensitivities : Fin n → ℝ)
+    (constant step : ℝ) (order : ℕ)
+    (hError : ChannelResponse.ValueStepErrorBound approximateSensitivities
+      exactSensitivities constant step order) :
+    p.WeightedJacobianErrorBound
+      (channelJacobian response approximateSensitivities)
+      (channelJacobian response exactSensitivities)
+      (constant * step ^ order) := by
+  apply channelJacobian_weightedErrorBound_of_unitWeight p hWeight
+    response response approximateSensitivities exactSensitivities
+  exact channelJacobian_coefficient_error_le_of_valueStepError response
+    approximateSensitivities exactSensitivities constant step order hError
 
 end
 end LeanOEM.RadiativeTransfer

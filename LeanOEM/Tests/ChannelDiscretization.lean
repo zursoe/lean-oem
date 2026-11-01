@@ -2,6 +2,7 @@ module
 
 public import LeanOEM.Physics.ChannelDiscretization
 public import LeanOEM.Physics.FiniteLayerDiscretization
+public import LeanOEM.Physics.Discretization
 import Mathlib.LinearAlgebra.Matrix.Notation
 import Mathlib.Tactic
 
@@ -177,6 +178,60 @@ example :
       (channelJacobian approximateResponse approximateSensitivities)
       (channelJacobian exactResponse exactSensitivities) (3 / 10 : ℝ) :=
   channel_jacobian_error
+
+private def finiteDifferenceExactSensitivities : Fin 2 → ℝ := ![3, 3]
+
+private def finiteDifferenceApproximateSensitivities : Fin 2 → ℝ :=
+  ![centralDifference (fun z => z ^ 3) 1 (1 / 10 : ℝ),
+    centralDifference (fun z => z ^ 3) 1 (1 / 10 : ℝ)]
+
+private lemma finite_difference_step_error :
+    ChannelResponse.ValueStepErrorBound
+      finiteDifferenceApproximateSensitivities
+      finiteDifferenceExactSensitivities 1 (1 / 10 : ℝ) 2 := by
+  intro i
+  fin_cases i
+  · have hBound := centralDifference_error_bound (f := fun z => z ^ 3)
+      (x := 1) (h := (1 / 10 : ℝ)) (derivative := 3)
+      (quadratic := 3) (rPlus := (1 / 10 : ℝ) ^ 3)
+      (rMinus := -(1 / 10 : ℝ) ^ 3) (C := 1)
+      (by norm_num) (by ring) (by ring)
+      (by norm_num [abs_of_nonneg]) (by norm_num [abs_of_nonneg])
+    simpa [finiteDifferenceApproximateSensitivities,
+      finiteDifferenceExactSensitivities] using hBound
+  · have hBound := centralDifference_error_bound (f := fun z => z ^ 3)
+      (x := 1) (h := (1 / 10 : ℝ)) (derivative := 3)
+      (quadratic := 3) (rPlus := (1 / 10 : ℝ) ^ 3)
+      (rMinus := -(1 / 10 : ℝ) ^ 3) (C := 1)
+      (by norm_num) (by ring) (by ring)
+      (by norm_num [abs_of_nonneg]) (by norm_num [abs_of_nonneg])
+    simpa [finiteDifferenceApproximateSensitivities,
+      finiteDifferenceExactSensitivities] using hBound
+
+/-- 中心有限差分的 `h²` 误差可以沿通道加权提升到 Jacobian。 -/
+example :
+    |(channelJacobian exactResponse finiteDifferenceApproximateSensitivities) 0 0 -
+      (channelJacobian exactResponse finiteDifferenceExactSensitivities) 0 0| ≤
+      (1 / 100 : ℝ) := by
+  have h := channelJacobian_coefficient_error_le_of_valueStepError
+    exactResponse finiteDifferenceApproximateSensitivities
+      finiteDifferenceExactSensitivities 1 (1 / 10 : ℝ) 2
+      finite_difference_step_error
+  norm_num at h ⊢
+  exact h
+
+/-- 同一个 `h²` 误差已经满足通用 OEM Jacobian 误差契约。 -/
+example :
+    channelProblem.WeightedJacobianErrorBound
+      (channelJacobian exactResponse finiteDifferenceApproximateSensitivities)
+      (channelJacobian exactResponse finiteDifferenceExactSensitivities)
+      (1 / 100 : ℝ) := by
+  have h := channelJacobian_weightedErrorBound_of_valueStepError
+    channelProblem rfl exactResponse finiteDifferenceApproximateSensitivities
+      finiteDifferenceExactSensitivities 1 (1 / 10 : ℝ) 2
+      finite_difference_step_error
+  norm_num at h ⊢
+  exact h
 
 end
 end LeanOEM.Tests.ChannelDiscretization

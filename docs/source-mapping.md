@@ -161,10 +161,15 @@ ARTS 运行，也没有把共同源项直接解释为温度、风速或其他现
 - `channelJacobian_coefficient_error_le`：通道 Jacobian 系数的组合误差；
 - `channelJacobian_weightedErrorBound_unit` / `channelJacobian_weightedErrorBound_of_unitWeight`：
   将系数误差接入通用 OEM Jacobian 误差契约。
+- `ChannelResponse.ValueStepErrorBound`：有限样本的统一 $C h^p$ 点态误差；
+- `ChannelResponse.apply_error_le_of_valueStepError`：将步长误差提升为通道输出误差；
+- `channelJacobian_coefficient_error_le_of_valueStepError` /
+  `channelJacobian_weightedErrorBound_of_valueStepError`：将步长误差提升为通道 Jacobian 和
+  OEM 误差契约。
 
 测试中的频率值和灵敏度来自两层有限层有理数 fixture，但通道模块本身只依赖有限样本和
 显式误差界。它不把权重解释为连续积分的自动求积结果；网格步长、求积规则和误差阶数属于
-后续 P12-C-2。
+P12-C-2 的后续工作。
 
 ## 独立数值证据
 

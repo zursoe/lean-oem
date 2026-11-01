@@ -301,8 +301,19 @@ P12-C 第一批已完成有限通道响应组合切片：
   灵敏度，验证观测输出误差和通道 Jacobian 误差；独立 `Fraction` 复算同步覆盖该 fixture。
 
 当前结果把离散权重和谱值误差作为显式契约，尚未从连续积分、网格步长或具体梯形/Simpson
-规则自动推出误差阶数。下一批先补有限网格细化的可复用接口，再进入阻尼和正则化的非线性
-Gauss–Newton 规格。
+规则自动推出误差阶数。步长误差的传播接口在 P12-C-2 第一批中补齐，阻尼和正则化的
+非线性 Gauss–Newton 规格仍在后续。
+
+P12-C-2 第一批已完成步长误差提升接口：
+
+- `ChannelResponse.ValueStepErrorBound` 记录逐点的 $C h^p$ 误差；
+- `apply_error_le_of_valueStepError` 将该误差提升为通道输出的同阶界；
+- `channelJacobian_coefficient_error_le_of_valueStepError` 和
+  `channelJacobian_weightedErrorBound_of_valueStepError` 将该界提升到通道 Jacobian 和 OEM
+  Jacobian 误差契约；
+- 测试用中心有限差分的 $h^2$ 定理实例化两频率通道灵敏度误差，并由独立有理数脚本复算。
+
+这一批只传播已经给定的点态 $C h^p$ 界，没有从连续积分或网格结构自动生成该界。
 
 ## 阶段 P13：ARTS/Python 符合性桥接
 
@@ -342,5 +353,5 @@ SciLean 继续暂缓：其当前主分支工具链仍为 Lean `v4.28.0-rc1`，�
 - README、范围文档和来源映射明确写出“已证明范围”和“尚未证明范围”；
 - 干净 checkout 可以在锁定工具链和 `lake-manifest.json` 下完成构建。
 
-下一次实际编码批次进入 P12-C-2：把有限网格细化或明确求积规则的步长误差连接到当前通道
-权重/谱值契约；阻尼和浮点停止规则继续单独处理。
+下一次实际编码批次继续 P12-C-2：选择一个明确的有限网格细化或求积规则，证明其点态
+$C h^p$ 界，再接入当前通道契约；阻尼和浮点停止规则继续单独处理。

@@ -355,6 +355,31 @@ def channel_discretization_case() -> None:
         raise AssertionError("通道 Jacobian 组合误差界不满足")
 
 
+def channel_step_order_case() -> None:
+    """独立复算中心有限差分的 h² 误差如何沿通道 Jacobian 传播。"""
+    step = F(1, 10)
+    central = ((1 + step) ** 3 - (1 - step) ** 3) / (2 * step)
+    exact_sensitivities = [F(3), F(3)]
+    approximate_sensitivities = [central, central]
+    weights = [F(3, 4), F(1, 4)]
+
+    exact_channel = sum(
+        weight * sensitivity
+        for weight, sensitivity in zip(weights, exact_sensitivities)
+    )
+    approximate_channel = sum(
+        weight * sensitivity
+        for weight, sensitivity in zip(weights, approximate_sensitivities)
+    )
+    error = abs(approximate_channel - exact_channel)
+    bound = F(1) * step**2
+
+    if central != F(301, 100):
+        raise AssertionError("通道中心差分值不一致")
+    if error != F(1, 100) or error > bound:
+        raise AssertionError("通道中心差分 h² 误差界不满足")
+
+
 def main() -> None:
     scalar_case()
     rank_deficient_case()
@@ -363,6 +388,7 @@ def main() -> None:
     discretization_error_case()
     finite_layer_discretization_case()
     channel_discretization_case()
+    channel_step_order_case()
     print("一维精确 OEM 交叉验证：通过")
     print("秩亏二维 OEM 交叉验证：通过")
     print("Gauss–Newton 轨迹与停滞反例交叉验证：通过")
@@ -370,6 +396,7 @@ def main() -> None:
     print("中心差分离散化误差交叉验证：通过")
     print("两层有限层离散化误差交叉验证：通过")
     print("通道响应离散化误差交叉验证：通过")
+    print("通道中心差分 h² 误差交叉验证：通过")
     print("所有独立有理数交叉验证：通过")
 
 
