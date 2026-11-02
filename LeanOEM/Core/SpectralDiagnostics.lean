@@ -2,6 +2,7 @@ module
 
 public import LeanOEM.Core.Information
 public import LeanOEM.Core.Diagnostics
+public import Mathlib.Analysis.Matrix.Order
 public import Mathlib.Analysis.Matrix.PosDef
 public import Mathlib.LinearAlgebra.Matrix.Trace
 
@@ -10,6 +11,30 @@ public import Mathlib.LinearAlgebra.Matrix.Trace
 namespace LeanOEM
 
 noncomputable section
+
+/-- 半正定 `A` 且 `I - A` 半正定时，Hermitian `A` 的每个特征值都在 `[0, 1]`。 -/
+theorem eigenvalues_bounds_of_posSemidef {n : Type*} [Fintype n] [DecidableEq n]
+    (A : Matrix n n ℝ) (hA : A.PosSemidef)
+    (hComplement : (1 - A).PosSemidef) (i : n) :
+    0 ≤ hA.isHermitian.eigenvalues i ∧ hA.isHermitian.eigenvalues i ≤ 1 := by
+  constructor
+  · exact hA.eigenvalues_nonneg i
+  · let v : n → ℝ := ⇑(hA.isHermitian.eigenvectorBasis i)
+    have hv : v ≠ 0 := by
+      intro hv
+      apply hA.isHermitian.eigenvectorBasis.orthonormal.ne_zero i
+      apply (WithLp.ofLp_eq_zero 2).mp
+      simpa [v] using hv
+    have hEigen : Matrix.mulVec A v = (hA.isHermitian.eigenvalues i) • v := by
+      exact hA.isHermitian.mulVec_eigenvectorBasis i
+    have hQuad := hComplement.dotProduct_mulVec_nonneg v
+    rw [Matrix.sub_mulVec, Matrix.one_mulVec, hEigen] at hQuad
+    have hNorm : 0 < dotProduct (star v) v :=
+      (Matrix.dotProduct_star_self_pos_iff).2 hv
+    have hQuad' :
+        hA.isHermitian.eigenvalues i * dotProduct (star v) v ≤ dotProduct (star v) v := by
+      simpa [smul_eq_mul, dotProduct_smul] using hQuad
+    nlinarith
 
 /-- 两个实半正定矩阵乘积的迹非负。 -/
 theorem trace_mul_nonneg_of_posSemidef {n : Type*} [Fintype n]

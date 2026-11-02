@@ -39,4 +39,9 @@ example {n m : ℕ} (p : Problem n m)
     0 ≤ p.dofs ∧ p.dofs ≤ (n : ℝ) := by
   exact p.dofs_bounds_of_posDef hPrior hObservation
 
+example {n : ℕ} (A : Square n) (hA : A.PosSemidef)
+    (hComplement : ((1 : Square n) - A).PosSemidef) (i : Fin n) :
+    0 ≤ hA.isHermitian.eigenvalues i ∧ hA.isHermitian.eigenvalues i ≤ 1 := by
+  exact eigenvalues_bounds_of_posSemidef A hA hComplement i
+
 end LeanOEM.Tests.CoreEntry

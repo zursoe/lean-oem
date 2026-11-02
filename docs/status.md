@@ -12,7 +12,7 @@
 
 - 有限维、实数、矩阵表示的线性 OEM 核心；
 - 后验协方差、Joseph 形式、信息形式和确定性误差分解；
-- DOFS trace、显式矩阵序条件下的上下界、正定 OEM 条件下最优增益的 `0 ≤ DOFS ≤ n` 定理和静态可辨识性接口；
+- DOFS trace、显式矩阵序条件下的上下界和逐特征值界、正定 OEM 条件下最优增益的 `0 ≤ DOFS ≤ n` 定理和静态可辨识性接口；
 - Physics 中 Gaussian 线宽的正性参数包及其合成测试；
 - `ForwardModel`、Jacobian 导数契约、局部收缩和 Gauss–Newton 迭代规格；
 - 带统一加性误差底的 Gauss–Newton 轨迹有限步界和稳态误差界；

@@ -43,6 +43,9 @@
 - `dofs_nonneg_of_averagingKernel_posSemidef`：$A$ 半正定时给出 $0\leq\operatorname{DOFS}$；
 - `dofs_le_dim_of_complement_posSemidef`：$I-A$ 半正定时给出
   $\operatorname{DOFS}\leq n$；两者合并为 `dofs_bounds_of_averagingKernel_posSemidef`。
+- `eigenvalues_bounds_of_posSemidef`：在同样的 $A\succeq0$、$I-A\succeq0$ 条件下，逐个证明
+  Hermitian $A$ 的特征值属于 $[0,1]$；这仍是条件接口，不自动把一般最优增益 averaging
+  kernel 变成 Hermitian 矩阵。
 - `trace_mul_nonneg_of_posSemidef`：用 Hermitian 谱分解证明两个半正定矩阵乘积的迹非负；
 - `Problem.dofs_nonneg_of_posDef`、`Problem.dofs_le_dim_of_posDef` 和
   `Problem.dofs_bounds_of_posDef`：在正定先验和正定观测误差下，利用最优增益与后验协方差

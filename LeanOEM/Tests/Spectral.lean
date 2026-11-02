@@ -104,5 +104,12 @@ example : twoChannelResponse.apply (![2, 6] : Fin 2 → ℝ) ≤ 6 := by
 example : twoChannelResponse.apply (fun _ => (7 : ℝ)) = 7 := by
   exact ChannelResponse.apply_const twoChannelResponse 7
 
+/-- 空频率网格无法构造归一化通道响应。 -/
+example : ¬ Nonempty (ChannelResponse 0) := by
+  intro h
+  rcases h with ⟨response⟩
+  have hNormalized := response.normalized
+  norm_num at hNormalized
+
 end
 end LeanOEM.Tests.Spectral

@@ -93,4 +93,5 @@ $$
 当前 DOFS 上下界有两层接口：通用定理接收 averaging kernel 半正定以及 `I - A` 半正定作为显式
 矩阵序假设；`Problem.dofs_bounds_of_posDef` 则在正定先验和正定观测误差下，利用半正定矩阵
 乘积的迹非负性及后验协方差恒等式，直接证明最优增益满足 $0\leq\mathrm{DOFS}\leq n$。
-一般 averaging kernel 的特征值逐个落在 `[0, 1]`、谱半径以及相似变换的谱解释仍待形式化。
+在显式矩阵序条件下，`eigenvalues_bounds_of_posSemidef` 已进一步证明每个 Hermitian 特征值落在
+`[0, 1]`；一般最优增益 averaging kernel 的相似变换、谱半径和逐特征值界仍待形式化。

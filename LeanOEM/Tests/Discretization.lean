@@ -23,4 +23,8 @@ example (x h : ℝ) (hStep : 0 < h) :
     · simp
   simpa using hBound
 
+/-- 零步长在总函数定义下给出零值，但不满足有限差分误差定理的有效条件。 -/
+example : centralDifference (fun z => z ^ 3) 1 0 = 0 := by
+  norm_num [centralDifference]
+
 end LeanOEM.Tests.Discretization

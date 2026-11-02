@@ -233,5 +233,12 @@ example :
   norm_num at h ⊢
   exact h
 
+/-- 负误差常数不能作为逐点误差界的有效参数。 -/
+example : ¬ ChannelResponse.ValueStepErrorBound
+    (fun _ : Fin 1 => (0 : ℝ)) (fun _ : Fin 1 => (0 : ℝ)) (-1) 1 0 := by
+  intro hError
+  have h := hError 0
+  norm_num at h
+
 end
 end LeanOEM.Tests.ChannelDiscretization

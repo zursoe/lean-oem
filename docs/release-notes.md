@@ -15,8 +15,9 @@
 - 带统一加性误差底的 Gauss–Newton 轨迹有限步界和稳态界；
 - 归一化有限层、带正线宽参数包的谱线、Doppler、通道响应和两通道两状态有限层 fixture；
 - 有限层、Gaussian 线宽、Doppler、Planck 和两层状态参数的非法边界合成反例；
-- 显式矩阵序条件下的 DOFS 上下界、正定先验/观测误差下最优增益的 `0 ≤ DOFS ≤ n` 定理，
+- 显式矩阵序条件下的 DOFS 上下界和 Hermitian 逐特征值 `[0,1]` 界、正定先验/观测误差下最优增益的 `0 ≤ DOFS ≤ n` 定理，
   以及 Gaussian 线宽有效性接口；
+- 通道空网格、负误差常数、零步长和有限层参数边界的合成反例；
 - `LeanOEM.Core` 稳定聚合入口和 `LeanOEM.Physics` 实验聚合入口；
 - 精确有理数交叉验证、公理审计和 GitHub Actions CI。
 

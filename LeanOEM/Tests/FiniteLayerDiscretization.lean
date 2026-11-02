@@ -45,6 +45,17 @@ private lemma exact_valid : exactParameters.Valid := by
 private lemma approximate_valid : approximateParameters.Valid := by
   constructor <;> norm_num [approximateParameters]
 
+private def invalidParameters : TwoLayerSourceParameters :=
+  { firstTransmissivity := -1
+    secondTransmissivity := 1 / 2
+    incoming := 0 }
+
+/-- 共同源项有限层模型排除负透过率参数。 -/
+example : ¬ invalidParameters.Valid := by
+  intro h
+  have hNonneg := h.first_nonneg
+  norm_num [invalidParameters] at hNonneg
+
 private lemma transmissivity_errors :
     |approximateParameters.firstTransmissivity - exactParameters.firstTransmissivity|
         ≤ (1 / 10 : ℝ) ∧

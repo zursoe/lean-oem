@@ -33,6 +33,7 @@ lake env lean LeanOEM/Tests/Axioms.lean
 - `dofs_nonneg_of_averagingKernel_posSemidef`；
 - `dofs_le_dim_of_complement_posSemidef`；
 - `dofs_bounds_of_averagingKernel_posSemidef`；
+- `eigenvalues_bounds_of_posSemidef`；
 - `trace_mul_nonneg_of_posSemidef`；
 - `Problem.dofs_nonneg_of_posDef`；
 - `Problem.dofs_le_dim_of_posDef`；
