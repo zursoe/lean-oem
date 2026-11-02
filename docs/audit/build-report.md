@@ -63,3 +63,7 @@ Physics 的情况下验证稳定核心，公理审计则显式分别导入 `Lean
 3366 个目标；新增公理审计目标仍只报告 `propext`、`Classical.choice` 和 `Quot.sound`。
 
 最终代码收口提交：`365067d`。提交内容对应上述构建、公理审计、占位扫描和独立精确数值验证结果。
+
+随后批次新增 `ContractsTowardAlongWithFloor` 的有限步误差底和稳态误差底定理，并加入有限层、
+Gaussian、Doppler、Planck 和两层状态参数的非法合成反例；完整构建仍为 3366 个目标，公理审计
+仍通过。当前代码提交为 `5554692`。

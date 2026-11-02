@@ -13,7 +13,7 @@
 - [x] `api/linear-core` 从远端 `main` 建立，并已通过 PR #1 合并到远端主线。
 - [x] 版本说明、范围说明和来源映射已写入 `docs/`。
 - [x] 稳定 `LeanOEM.Core` 与实验 `LeanOEM.Physics` 的入口边界已由独立 `CoreEntry` 和显式 Physics 导入示例验证。
-- [x] 当前主线已有与代码范围一致的版本说明和审计提交号（`365067d`）。
+- [x] 当前主线已有与代码范围一致的版本说明和审计提交号（`5554692`）。
 - [x] `.github/workflows/ci.yml` 已固定 action 提交，并覆盖构建、审计和精确数值校验。
 
 ## 构建和测试
