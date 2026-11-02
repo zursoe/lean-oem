@@ -139,7 +139,7 @@
 - `ChannelResponse.apply`：通道加权求和；
 - `ChannelResponse.apply_nonneg`、`apply_le_of_le`、`apply_const`：非负性、上界保持和常量保持。
 
-这些结果见 `LeanOEM/Physics/Spectral.lean`。它们没有引入单位、真实谱线参数、具体采样或浮点误差界；测试例子位于 `LeanOEM/Tests/Spectral.lean`。
+这些结果见 `LeanOEM/Physics/Spectral.lean`。它们没有引入单位、真实谱线参数、具体采样或浮点误差界；测试例子位于 `LeanOEM/Tests/Spectral.lean`，其中还保留零线宽、达到光速和零温度的非法参数反例。
 
 ### 两层有限层离散化映射
 
@@ -275,6 +275,10 @@ P9 的第一批已经完成：后续形式化继续建立独立的数学规格�
 正容差最终满足判据。测试证明线性一步解、刷新/冻结策略差异和平方模型的非最优停滞，
 独立 Python 有理数复算覆盖相同案例。上述目标点的最优性、实际问题的收缩性质和浮点误差
 不由本批结果自动给出。
+
+`ContractsTowardAlongWithFloor`、`gaussNewtonIterate_error_le_with_floor` 和
+`gaussNewtonIterate_error_le_with_floor_bound` 将一步加性误差底提升到有限步轨迹界和
+稳态误差底；它们仍要求调用者显式提供 $q$、$\tau$ 以及轨迹契约。
 
 `normalDefect`、`gaussNewtonUpdate_sub_target_eq_inverse_normalDefect` 和
 `gaussNewtonUpdate_error_le_of_inverse_and_defect` 把正规方程缺陷和逆作用界连接成单步

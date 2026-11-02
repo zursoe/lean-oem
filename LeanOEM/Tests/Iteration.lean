@@ -9,6 +9,7 @@ import Mathlib.Tactic
 namespace LeanOEM.Tests.Iteration
 
 open LeanOEM LeanOEM.NonlinearProblem Filter
+open scoped BigOperators
 open scoped Topology
 
 noncomputable section
@@ -167,6 +168,26 @@ example : squareProblem.ContractsTowardAlong refreshed 0 ![2] 1 ∧
 example : squareProblem.objective (0 : State 1) > squareProblem.objective ![2] := by
   norm_num [objective, quadraticForm, NonlinearProblem.residual, squareProblem, scalarProblem,
     Matrix.mulVec, dotProduct]
+
+/-- 抽象带误差底契约可直接给出有限步误差界。 -/
+example {p : NonlinearProblem 1 1}
+    (jacobian : ℕ → State 1 → Jacobian 1 1) (initial target : State 1)
+    {q tau : ℝ} (hq : 0 ≤ q)
+    (hContract : p.ContractsTowardAlongWithFloor jacobian initial target q tau) :
+    ‖p.gaussNewtonIterate jacobian initial 1 - target‖ ≤
+      q ^ 1 * ‖initial - target‖ + tau * ∑ j ∈ Finset.range 1, q ^ j := by
+  exact p.gaussNewtonIterate_error_le_with_floor
+    jacobian initial target hq hContract 1
+
+/-- 严格收缩时，统一误差底可收口到 `tau / (1 - q)`。 -/
+example {p : NonlinearProblem 1 1}
+    (jacobian : ℕ → State 1 → Jacobian 1 1) (initial target : State 1)
+    {q tau : ℝ} (hq : 0 ≤ q) (hqOne : q < 1) (hTau : 0 ≤ tau)
+    (hContract : p.ContractsTowardAlongWithFloor jacobian initial target q tau) :
+    ‖p.gaussNewtonIterate jacobian initial 1 - target‖ ≤
+      q ^ 1 * ‖initial - target‖ + tau / (1 - q) := by
+  exact p.gaussNewtonIterate_error_le_with_floor_bound
+    jacobian initial target hq hqOne hTau hContract 1
 
 /-- 空状态空间允许定义轨迹；条件中的范数仍是合法范数。 -/
 example (p : NonlinearProblem 0 0) (jacobian : ℕ → State 0 → Jacobian 0 0) (i : ℕ) :

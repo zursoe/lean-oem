@@ -91,6 +91,8 @@ public import LeanOEM.Physics
 #print axioms LeanOEM.NonlinearProblem.gaussNewtonIterate_mem
 #print axioms LeanOEM.NonlinearProblem.contractsTowardAlong_of_lipschitzOn
 #print axioms LeanOEM.NonlinearProblem.gaussNewtonIterate_error_le
+#print axioms LeanOEM.NonlinearProblem.gaussNewtonIterate_error_le_with_floor
+#print axioms LeanOEM.NonlinearProblem.gaussNewtonIterate_error_le_with_floor_bound
 #print axioms LeanOEM.NonlinearProblem.gaussNewtonIterate_tendsto
 #print axioms LeanOEM.NonlinearProblem.error_le_step_div_one_sub
 #print axioms LeanOEM.NonlinearProblem.stoppedAt_error_le

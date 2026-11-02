@@ -35,6 +35,16 @@ private lemma validGaussian_valid : validGaussian.Valid := by
   constructor
   norm_num [validGaussian]
 
+private def zeroWidthGaussian : GaussianLineParameters :=
+  { center := 0
+    width := 0 }
+
+/-- 零线宽参数被有效性结构排除。 -/
+example : ¬ zeroWidthGaussian.Valid := by
+  intro h
+  have hWidth := h.width_pos
+  norm_num [zeroWidthGaussian] at hWidth
+
 /-- Gaussian 参数包明确拒绝零线宽，并保留中心值和正性定理。 -/
 example : validGaussian.width ≠ 0 :=
   validGaussian_valid.width_ne_zero
@@ -57,6 +67,14 @@ example : dopplerShift 3 0 2 = 3 := by
 /-- 在速度小于光速的条件下，正频率的 Doppler 频率保持为正。 -/
 example : 0 < dopplerShift 2 1 3 := by
   apply dopplerShift_pos <;> norm_num
+
+/-- 速度达到光速时，正频率 Doppler 正性结论失效。 -/
+example : dopplerShift 2 3 3 = 0 := by
+  norm_num [dopplerShift]
+
+/-- 零温度不满足 Planck 正性定理的参数条件，并在总函数定义下给出零值。 -/
+example : planckRadiance 1 1 1 1 0 = 0 := by
+  norm_num [planckRadiance]
 
 private def twoChannelResponse : ChannelResponse 2 where
   weights := ![1 / 4, 3 / 4]

@@ -84,6 +84,8 @@ lake env lean LeanOEM/Tests/Axioms.lean
 - `NonlinearProblem.gaussNewtonIterate_mem`；
 - `NonlinearProblem.contractsTowardAlong_of_lipschitzOn`；
 - `NonlinearProblem.gaussNewtonIterate_error_le`；
+- `NonlinearProblem.gaussNewtonIterate_error_le_with_floor`；
+- `NonlinearProblem.gaussNewtonIterate_error_le_with_floor_bound`；
 - `NonlinearProblem.gaussNewtonIterate_tendsto`；
 - `NonlinearProblem.error_le_step_div_one_sub`；
 - `NonlinearProblem.stoppedAt_error_le`；

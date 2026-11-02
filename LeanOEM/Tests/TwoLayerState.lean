@@ -40,6 +40,17 @@ private lemma exact_valid : exactParameters.Valid := by
 private lemma approximate_valid : approximateParameters.Valid := by
   constructor <;> intro i <;> fin_cases i <;> norm_num [approximateParameters]
 
+private def invalidParameters : TwoLayerStateParameters :=
+  { firstTransmissivity := ![(3 / 2 : ℝ), 1 / 2]
+    secondTransmissivity := ![(1 / 2 : ℝ), 1 / 2]
+    incoming := ![0, 0] }
+
+/-- 超过一的透过率参数不能满足两层状态模型的有效性假设。 -/
+example : ¬ invalidParameters.Valid := by
+  intro h
+  have hUpper := h.first_le_one 0
+  norm_num [invalidParameters] at hUpper
+
 /-- 两个通道的显式 Jacobian。 -/
 example : twoLayerStateJacobian exactParameters =
     !![(3 / 8 : ℝ), 1 / 4; 4 / 15, 1 / 5] := by

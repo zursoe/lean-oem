@@ -37,7 +37,7 @@ Mathlib 的版本和提交由 `lean-toolchain`、`lakefile.toml` 与 `lake-manif
 - 有限通道响应权重和谱值误差界，以及通道 Jacobian 到 OEM 误差契约的连接。
 - 归一化 Planck 函数、带正线宽参数包的 Gaussian 谱线、Doppler 频移和非负归一化通道响应的基本性质。
 - 非线性 MAP 目标、Gauss–Newton 正规方程规格，以及与线性 OEM 信息形式的连接。
-- Gauss–Newton 迭代轨迹、步长停止判据，以及显式收缩条件下的收敛和停止误差界。
+- Gauss–Newton 迭代轨迹、步长停止判据，以及显式收缩条件下的收敛、停止误差界和统一加性误差底界。
 - 正定权重下的正规矩阵性质，以及线性化正规梯度的一阶驻点规格。
 - 可替换正演模型的 `residualFor`、`normalRhsFor` 和 `withModel`，以及前向模型/Jacobian
   联合误差到正规方程和一步更新误差的契约。

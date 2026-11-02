@@ -15,6 +15,7 @@
 - DOFS trace、显式矩阵序条件下的上下界、正定 OEM 条件下最优增益的 `0 ≤ DOFS ≤ n` 定理和静态可辨识性接口；
 - Physics 中 Gaussian 线宽的正性参数包及其合成测试；
 - `ForwardModel`、Jacobian 导数契约、局部收缩和 Gauss–Newton 迭代规格；
+- 带统一加性误差底的 Gauss–Newton 轨迹有限步界和稳态误差界；
 - Jacobian、有限层和有限通道离散化误差契约；
 - 前向模型/Jacobian 联合误差到正规方程和一步更新误差的契约；
 - 两通道两状态有限层模型及其显式 Jacobian；

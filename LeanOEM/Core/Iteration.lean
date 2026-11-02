@@ -2,6 +2,7 @@ module
 
 public import LeanOEM.Core.NonlinearOEM
 public import Mathlib.Analysis.SpecificLimits.Basic
+public import Mathlib.Algebra.Order.Ring.GeomSum
 public import Mathlib.Topology.MetricSpace.Lipschitz
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Abel
@@ -18,6 +19,7 @@ import Mathlib.Tactic.Abel
 namespace LeanOEM.NonlinearProblem
 
 open Filter
+open scoped BigOperators
 open scoped Topology
 
 noncomputable section
@@ -145,6 +147,13 @@ def ContractsTowardAlong (p : NonlinearProblem n m)
   ∀ i, ‖p.gaussNewtonIterate jacobian initial (i + 1) - target‖ ≤
     q * ‖p.gaussNewtonIterate jacobian initial i - target‖
 
+/-- 带统一加性误差底的沿轨迹收缩条件。 -/
+def ContractsTowardAlongWithFloor (p : NonlinearProblem n m)
+    (jacobian : ℕ → State n → Jacobian n m) (initial target : State n)
+    (q tau : ℝ) : Prop :=
+  ∀ i, ‖p.gaussNewtonIterate jacobian initial (i + 1) - target‖ ≤
+    q * ‖p.gaussNewtonIterate jacobian initial i - target‖ + tau
+
 /-- 在不变集合内有共同不动点和 Lipschitz 界时，可得到沿轨迹条件。
 
 当 `q < 1` 时，这些假设给出局部收缩；集合可以是经过单独验证的邻域。
@@ -172,6 +181,61 @@ theorem gaussNewtonIterate_error_le (p : NonlinearProblem n m)
     ‖p.gaussNewtonIterate jacobian initial i - target‖ ≤ q ^ i * ‖initial - target‖ := by
   exact le_geom (u := fun j => ‖p.gaussNewtonIterate jacobian initial j - target‖)
     hq i (fun j _ => hContract j)
+
+/-- 带加性误差底的有限步轨迹界。 -/
+theorem gaussNewtonIterate_error_le_with_floor (p : NonlinearProblem n m)
+    (jacobian : ℕ → State n → Jacobian n m) (initial target : State n)
+    {q tau : ℝ} (hq : 0 ≤ q)
+    (hContract : p.ContractsTowardAlongWithFloor jacobian initial target q tau) (i : ℕ) :
+    ‖p.gaussNewtonIterate jacobian initial i - target‖ ≤
+      q ^ i * ‖initial - target‖ + tau * ∑ j ∈ Finset.range i, q ^ j := by
+  induction i with
+  | zero => simp
+  | succ i ih =>
+      have hStep := hContract i
+      have hScaled := mul_le_mul_of_nonneg_left ih hq
+      calc
+        ‖p.gaussNewtonIterate jacobian initial (i + 1) - target‖ ≤
+            q * ‖p.gaussNewtonIterate jacobian initial i - target‖ + tau := hStep
+        _ ≤ q * (q ^ i * ‖initial - target‖ +
+            tau * ∑ j ∈ Finset.range i, q ^ j) + tau :=
+          add_le_add hScaled (le_refl tau)
+        _ = q ^ (i + 1) * ‖initial - target‖ +
+            tau * ∑ j ∈ Finset.range (i + 1), q ^ j := by
+          have hGeomRec :
+              q * (∑ j ∈ Finset.range i, q ^ j) + 1 =
+                (∑ j ∈ Finset.range i, q ^ j) + q ^ i := by
+            have hGeomEq := geom_sum_mul q i
+            nlinarith [hGeomEq]
+          rw [Finset.sum_range_succ, pow_succ]
+          calc
+            q * (q ^ i * ‖initial - target‖ +
+                tau * ∑ j ∈ Finset.range i, q ^ j) + tau =
+                q ^ i * q * ‖initial - target‖ +
+                  tau * (q * (∑ j ∈ Finset.range i, q ^ j) + 1) := by ring
+            _ = q ^ i * q * ‖initial - target‖ +
+                  tau * ((∑ j ∈ Finset.range i, q ^ j) + q ^ i) := by
+              rw [hGeomRec]
+
+/-- `0 ≤ q < 1` 时，加性误差底的有限步界可统一收口到 `tau / (1 - q)`。 -/
+theorem gaussNewtonIterate_error_le_with_floor_bound (p : NonlinearProblem n m)
+    (jacobian : ℕ → State n → Jacobian n m) (initial target : State n)
+    {q tau : ℝ} (hq : 0 ≤ q) (hqOne : q < 1) (hTau : 0 ≤ tau)
+    (hContract : p.ContractsTowardAlongWithFloor jacobian initial target q tau) (i : ℕ) :
+    ‖p.gaussNewtonIterate jacobian initial i - target‖ ≤
+      q ^ i * ‖initial - target‖ + tau / (1 - q) := by
+  have hGeom : ∑ j ∈ Finset.range i, q ^ j ≤ 1 / (1 - q) := by
+    apply (le_div_iff₀ (sub_pos.mpr hqOne)).2
+    rw [geom_sum_mul_of_le_one hqOne.le]
+    linarith [pow_nonneg hq i]
+  have hFinite := p.gaussNewtonIterate_error_le_with_floor
+    jacobian initial target hq hContract i
+  calc
+    ‖p.gaussNewtonIterate jacobian initial i - target‖ ≤
+        q ^ i * ‖initial - target‖ + tau * ∑ j ∈ Finset.range i, q ^ j := hFinite
+    _ ≤ q ^ i * ‖initial - target‖ + tau * (1 / (1 - q)) := by
+      exact add_le_add (le_refl _) (mul_le_mul_of_nonneg_left hGeom hTau)
+    _ = q ^ i * ‖initial - target‖ + tau / (1 - q) := by ring
 
 /-- `0 ≤ q < 1` 的沿轨迹收缩推出对给定目标的收敛。 -/
 theorem gaussNewtonIterate_tendsto (p : NonlinearProblem n m)

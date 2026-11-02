@@ -56,6 +56,25 @@ $$
 `LipschitzOnWith`。停止误差估计由三角不等式得到，与 Mathlib
 `Topology/MetricSpace/Contracting.lean` 的不动点距离估计一致。
 
+`ContractsTowardAlongWithFloor` 允许每步存在统一的加性误差底 $\tau$：
+
+$$
+\|x_{i+1}-x_\star\|_\infty
+\leq q\|x_i-x_\star\|_\infty+\tau.
+$$
+
+`gaussNewtonIterate_error_le_with_floor` 给出有限步界
+
+$$
+\|x_i-x_\star\|_\infty
+\leq q^i\|x_0-x_\star\|_\infty
+ +\tau\sum_{j<i}q^j.
+$$
+
+当 $0\leq q<1$ 且 $\tau\geq0$ 时，`gaussNewtonIterate_error_le_with_floor_bound`
+进一步给出 $q^i\|x_0-x_\star\|_\infty+\tau/(1-q)$。该误差底表示离散化、目标残差或
+其他加性误差不会被收缩迭代自动消除。
+
 ## 局部缺陷契约
 
 `normalDefect p x target k` 定义正规方程右端与目标位移的差：

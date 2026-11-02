@@ -25,6 +25,26 @@ private lemma firstLayer_valid : firstLayer.Valid := by
 private lemma secondLayer_valid : secondLayer.Valid := by
   constructor <;> norm_num [secondLayer]
 
+private def invalidTransmissivityLayer : Layer :=
+  { transmissivity := -1
+    source := 0 }
+
+private def invalidSourceLayer : Layer :=
+  { transmissivity := 1 / 2
+    source := -1 }
+
+/-- 透过率小于零的层不能满足有效性假设。 -/
+example : ¬ invalidTransmissivityLayer.Valid := by
+  intro h
+  have hNonneg := h.transmissivity_nonneg
+  norm_num [invalidTransmissivityLayer] at hNonneg
+
+/-- 负源项的层不能满足有效性假设。 -/
+example : ¬ invalidSourceLayer.Valid := by
+  intro h
+  have hNonneg := h.source_nonneg
+  norm_num [invalidSourceLayer] at hNonneg
+
 /-- 单层递推的精确数值例子。 -/
 example : firstLayer.propagate 2 = 3 := by
   norm_num [Layer.propagate, firstLayer]
