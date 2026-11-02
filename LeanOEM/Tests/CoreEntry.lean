@@ -58,6 +58,17 @@ example {n m : ℕ} (p : Problem n m) (f : p.PriorFactor) :
   f.whitenedAveragingKernel_rank_le
 
 example {n m : ℕ} (p : Problem n m) (f : p.PriorFactor)
+    (hObservation : p.observationErrorCovariance.PosDef) :
+    f.whitenedAveragingKernel.rank = p.jacobian.rank :=
+  f.whitenedAveragingKernel_rank_eq hObservation
+
+example {n m : ℕ} (p : Problem n m) (f : p.PriorFactor)
+    (hObservation : p.observationErrorCovariance.PosDef) (v : State n) :
+    f.whitenedAveragingKernel.mulVec v = 0 ↔
+      p.jacobian.mulVec (f.matrix.mulVec v) = 0 :=
+  f.whitenedAveragingKernel_mulVec_eq_zero_iff_jacobian hObservation v
+
+example {n m : ℕ} (p : Problem n m) (f : p.PriorFactor)
     (hObservation : p.observationErrorCovariance.PosDef)
     (hObservable : Observable p.jacobian) (i : Fin n) :
     0 < f.eigenvalues hObservation i :=

@@ -47,6 +47,11 @@ $$
 `eigenvalues_pos_of_observable` 给出白化矩阵的严格正特征值。任意 Jacobian 下，
 `whitenedAveragingKernel_rank_le` 给出白化矩阵秩不超过 Jacobian 秩；这为零特征值和
 可辨识性连接保留了明确入口。
+在观测误差正定时，`whitenedAveragingKernel_rank_eq` 使用观测协方差平方根恢复等式
+`rank B = rank K`；因此白化矩阵的非零特征值数量正好受 Jacobian 秩控制。
+`whitenedAveragingKernel_mulVec_eq_zero_iff` 先把 $Bv=0$ 化为 $(KL)v=0$，
+`whitenedAveragingKernel_mulVec_eq_zero_iff_jacobian` 再显式写成
+$K(Lv)=0$，因此零特征值的证明已经降到 Jacobian 核问题。
 
 通过 `import LeanOEM.Core` 可以直接使用：
 
@@ -87,5 +92,5 @@ $$
 
 当前高层接口要求正定先验；奇异半正定先验需要另一种坐标或子空间接口。
 虽然内部已经证明 $I-B$ 正定，公开的逐特征值界暂为闭区间 $[0,1]$。
-严格上界、零特征值与不可观测核的双向等价、DOFS 的精确秩计数以及谱半径接口仍待后续工作。
+严格上界、零特征值与不可观测核的双向等价、DOFS 的精确秩求和界以及谱半径接口仍待后续工作。
 矩阵平方根是精确实数构造，本模块没有承诺浮点 Cholesky 或特征值算法的数值稳定性。

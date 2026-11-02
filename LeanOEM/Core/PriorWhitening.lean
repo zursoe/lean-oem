@@ -19,6 +19,8 @@ namespace LeanOEM
 
 noncomputable section
 
+open scoped MatrixOrder
+
 /-- 先验协方差的可逆因子；允许平方根、Cholesky 等满足同一恒等式的因子。 -/
 structure Problem.PriorFactor {n m : ℕ} (p : Problem n m) where
   matrix : Square n
@@ -85,6 +87,40 @@ theorem whitenedAveragingKernel_posSemidef (f : p.PriorFactor)
     f.whitenedAveragingKernel.PosSemidef := by
   exact (innovationCovariance_inv_posDef p f.prior_posSemidef hObservation).posSemidef
     |>.conjTranspose_mul_mul_same (p.jacobian * f.matrix)
+
+/-- 白化 averaging kernel 的核等于白化 Jacobian 的核。 -/
+theorem whitenedAveragingKernel_mulVec_eq_zero_iff (f : p.PriorFactor)
+    (hObservation : p.observationErrorCovariance.PosDef) (v : State n) :
+    f.whitenedAveragingKernel.mulVec v = 0 ↔
+      (p.jacobian * f.matrix).mulVec v = 0 := by
+  let c : Matrix (Fin m) (Fin n) ℝ := p.jacobian * f.matrix
+  let w : Square m := p.innovationCovariance⁻¹
+  have hw : w.PosDef := innovationCovariance_inv_posDef p f.prior_posSemidef hObservation
+  have hKernel : (c.conjTranspose * w * c).mulVec v = 0 ↔ c.mulVec v = 0 := by
+    constructor
+    · intro hB
+      by_contra hCv
+      have hPos := hw.dotProduct_mulVec_pos hCv
+      have hEq : star (c.mulVec v) ⬝ᵥ (w.mulVec (c.mulVec v)) =
+          star v ⬝ᵥ ((c.conjTranspose * w * c).mulVec v) := by
+        simp only [Matrix.mulVec_mulVec, Matrix.star_mulVec, Matrix.dotProduct_mulVec,
+          Matrix.vecMul_vecMul]
+        simp [Matrix.mul_assoc, dotProduct_comm]
+      rw [hB] at hEq
+      have hEq' : star (c.mulVec v) ⬝ᵥ (w.mulVec (c.mulVec v)) = 0 := by
+        simpa [← Matrix.mulVec_mulVec] using hEq
+      exact (ne_of_gt hPos) hEq'
+    · intro hCv
+      simp [← Matrix.mulVec_mulVec, hCv]
+  simpa [whitenedAveragingKernel, c, w] using hKernel
+
+/-- 白化 averaging kernel 的核可写回原 Jacobian 的白化坐标核。 -/
+theorem whitenedAveragingKernel_mulVec_eq_zero_iff_jacobian (f : p.PriorFactor)
+    (hObservation : p.observationErrorCovariance.PosDef) (v : State n) :
+    f.whitenedAveragingKernel.mulVec v = 0 ↔
+      p.jacobian.mulVec (f.matrix.mulVec v) = 0 := by
+  simpa [Matrix.mulVec_mulVec] using
+    f.whitenedAveragingKernel_mulVec_eq_zero_iff hObservation v
 
 /-- 可观测 Jacobian 下，白化 averaging kernel 正定，因而所有特征值严格为正。 -/
 theorem whitenedAveragingKernel_posDef_of_observable (f : p.PriorFactor)
@@ -160,6 +196,38 @@ theorem whitenedAveragingKernel_rank_le (f : p.PriorFactor) :
     dsimp [c]
     exact Matrix.rank_mul_le_left _ _
   exact hRank.trans hC
+
+/-- 观测误差正定时，白化 averaging kernel 的秩恰好等于 Jacobian 的秩。 -/
+theorem whitenedAveragingKernel_rank_eq (f : p.PriorFactor)
+    (hObservation : p.observationErrorCovariance.PosDef) :
+    f.whitenedAveragingKernel.rank = p.jacobian.rank := by
+  let c : Matrix (Fin m) (Fin n) ℝ := p.jacobian * f.matrix
+  let d : Square m := CFC.sqrt p.innovationCovariance⁻¹
+  have hInv : p.innovationCovariance⁻¹.PosDef :=
+    (innovationCovariance_posDef p f.prior_posSemidef hObservation).inv
+  have hDUnit : IsUnit d :=
+    (CFC.isUnit_sqrt_iff _ hInv.posSemidef.nonneg).mpr hInv.isUnit
+  have hDHerm : d.conjTranspose = d := by
+    have hdPos : d.PosSemidef := Matrix.nonneg_iff_posSemidef.mp (CFC.sqrt_nonneg _)
+    exact hdPos.isHermitian.eq
+  have hDSq : d * d = p.innovationCovariance⁻¹ :=
+    CFC.sqrt_mul_sqrt_self _ hInv.posSemidef.nonneg
+  have hB : f.whitenedAveragingKernel = (d * c).conjTranspose * (d * c) := by
+    unfold Problem.PriorFactor.whitenedAveragingKernel
+    dsimp [c]
+    rw [← hDSq]
+    simp only [Matrix.conjTranspose_mul, hDHerm]
+    simp [Matrix.mul_assoc]
+  calc
+    f.whitenedAveragingKernel.rank = (d * c).rank := by
+      rw [hB, Matrix.rank_conjTranspose_mul_self]
+    _ = c.rank := by
+      exact Matrix.rank_mul_eq_right_of_isUnit_det d c
+        ((Matrix.isUnit_iff_isUnit_det _).mp hDUnit)
+    _ = p.jacobian.rank := by
+      dsimp [c]
+      exact Matrix.rank_mul_eq_left_of_isUnit_det f.matrix p.jacobian
+        ((Matrix.isUnit_iff_isUnit_det _).mp f.isUnit)
 
 /-- 原 averaging kernel 的实谱恰好是白化矩阵特征值的取值集合。 -/
 theorem spectrum_eq_range_eigenvalues (f : p.PriorFactor)
