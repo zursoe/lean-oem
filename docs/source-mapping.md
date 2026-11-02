@@ -59,6 +59,10 @@
   `Matrix.charpoly_eq_of_mul_eq_mul` 保留代数重数；
 - `PriorFactor.eigenvalues_bounds`、`spectrum_eq_range_eigenvalues`、`charpoly_splits` 和
   `dofs_eq_sum_eigenvalues`：白化特征值界、原矩阵谱集合、全部根为实数及 DOFS 谱求和；
+- `PriorFactor.whitenedAveragingKernel_posDef_of_observable` 和
+  `eigenvalues_pos_of_observable`：`Observable K` 下严格正特征值；
+- `PriorFactor.whitenedAveragingKernel_rank_le`：白化矩阵秩不超过 Jacobian 秩，作为零谱与
+  可辨识性连接的上界接口；
 - `Problem.averagingKernel_spectrum_subset_Icc` 与 `averagingKernel_charpoly_splits`：
   仅以正定先验和观测误差为假设的高层入口，详见 [谱诊断规格](spectral-diagnostics.md)。
 - `posteriorCovariance`：

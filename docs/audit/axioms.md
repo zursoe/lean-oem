@@ -45,8 +45,11 @@ lake env lean LeanOEM/Tests/Axioms.lean
 - `Problem.PriorFactor.whitenedAveragingKernel_eq_conjugate`；
 - `Problem.PriorFactor.charpoly_eq`；
 - `Problem.PriorFactor.whitenedAveragingKernel_posSemidef`；
+- `Problem.PriorFactor.whitenedAveragingKernel_posDef_of_observable`；
 - `Problem.PriorFactor.one_sub_whitenedAveragingKernel_posDef`；
 - `Problem.PriorFactor.eigenvalues_bounds`；
+- `Problem.PriorFactor.eigenvalues_pos_of_observable`；
+- `Problem.PriorFactor.whitenedAveragingKernel_rank_le`；
 - `Problem.PriorFactor.spectrum_eq_range_eigenvalues`；
 - `Problem.PriorFactor.charpoly_splits`；
 - `Problem.PriorFactor.dofs_eq_sum_eigenvalues`；

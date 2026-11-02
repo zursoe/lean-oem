@@ -30,8 +30,11 @@ public import LeanOEM.Physics
 #print axioms LeanOEM.Problem.PriorFactor.whitenedAveragingKernel_eq_conjugate
 #print axioms LeanOEM.Problem.PriorFactor.charpoly_eq
 #print axioms LeanOEM.Problem.PriorFactor.whitenedAveragingKernel_posSemidef
+#print axioms LeanOEM.Problem.PriorFactor.whitenedAveragingKernel_posDef_of_observable
 #print axioms LeanOEM.Problem.PriorFactor.one_sub_whitenedAveragingKernel_posDef
 #print axioms LeanOEM.Problem.PriorFactor.eigenvalues_bounds
+#print axioms LeanOEM.Problem.PriorFactor.eigenvalues_pos_of_observable
+#print axioms LeanOEM.Problem.PriorFactor.whitenedAveragingKernel_rank_le
 #print axioms LeanOEM.Problem.PriorFactor.spectrum_eq_range_eigenvalues
 #print axioms LeanOEM.Problem.PriorFactor.charpoly_splits
 #print axioms LeanOEM.Problem.PriorFactor.dofs_eq_sum_eigenvalues

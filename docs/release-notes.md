@@ -20,6 +20,7 @@
 - 通道空网格、负误差常数、零步长和有限层参数边界的合成反例；
 - 正定先验的平方根因子、白化相似变换、原 averaging kernel 的实谱 `[0,1]` 界、
   特征多项式实数分裂和 DOFS 特征值求和；
+- `Observable` 下的严格正特征值结论，以及白化 averaging kernel 的 Jacobian 秩上界；
 - `LeanOEM.Core` 稳定聚合入口和 `LeanOEM.Physics` 实验聚合入口；
 - 精确有理数交叉验证、公理审计和 GitHub Actions CI。
 

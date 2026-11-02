@@ -1,6 +1,7 @@
 module
 
 public import LeanOEM.Core.SpectralDiagnostics
+public import LeanOEM.Core.Observability
 public import Mathlib.LinearAlgebra.Matrix.Charpoly.Eigs
 
 /-!
@@ -85,6 +86,21 @@ theorem whitenedAveragingKernel_posSemidef (f : p.PriorFactor)
   exact (innovationCovariance_inv_posDef p f.prior_posSemidef hObservation).posSemidef
     |>.conjTranspose_mul_mul_same (p.jacobian * f.matrix)
 
+/-- 可观测 Jacobian 下，白化 averaging kernel 正定，因而所有特征值严格为正。 -/
+theorem whitenedAveragingKernel_posDef_of_observable (f : p.PriorFactor)
+    (hObservation : p.observationErrorCovariance.PosDef)
+    (hObservable : Observable p.jacobian) :
+    f.whitenedAveragingKernel.PosDef := by
+  apply Matrix.PosDef.conjTranspose_mul_mul_same
+    (innovationCovariance_inv_posDef p f.prior_posSemidef hObservation)
+  intro x y hxy
+  have hFactor : Function.Injective f.matrix.mulVec :=
+    Matrix.mulVec_injective_of_isUnit f.isUnit
+  have hJacobian : p.jacobian.mulVec (f.matrix.mulVec x) =
+      p.jacobian.mulVec (f.matrix.mulVec y) := by
+    simpa [Matrix.mulVec_mulVec] using hxy
+  exact hFactor (hObservable hJacobian)
+
 /-- 使用单位先验的坐标问题，仅用于复用已有后验协方差定理。 -/
 private def coordinateProblem (f : p.PriorFactor) : Problem n m where
   jacobian := p.jacobian * f.matrix
@@ -123,6 +139,27 @@ theorem eigenvalues_bounds (f : p.PriorFactor)
   exact eigenvalues_bounds_of_posSemidef f.whitenedAveragingKernel
     (f.whitenedAveragingKernel_posSemidef hObservation)
     (f.one_sub_whitenedAveragingKernel_posDef hObservation).posSemidef i
+
+/-- 可观测 Jacobian 下，白化 averaging kernel 的每个特征值严格为正。 -/
+theorem eigenvalues_pos_of_observable (f : p.PriorFactor)
+    (hObservation : p.observationErrorCovariance.PosDef)
+    (hObservable : Observable p.jacobian) (i : Fin n) :
+    0 < f.eigenvalues hObservation i := by
+  exact (f.whitenedAveragingKernel_posDef_of_observable hObservation hObservable).eigenvalues_pos i
+
+/-- 白化 averaging kernel 的矩阵秩不超过 Jacobian 的矩阵秩。 -/
+theorem whitenedAveragingKernel_rank_le (f : p.PriorFactor) :
+    f.whitenedAveragingKernel.rank ≤ p.jacobian.rank := by
+  let c : Matrix (Fin m) (Fin n) ℝ := p.jacobian * f.matrix
+  have hRank : f.whitenedAveragingKernel.rank ≤ c.rank := by
+    simpa [whitenedAveragingKernel, c, Matrix.mul_assoc] using
+      (Matrix.rank_mul_le_right
+        ((p.jacobian * f.matrix).conjTranspose * p.innovationCovariance⁻¹)
+        (p.jacobian * f.matrix))
+  have hC : c.rank ≤ p.jacobian.rank := by
+    dsimp [c]
+    exact Matrix.rank_mul_le_left _ _
+  exact hRank.trans hC
 
 /-- 原 averaging kernel 的实谱恰好是白化矩阵特征值的取值集合。 -/
 theorem spectrum_eq_range_eigenvalues (f : p.PriorFactor)

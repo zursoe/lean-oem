@@ -53,4 +53,14 @@ example {n m : ℕ} (p : Problem n m)
   ⟨p.averagingKernel_spectrum_subset_Icc hPrior hObservation,
     p.averagingKernel_charpoly_splits hPrior hObservation⟩
 
+example {n m : ℕ} (p : Problem n m) (f : p.PriorFactor) :
+    f.whitenedAveragingKernel.rank ≤ p.jacobian.rank :=
+  f.whitenedAveragingKernel_rank_le
+
+example {n m : ℕ} (p : Problem n m) (f : p.PriorFactor)
+    (hObservation : p.observationErrorCovariance.PosDef)
+    (hObservable : Observable p.jacobian) (i : Fin n) :
+    0 < f.eigenvalues hObservation i :=
+  f.eigenvalues_pos_of_observable hObservation hObservable i
+
 end LeanOEM.Tests.CoreEntry

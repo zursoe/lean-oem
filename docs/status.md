@@ -12,6 +12,7 @@
 - 后验协方差、Joseph 形式、信息形式和确定性误差分解；
 - DOFS trace、显式矩阵序条件下的上下界和逐特征值界、正定 OEM 条件下最优增益的 `0 ≤ DOFS ≤ n` 定理和静态可辨识性接口；
 - 正定先验的平方根因子、白化相似关系、原 averaging kernel 的全部实特征值 `[0,1]` 界及 DOFS 谱求和；
+- `Observable` 下白化矩阵严格正特征值和白化矩阵秩的 Jacobian 上界；
 - Physics 中 Gaussian 线宽的正性参数包及其合成测试；
 - `ForwardModel`、Jacobian 导数契约、局部收缩和 Gauss–Newton 迭代规格；
 - 带统一加性误差底的 Gauss–Newton 轨迹有限步界和稳态误差界；
@@ -32,8 +33,8 @@
 
 ## 下一工作包
 
-下一阶段优先连接白化矩阵的零特征值、Jacobian 核与 `Observable`，然后完善 DOFS 的秩界及
-严格上界。统一误差底与具体模型契约的桥接仍为独立后续工作包。
+下一阶段优先连接白化矩阵的零特征值、Jacobian 核与 `Observable` 的双向等价，然后完善
+DOFS 的精确秩界及严格上界。统一误差底与具体模型契约的桥接仍为独立后续工作包。
 
 ## 发布状态
 

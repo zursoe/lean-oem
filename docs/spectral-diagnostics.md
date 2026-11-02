@@ -43,6 +43,11 @@ $$
    把原矩阵的实谱识别为白化特征值集合，`charpoly_splits` 保证全部根都是实数。
 5. 相似变换保持迹，`dofs_eq_sum_eigenvalues` 给出 DOFS 的谱解释。
 
+若 `Observable p.jacobian` 成立，`whitenedAveragingKernel_posDef_of_observable` 和
+`eigenvalues_pos_of_observable` 给出白化矩阵的严格正特征值。任意 Jacobian 下，
+`whitenedAveragingKernel_rank_le` 给出白化矩阵秩不超过 Jacobian 秩；这为零特征值和
+可辨识性连接保留了明确入口。
+
 通过 `import LeanOEM.Core` 可以直接使用：
 
 ```lean
@@ -82,5 +87,5 @@ $$
 
 当前高层接口要求正定先验；奇异半正定先验需要另一种坐标或子空间接口。
 虽然内部已经证明 $I-B$ 正定，公开的逐特征值界暂为闭区间 $[0,1]$。
-严格上界、零特征值与可辨识性的等价、秩计数以及谱半径接口仍待后续工作。
+严格上界、零特征值与不可观测核的双向等价、DOFS 的精确秩计数以及谱半径接口仍待后续工作。
 矩阵平方根是精确实数构造，本模块没有承诺浮点 Cholesky 或特征值算法的数值稳定性。
