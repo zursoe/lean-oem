@@ -50,6 +50,17 @@
 - `Problem.dofs_nonneg_of_posDef`、`Problem.dofs_le_dim_of_posDef` 和
   `Problem.dofs_bounds_of_posDef`：在正定先验和正定观测误差下，利用最优增益与后验协方差
   恒等式证明 $0\leq\mathrm{DOFS}\leq n$。这些是总迹界，不等同于逐特征值界。
+- `Problem.PriorFactor`：可逆先验因子 $S_a=LL^\mathsf{T}$，`ofPosDef` 使用 Mathlib
+  `CFC.sqrt`、`isUnit_sqrt_iff` 和 `sqrt_mul_sqrt_self` 从正定先验构造该因子；
+- `PriorFactor.whitenedAveragingKernel`：$B=(KL)^\mathsf{T}S^{-1}(KL)$；其半正定性和
+  $I-B$ 正定性分别来自合同变换与单位先验问题的后验正定性；
+- `PriorFactor.averagingKernel_mul_factor`、`whitenedAveragingKernel_eq_conjugate` 和
+  `charpoly_eq`：$AL=LB$、$B=L^{-1}AL$ 及特征多项式相等；复用
+  `Matrix.charpoly_eq_of_mul_eq_mul` 保留代数重数；
+- `PriorFactor.eigenvalues_bounds`、`spectrum_eq_range_eigenvalues`、`charpoly_splits` 和
+  `dofs_eq_sum_eigenvalues`：白化特征值界、原矩阵谱集合、全部根为实数及 DOFS 谱求和；
+- `Problem.averagingKernel_spectrum_subset_Icc` 与 `averagingKernel_charpoly_splits`：
+  仅以正定先验和观测误差为假设的高层入口，详见 [谱诊断规格](spectral-diagnostics.md)。
 - `posteriorCovariance`：
 
   $$
@@ -325,6 +336,6 @@ P12 第一批位于 `LeanOEM/Core/DiscretizationError.lean`：
 - 迭代误差界只在精确实数和显式收缩条件下成立；没有浮点、条件数或舍入误差保证。
 - 没有把外部工程代码、运行数据、观测数据库或具体场景输出作为 Lean 依赖。
 - 连续辐射传输方程、由光滑性导出有限差分余项界、非线性求解器阻尼及模型收缩条件仍待形式化；已有谱线、差分契约和条件迭代结果不替代这些工作。
-- 当前逐特征值的 $[0,1]$ 界、谱半径和最优增益的相似变换解释仍待形式化；已有总迹界不替代这些
-  更强的谱结论。
+- 正定 OEM 的相似变换、实谱 $[0,1]$ 界与 DOFS 谱求和已完成；奇异先验、严格上界、
+  谱半径和零特征值与可辨识性的连接仍待形式化。
 - Rodgers 的教材支持术语和公式来源，不自动支持某个现实场景中的参数、先验或误差模型。

@@ -72,3 +72,25 @@ Gaussian、Doppler、Planck 和两层状态参数的非法合成反例；完整�
 常数、零步长和有限层参数边界反例；完整构建完成 3416 个目标，公理审计和独立精确数值验证均通过。
 
 当前代码提交为 `3087b5a`。
+
+## 先验白化与最优增益谱界
+
+验证日期：2026-11-02。本批从本地提交 `edef89e` 开始，新增
+`LeanOEM.Core.PriorWhitening`、Core-only 调用测试和独立合成测试。
+
+```text
+lake build：Build completed successfully (3418 jobs).
+bash scripts/run_audit.sh --no-build：通过
+先验白化、相似变换和精确特征对的 Fraction 交叉验证：通过
+占位证明扫描与编译产物跟踪检查：通过
+git diff --check：通过
+```
+
+本批 14 项新增构造与公开定理已全部执行 `#print axioms`，输出只依赖
+`propext`、`Classical.choice` 和 `Quot.sound`。
+相关先验、秩亏观测的二维测试明确验证原 averaging kernel 非 Hermitian，
+白化矩阵对称、谱为 `{0, 2/3}`，DOFS 为 `2/3`；零 Jacobian 和空状态也已覆盖。
+完整构建未留下本批新增警告。
+
+上述构建复用当前锁定依赖和本地缓存，并非新建干净 checkout；当前候选代码的干净构建与
+独立人工语义审阅仍在发布清单中保留为未完成项。本批没有修改依赖版本或创建远端发布。

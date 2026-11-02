@@ -18,6 +18,8 @@
 - 显式矩阵序条件下的 DOFS 上下界和 Hermitian 逐特征值 `[0,1]` 界、正定先验/观测误差下最优增益的 `0 ≤ DOFS ≤ n` 定理，
   以及 Gaussian 线宽有效性接口；
 - 通道空网格、负误差常数、零步长和有限层参数边界的合成反例；
+- 正定先验的平方根因子、白化相似变换、原 averaging kernel 的实谱 `[0,1]` 界、
+  特征多项式实数分裂和 DOFS 特征值求和；
 - `LeanOEM.Core` 稳定聚合入口和 `LeanOEM.Physics` 实验聚合入口；
 - 精确有理数交叉验证、公理审计和 GitHub Actions CI。
 

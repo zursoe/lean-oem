@@ -26,7 +26,8 @@
 - [x] `scripts/validate_oem_numeric.py` 独立有理数验证成功。
 - [x] `scripts/run_audit.sh` 完整运行成功。
 - [x] 本地按 CI 顺序运行 `lake build`、`bash scripts/run_audit.sh --no-build` 和 `python3 scripts/validate_oem_numeric.py` 成功。
-- [x] 干净 checkout 重新物化依赖并完成 3166 个构建目标。
+- [x] 历史提交 `e803313` 的干净 checkout 重新物化依赖并完成 3166 个构建目标。
+- [ ] 当前候选代码重新完成干净 checkout 构建。
 
 ## 可信性和公理
 
@@ -46,4 +47,5 @@
 - [x] 线性核心实现已完成审阅并合并到 `main`；后续正演和辐射传输模块按新路线单独审阅。
 - [ ] 前向模型/Jacobian 联合误差和两状态有限层 fixture 已完成独立审阅。
 - [ ] Physics 模块的参数有效性、合成例子和形式边界已完成审阅。
+- [ ] 先验白化的因子方向、谱界假设及非对称合成例子已完成独立语义审阅。
 - [ ] 创建与发布说明一致的 Git tag 和 GitHub Release。

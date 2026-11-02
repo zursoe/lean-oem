@@ -120,18 +120,21 @@ Joseph 恒等式应先抽象成一个小型非交换矩阵代数引理，再实�
 
 ## 阶段 P4：averaging kernel、DOFS 和静态可辨识性
 
-本批次已完成第一层接口：新增 `dofs` 和 `Problem.dofs` 的 trace 定义、零增益与增益加法性质；新增 `Observable`、核为零刻画和正定权重下的加权正规矩阵定理；示例覆盖一维 DOFS、单位 Jacobian 和秩亏 Jacobian。DOFS 的 `0 ≤ A ≤ I` 矩阵序条件上下界和 Hermitian 逐特征值 `[0,1]` 界已补齐，并在正定先验/观测误差下证明最优增益的 `0 ≤ DOFS ≤ n`；最优增益的相似变换谱结构仍未自动推导。
+当前已完成 DOFS trace、加法性、总迹界和静态可辨识性接口。`SpectralDiagnostics` 提供
+Hermitian 条件谱界；`PriorWhitening` 进一步从正定先验构造平方根因子，证明最优增益
+averaging kernel 与半正定矩阵相似、其全部特征值为实数且属于 `[0,1]`，并将 DOFS
+写成特征值之和。相关先验与秩亏 Jacobian 的二维例子验证原矩阵可以不对称。
 
 后验协方差完成后再扩展诊断量。
 
 1. 将 `averagingKernel` 的最优增益特例固定为 `A = gK`，并添加 `dofs` 的定义 `Matrix.trace A`。
 2. 先证明 trace 的代数性质和示例值，再以显式 `A` 与 `I - A` 半正定假设得到
    `0 ≤ DOFS ≤ n`；当前已进一步用半正定矩阵乘积迹的谱分解证明最优增益的总 DOFS 界，
-   并对显式 Hermitian averaging kernel 完成逐特征值界；从最优增益的加权相似变换得到该条件
-   仍需后续谱理论。
+   并通过先验白化相似关系得到原最优增益的逐特征值界，详见 [谱诊断规格](spectral-diagnostics.md)。
 3. 定义静态可辨识性，例如 `Observable K := Function.Injective K.mulVec`，与“某个具体先验下的后验不确定性”分开。
 4. 先证明 `Kᴴ * S * K` 在 `S` 正定且 `K` 满列秩时正定，再考虑矩阵秩的等价刻画。
-5. `Matrix.rank`、谱分解、最优增益的逐特征值 DOFS 界和信息形式属于独立模块，避免把复杂谱理论塞进最小 API。
+5. 谱诊断分别位于 `SpectralDiagnostics` 和 `PriorWhitening`，基础 `Diagnostics` 保持 trace
+   接口；下一步连接零特征值、矩阵秩与可辨识性。
 
 ## 阶段 P5：信息形式和纯数学扩展
 
@@ -358,8 +361,8 @@ P12-C-3 和 P12-C-4 已完成第一条前向模型/Jacobian 联合误差链以�
 
 1. 完善 Physics 模块的参数有效性结构，例如正频率、正温度、正线宽和速度范围；Gaussian
    线宽参数包的正性约束已完成第一条切片；
-2. 有限层、Gaussian 线宽、Doppler、Planck 和两层状态的参数非法反例已加入；后续继续补充通道响应和离散化误差反例；
-3. 将 DOFS、可辨识性和秩亏方向连接到有限维模型；
+2. 有限层、Gaussian、Doppler、Planck、通道空网格、负误差常数和零差分步长的边界反例已加入；根据新增定理继续补充具体边界；
+3. 先验白化与最优增益逐特征值界已完成；下一步连接零特征值、矩阵秩与可辨识性；
 4. 带统一加性误差底的轨迹界已完成第一条切片；后续再研究阻尼 Gauss–Newton、有限步停止和更一般的误差底契约；
 5. 为稳定 Core 与实验 Physics 入口补充外部导入示例和 API 文档。
 
@@ -377,5 +380,5 @@ P12-C-3 和 P12-C-4 已完成第一条前向模型/Jacobian 联合误差链以�
 - README、范围文档和来源映射明确写出“已证明范围”和“尚未证明范围”；
 - 干净 checkout 可以在锁定工具链和 `lake-manifest.json` 下完成构建。
 
-下一次实际编码批次继续完善纯 Lean 数学 API：研究最优增益的加权相似变换谱界，补充通道响应和
-离散化误差反例，再评估阻尼和有限步停止契约。
+下一次实际编码批次优先连接白化矩阵的零特征值、Jacobian 核与 `Observable`，再完善
+DOFS 的秩界及严格上界。统一误差底与具体模型契约的桥接仍保留为后续独立工作包。

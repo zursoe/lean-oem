@@ -94,4 +94,8 @@ $$
 矩阵序假设；`Problem.dofs_bounds_of_posDef` 则在正定先验和正定观测误差下，利用半正定矩阵
 乘积的迹非负性及后验协方差恒等式，直接证明最优增益满足 $0\leq\mathrm{DOFS}\leq n$。
 在显式矩阵序条件下，`eigenvalues_bounds_of_posSemidef` 已进一步证明每个 Hermitian 特征值落在
-`[0, 1]`；一般最优增益 averaging kernel 的相似变换、谱半径和逐特征值界仍待形式化。
+`[0, 1]`。`PriorWhitening` 通过可逆先验因子 `Sₐ = L Lᴴ` 构造 `B = L⁻¹ A L`，
+证明其半正定性和补矩阵正定性，再将谱界传回原矩阵 `A`。正定先验可用矩阵平方根自动构造
+因子，因此 `Problem.averagingKernel_spectrum_subset_Icc` 只要求先验与观测误差正定。
+特征多项式实数分裂和 DOFS 特征值求和也已证明。奇异先验、严格上界、谱半径和
+零特征值的可辨识性刻画仍待后续工作，见 [谱诊断规格](spectral-diagnostics.md)。

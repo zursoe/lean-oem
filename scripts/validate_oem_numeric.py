@@ -175,6 +175,39 @@ def rank_deficient_case() -> None:
         raise AssertionError("秩亏例子的不可观测方向不应被收缩")
 
 
+def prior_whitening_case() -> None:
+    """复算不对称 averaging kernel 的先验白化与两个精确特征对。"""
+    factor = matrix([[1, 1], [0, 1]])
+    prior = matrix([[2, 1], [1, 1]])
+    jacobian = matrix([[1, 0]])
+    observation_error = identity(1)
+    assert_matrix(multiply(factor, transpose(factor)), prior, "先验因子化")
+    innovation = add(multiply(multiply(jacobian, prior), transpose(jacobian)),
+                     observation_error)
+    gain = multiply(multiply(prior, transpose(jacobian)), inverse(innovation))
+    averaging = multiply(gain, jacobian)
+    transformed_jacobian = multiply(jacobian, factor)
+    whitened = multiply(multiply(transpose(transformed_jacobian), inverse(innovation)),
+                        transformed_jacobian)
+    assert_matrix(averaging, matrix([[F(2, 3), 0], [F(1, 3), 0]]),
+                  "原坐标 averaging kernel")
+    assert_matrix(whitened, matrix([[F(1, 3), F(1, 3)], [F(1, 3), F(1, 3)]]),
+                  "白化 averaging kernel")
+    assert_matrix(multiply(multiply(inverse(factor), averaging), factor), whitened,
+                  "白化相似变换方向")
+    if averaging == transpose(averaging):
+        raise AssertionError("反例应给出不对称的原 averaging kernel")
+    assert_matrix(whitened, transpose(whitened), "白化矩阵对称性")
+    for eigenvalue, vector in ((F(0), [F(1), F(-1)]), (F(2, 3), [F(1), F(1)])):
+        assert_vector(matrix_vector(whitened, vector),
+                      [eigenvalue * component for component in vector], "白化特征对")
+        original_vector = matrix_vector(factor, vector)
+        assert_vector(matrix_vector(averaging, original_vector),
+                      [eigenvalue * component for component in original_vector], "原坐标特征对")
+    if trace(averaging) != F(2, 3) or trace(whitened) != F(2, 3):
+        raise AssertionError("白化前后的 DOFS 必须等于两个特征值之和")
+
+
 def iteration_cases() -> None:
     """精确复算状态增量，检查刷新、冻结和零步长停滞。"""
     def update(state: Fraction, prediction: Fraction, jacobian: Fraction) -> Fraction:
@@ -417,6 +450,7 @@ def channel_step_order_case() -> None:
 def main() -> None:
     scalar_case()
     rank_deficient_case()
+    prior_whitening_case()
     iteration_cases()
     local_contraction_case()
     discretization_error_case()
@@ -426,6 +460,7 @@ def main() -> None:
     channel_step_order_case()
     print("一维精确 OEM 交叉验证：通过")
     print("秩亏二维 OEM 交叉验证：通过")
+    print("先验白化、相似变换和精确特征对交叉验证：通过")
     print("Gauss–Newton 轨迹与停滞反例交叉验证：通过")
     print("平方模型局部收缩契约交叉验证：通过")
     print("中心差分离散化误差交叉验证：通过")

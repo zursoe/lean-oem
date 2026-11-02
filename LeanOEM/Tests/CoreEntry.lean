@@ -44,4 +44,13 @@ example {n : ℕ} (A : Square n) (hA : A.PosSemidef)
     0 ≤ hA.isHermitian.eigenvalues i ∧ hA.isHermitian.eigenvalues i ≤ 1 := by
   exact eigenvalues_bounds_of_posSemidef A hA hComplement i
 
+/-- 核心入口同时提供原 averaging kernel 的谱界和实数分裂结论。 -/
+example {n m : ℕ} (p : Problem n m)
+    (hPrior : p.priorCovariance.PosDef)
+    (hObservation : p.observationErrorCovariance.PosDef) :
+    spectrum ℝ (averagingKernel p.gain p.jacobian) ⊆ Set.Icc (0 : ℝ) 1 ∧
+      (averagingKernel p.gain p.jacobian).charpoly.Splits :=
+  ⟨p.averagingKernel_spectrum_subset_Icc hPrior hObservation,
+    p.averagingKernel_charpoly_splits hPrior hObservation⟩
+
 end LeanOEM.Tests.CoreEntry
