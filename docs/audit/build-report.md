@@ -118,3 +118,20 @@ git diff --check：通过
 代码审计基线：`f83b239`。
 
 代码审计基线：`4ad0b02`。
+
+## 奇异先验支持白化
+
+验证日期：2026-11-03。本批代码提交：`6ff28c1`。
+
+```text
+lake build：Build completed successfully (3420 jobs).
+bash scripts/run_audit.sh --no-build：通过
+python3 scripts/validate_oem_numeric.py：通过
+git diff --check：通过
+```
+
+本批新增 `LeanOEM.Core.SupportWhitening` 和对应的 Core-only 精确测试。`SupportFactor` 使用
+满列秩矩形因子表示半正定先验，在支持坐标中复用单位先验的谱证明链；新增公理审计共 17 项，
+全部只依赖 `propext`、`Classical.choice` 和 `Quot.sound`。Lean 精确例子和独立 `Fraction`
+复算覆盖 `Sₐ = diag(1,0)`、支持内可观测、支持内不可观测、ambient 不可观测以及
+`DOFS ≤ rank(Sₐ)` 边界。没有引入伪逆、外部工程依赖或自定义公理。

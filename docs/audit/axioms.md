@@ -1,8 +1,8 @@
 # 公理审计记录
 
-审计日期：2026-11-02
+审计日期：2026-11-03
 
-审计基线：最终代码提交 `44c08be`；本批新增构造和公开定理均已纳入，共检查 137 项公理输出。
+审计基线：最终代码提交 `6ff28c1`；本批新增构造和公开定理均已纳入，共检查 154 项公理输出。
 
 执行命令：
 
@@ -63,6 +63,23 @@ lake env lean LeanOEM/Tests/Axioms.lean
 - `Problem.PriorFactor.dofs_eq_sum_eigenvalues`；
 - `Problem.averagingKernel_spectrum_subset_Icc`；
 - `Problem.averagingKernel_charpoly_splits`；
+- `Problem.SupportFactor.prior_posSemidef`；
+- `Problem.SupportFactor.matrix_rank_eq_support_dim`；
+- `Problem.SupportFactor.priorCovariance_rank_eq_support_dim`；
+- `Problem.SupportFactor.whitenedAveragingKernel_posSemidef`；
+- `Problem.SupportFactor.one_sub_whitenedAveragingKernel_posDef`；
+- `Problem.SupportFactor.whitenedAveragingKernel_posDef_of_observableOnSupport`；
+- `Problem.SupportFactor.eigenvalues_bounds`；
+- `Problem.SupportFactor.eigenvalues_lt_one`；
+- `Problem.SupportFactor.eigenvalues_pos_of_observableOnSupport`；
+- `Problem.SupportFactor.whitenedAveragingKernel_zero_mem_spectrum_iff_not_observableOnSupport`；
+- `Problem.SupportFactor.whitenedAveragingKernel_rank_eq`；
+- `Problem.SupportFactor.dofs_eq_support_trace`；
+- `Problem.SupportFactor.dofs_eq_sum_eigenvalues`；
+- `Problem.SupportFactor.dofs_le_support_dim`；
+- `Problem.SupportFactor.dofs_lt_support_dim`；
+- `Problem.SupportFactor.dofs_le_support_jacobian_rank`；
+- `Problem.SupportFactor.dofs_le_priorCovariance_rank`；
 - `observable_iff_kernel_eq_zero`；
 - `weightedNormalMatrix_posDef`；
 - `informationMatrix_posDef`；
