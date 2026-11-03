@@ -67,6 +67,8 @@
   `Matrix.rank_conjTranspose_mul_self` 证明白化矩阵秩等于 Jacobian 秩；
 - `PriorFactor.dofs_le_jacobian_rank`：按非零白化特征值集合收缩求和，证明
   $\mathrm{DOFS}\leq\operatorname{rank}(K)$；
+- `PriorFactor.eigenvalues_lt_one` 与 `dofs_lt_state_dim`：正定观测误差下逐特征值严格小于
+  `1`，并在非空状态空间得到严格 DOFS 状态维数上界；
 - `PriorFactor.whitenedAveragingKernel_mulVec_eq_zero_iff` 与
   `whitenedAveragingKernel_mulVec_eq_zero_iff_jacobian`：逐向量核等价，明确记录
   $Bv=0\iff K(Lv)=0$；

@@ -37,10 +37,12 @@ public import LeanOEM.Physics
 #print axioms LeanOEM.Problem.PriorFactor.whitenedAveragingKernel_zero_mem_spectrum_iff_not_observable
 #print axioms LeanOEM.Problem.PriorFactor.one_sub_whitenedAveragingKernel_posDef
 #print axioms LeanOEM.Problem.PriorFactor.eigenvalues_bounds
+#print axioms LeanOEM.Problem.PriorFactor.eigenvalues_lt_one
 #print axioms LeanOEM.Problem.PriorFactor.eigenvalues_pos_of_observable
 #print axioms LeanOEM.Problem.PriorFactor.whitenedAveragingKernel_rank_le
 #print axioms LeanOEM.Problem.PriorFactor.whitenedAveragingKernel_rank_eq
 #print axioms LeanOEM.Problem.PriorFactor.dofs_le_jacobian_rank
+#print axioms LeanOEM.Problem.PriorFactor.dofs_lt_state_dim
 #print axioms LeanOEM.Problem.PriorFactor.spectrum_eq_range_eigenvalues
 #print axioms LeanOEM.Problem.PriorFactor.charpoly_splits
 #print axioms LeanOEM.Problem.PriorFactor.dofs_eq_sum_eigenvalues

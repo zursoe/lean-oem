@@ -36,6 +36,28 @@ theorem eigenvalues_bounds_of_posSemidef {n : Type*} [Fintype n] [DecidableEq n]
       simpa [smul_eq_mul, dotProduct_smul] using hQuad
     nlinarith
 
+/-- `I - A` 正定时，Hermitian `A` 的每个特征值严格小于 `1`。 -/
+theorem eigenvalues_lt_one_of_complement_posDef {n : Type*} [Fintype n] [DecidableEq n]
+    (A : Matrix n n ℝ) (hA : A.PosSemidef)
+    (hComplement : (1 - A).PosDef) (i : n) :
+    hA.isHermitian.eigenvalues i < 1 := by
+  let v : n → ℝ := ⇑(hA.isHermitian.eigenvectorBasis i)
+  have hv : v ≠ 0 := by
+    intro hv
+    apply hA.isHermitian.eigenvectorBasis.orthonormal.ne_zero i
+    apply (WithLp.ofLp_eq_zero 2).mp
+    simpa [v] using hv
+  have hEigen : Matrix.mulVec A v = (hA.isHermitian.eigenvalues i) • v := by
+    exact hA.isHermitian.mulVec_eigenvectorBasis i
+  have hQuad := hComplement.dotProduct_mulVec_pos hv
+  rw [Matrix.sub_mulVec, Matrix.one_mulVec, hEigen] at hQuad
+  have hNorm : 0 < dotProduct (star v) v :=
+    (Matrix.dotProduct_star_self_pos_iff).2 hv
+  have hQuad' :
+      hA.isHermitian.eigenvalues i * dotProduct (star v) v < dotProduct (star v) v := by
+    simpa [smul_eq_mul, dotProduct_smul] using hQuad
+  nlinarith
+
 /-- 两个实半正定矩阵乘积的迹非负。 -/
 theorem trace_mul_nonneg_of_posSemidef {n : Type*} [Fintype n]
     (A B : Matrix n n ℝ) (hA : A.PosSemidef) (hB : B.PosSemidef) :

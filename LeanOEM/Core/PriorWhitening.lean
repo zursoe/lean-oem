@@ -227,6 +227,14 @@ theorem eigenvalues_bounds (f : p.PriorFactor)
     (f.whitenedAveragingKernel_posSemidef hObservation)
     (f.one_sub_whitenedAveragingKernel_posDef hObservation).posSemidef i
 
+/-- 正定观测误差使最优增益的每个特征值严格小于 `1`。 -/
+theorem eigenvalues_lt_one (f : p.PriorFactor)
+    (hObservation : p.observationErrorCovariance.PosDef) (i : Fin n) :
+    f.eigenvalues hObservation i < 1 := by
+  exact eigenvalues_lt_one_of_complement_posDef f.whitenedAveragingKernel
+    (f.whitenedAveragingKernel_posSemidef hObservation)
+    (f.one_sub_whitenedAveragingKernel_posDef hObservation) i
+
 /-- 可观测 Jacobian 下，白化 averaging kernel 的每个特征值严格为正。 -/
 theorem eigenvalues_pos_of_observable (f : p.PriorFactor)
     (hObservation : p.observationErrorCovariance.PosDef)
@@ -342,6 +350,22 @@ theorem dofs_le_jacobian_rank (f : p.PriorFactor)
       rw [hRankCard]
     _ = (p.jacobian.rank : ℝ) := by
       rw [f.whitenedAveragingKernel_rank_eq hObservation]
+
+/-- 非空状态空间下，正定观测误差给出严格的状态维数上界。 -/
+theorem dofs_lt_state_dim (f : p.PriorFactor)
+    (hObservation : p.observationErrorCovariance.PosDef) (hState : 0 < n) :
+    p.dofs < (n : ℝ) := by
+  let e : Fin n → ℝ := f.eigenvalues hObservation
+  have hSum : (∑ i, e i) < (∑ i : Fin n, (1 : ℝ)) := by
+    apply Finset.sum_lt_sum
+    · intro i hi
+      exact (f.eigenvalues_lt_one hObservation i).le
+    · refine ⟨⟨0, hState⟩, Finset.mem_univ _, ?_⟩
+      exact f.eigenvalues_lt_one hObservation ⟨0, hState⟩
+  calc
+    p.dofs = ∑ i, e i := f.dofs_eq_sum_eigenvalues hObservation
+    _ < ∑ i, (1 : ℝ) := hSum
+    _ = (n : ℝ) := by simp
 
 
 end Problem.PriorFactor

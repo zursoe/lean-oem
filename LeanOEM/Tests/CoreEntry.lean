@@ -68,6 +68,11 @@ example {n m : ℕ} (p : Problem n m) (f : p.PriorFactor)
   f.dofs_le_jacobian_rank hObservation
 
 example {n m : ℕ} (p : Problem n m) (f : p.PriorFactor)
+    (hObservation : p.observationErrorCovariance.PosDef) (hState : 0 < n) :
+    p.dofs < (n : ℝ) :=
+  f.dofs_lt_state_dim hObservation hState
+
+example {n m : ℕ} (p : Problem n m) (f : p.PriorFactor)
     (hObservation : p.observationErrorCovariance.PosDef) (v : State n) :
     f.whitenedAveragingKernel.mulVec v = 0 ↔
       p.jacobian.mulVec (f.matrix.mulVec v) = 0 :=

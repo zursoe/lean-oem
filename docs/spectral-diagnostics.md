@@ -57,6 +57,8 @@ $K(Lv)=0$，因此零特征值的证明已经降到 Jacobian 核问题。
 进一步把零谱存在性与 `¬ Observable` 连接起来。
 `dofs_le_jacobian_rank` 将特征值求和界收口为
 $\mathrm{DOFS}\leq\operatorname{rank}(K)$。
+`eigenvalues_lt_one` 和 `dofs_lt_state_dim` 进一步说明非空状态空间且观测误差正定时，
+DOFS 严格小于状态维数；它们不需要 Jacobian 满秩。
 
 通过 `import LeanOEM.Core` 可以直接使用：
 
