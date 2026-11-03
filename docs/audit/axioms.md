@@ -2,7 +2,7 @@
 
 审计日期：2026-11-02
 
-审计基线：最终代码提交 `f83b239`；本批新增构造和公开定理均已纳入，共检查 132 项公理输出。
+审计基线：当前批次代码待收口；本批新增构造和公开定理均已纳入，共检查 135 项公理输出。
 
 执行命令：
 
@@ -51,8 +51,11 @@ lake env lean LeanOEM/Tests/Axioms.lean
 - `Problem.PriorFactor.eigenvalues_pos_of_observable`；
 - `Problem.PriorFactor.whitenedAveragingKernel_rank_le`；
 - `Problem.PriorFactor.whitenedAveragingKernel_rank_eq`；
+- `Problem.PriorFactor.dofs_le_jacobian_rank`；
 - `Problem.PriorFactor.whitenedAveragingKernel_mulVec_eq_zero_iff`；
 - `Problem.PriorFactor.whitenedAveragingKernel_mulVec_eq_zero_iff_jacobian`；
+- `Problem.PriorFactor.whitenedAveragingKernel_mulVec_injective_iff_observable`；
+- `Problem.PriorFactor.whitenedAveragingKernel_zero_mem_spectrum_iff_not_observable`；
 - `Problem.PriorFactor.spectrum_eq_range_eigenvalues`；
 - `Problem.PriorFactor.charpoly_splits`；
 - `Problem.PriorFactor.dofs_eq_sum_eigenvalues`；

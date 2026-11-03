@@ -65,9 +65,13 @@
   可辨识性连接的上界接口；
 - `PriorFactor.whitenedAveragingKernel_rank_eq`：观测误差正定时使用 `CFC.sqrt S⁻¹` 和
   `Matrix.rank_conjTranspose_mul_self` 证明白化矩阵秩等于 Jacobian 秩；
+- `PriorFactor.dofs_le_jacobian_rank`：按非零白化特征值集合收缩求和，证明
+  $\mathrm{DOFS}\leq\operatorname{rank}(K)$；
 - `PriorFactor.whitenedAveragingKernel_mulVec_eq_zero_iff` 与
   `whitenedAveragingKernel_mulVec_eq_zero_iff_jacobian`：逐向量核等价，明确记录
   $Bv=0\iff K(Lv)=0$；
+- `PriorFactor.whitenedAveragingKernel_mulVec_injective_iff_observable` 与
+  `whitenedAveragingKernel_zero_mem_spectrum_iff_not_observable`：可辨识性双向等价和零谱命题；
 - `Problem.averagingKernel_spectrum_subset_Icc` 与 `averagingKernel_charpoly_splits`：
   仅以正定先验和观测误差为假设的高层入口，详见 [谱诊断规格](spectral-diagnostics.md)。
 - `posteriorCovariance`：

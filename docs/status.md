@@ -15,6 +15,7 @@
 - `Observable` 下白化矩阵严格正特征值和白化矩阵秩的 Jacobian 上界；
 - 观测误差正定时白化矩阵秩等于 Jacobian 秩；
 - 白化 averaging kernel 的逐向量核等价已连接到 `K (L v) = 0`；
+- 白化矩阵的可辨识性与 `Observable` 等价，零谱存在性与 `¬ Observable` 等价；
 - Physics 中 Gaussian 线宽的正性参数包及其合成测试；
 - `ForwardModel`、Jacobian 导数契约、局部收缩和 Gauss–Newton 迭代规格；
 - 带统一加性误差底的 Gauss–Newton 轨迹有限步界和稳态误差界；
@@ -35,8 +36,8 @@
 
 ## 下一工作包
 
-下一阶段优先把白化矩阵的零特征值与 `Observable` 的反例方向做成双向谱命题，然后完善
-DOFS 的精确秩求和界及严格上界。统一误差底与具体模型契约的桥接仍为独立后续工作包。
+下一阶段优先处理 DOFS 严格上界和奇异先验子空间白化。统一误差底与具体模型契约的桥接
+仍为独立后续工作包。
 
 ## 发布状态
 

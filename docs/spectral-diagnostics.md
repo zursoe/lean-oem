@@ -52,6 +52,11 @@ $$
 `whitenedAveragingKernel_mulVec_eq_zero_iff` 先把 $Bv=0$ 化为 $(KL)v=0$，
 `whitenedAveragingKernel_mulVec_eq_zero_iff_jacobian` 再显式写成
 $K(Lv)=0$，因此零特征值的证明已经降到 Jacobian 核问题。
+`whitenedAveragingKernel_mulVec_injective_iff_observable` 证明白化矩阵的线性映射可辨识性
+与原 Jacobian 的 `Observable` 等价；`whitenedAveragingKernel_zero_mem_spectrum_iff_not_observable`
+进一步把零谱存在性与 `¬ Observable` 连接起来。
+`dofs_le_jacobian_rank` 将特征值求和界收口为
+$\mathrm{DOFS}\leq\operatorname{rank}(K)$。
 
 通过 `import LeanOEM.Core` 可以直接使用：
 
@@ -92,5 +97,5 @@ $$
 
 当前高层接口要求正定先验；奇异半正定先验需要另一种坐标或子空间接口。
 虽然内部已经证明 $I-B$ 正定，公开的逐特征值界暂为闭区间 $[0,1]$。
-严格上界、零特征值与不可观测核的双向等价、DOFS 的精确秩求和界以及谱半径接口仍待后续工作。
+严格上界、DOFS 的精确秩求和界以及谱半径接口仍待后续工作。
 矩阵平方根是精确实数构造，本模块没有承诺浮点 Cholesky 或特征值算法的数值稳定性。

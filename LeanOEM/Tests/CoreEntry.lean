@@ -63,10 +63,25 @@ example {n m : ℕ} (p : Problem n m) (f : p.PriorFactor)
   f.whitenedAveragingKernel_rank_eq hObservation
 
 example {n m : ℕ} (p : Problem n m) (f : p.PriorFactor)
+    (hObservation : p.observationErrorCovariance.PosDef) :
+    p.dofs ≤ (p.jacobian.rank : ℝ) :=
+  f.dofs_le_jacobian_rank hObservation
+
+example {n m : ℕ} (p : Problem n m) (f : p.PriorFactor)
     (hObservation : p.observationErrorCovariance.PosDef) (v : State n) :
     f.whitenedAveragingKernel.mulVec v = 0 ↔
       p.jacobian.mulVec (f.matrix.mulVec v) = 0 :=
   f.whitenedAveragingKernel_mulVec_eq_zero_iff_jacobian hObservation v
+
+example {n m : ℕ} (p : Problem n m) (f : p.PriorFactor)
+    (hObservation : p.observationErrorCovariance.PosDef) :
+    Function.Injective f.whitenedAveragingKernel.mulVec ↔ Observable p.jacobian :=
+  f.whitenedAveragingKernel_mulVec_injective_iff_observable hObservation
+
+example {n m : ℕ} (p : Problem n m) (f : p.PriorFactor)
+    (hObservation : p.observationErrorCovariance.PosDef) :
+    (0 : ℝ) ∈ spectrum ℝ f.whitenedAveragingKernel ↔ ¬ Observable p.jacobian :=
+  f.whitenedAveragingKernel_zero_mem_spectrum_iff_not_observable hObservation
 
 example {n m : ℕ} (p : Problem n m) (f : p.PriorFactor)
     (hObservation : p.observationErrorCovariance.PosDef)

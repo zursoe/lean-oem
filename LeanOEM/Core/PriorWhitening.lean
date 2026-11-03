@@ -19,7 +19,7 @@ namespace LeanOEM
 
 noncomputable section
 
-open scoped MatrixOrder
+open scoped MatrixOrder BigOperators
 
 /-- 先验协方差的可逆因子；允许平方根、Cholesky 等满足同一恒等式的因子。 -/
 structure Problem.PriorFactor {n m : ℕ} (p : Problem n m) where
@@ -136,6 +136,57 @@ theorem whitenedAveragingKernel_posDef_of_observable (f : p.PriorFactor)
       p.jacobian.mulVec (f.matrix.mulVec y) := by
     simpa [Matrix.mulVec_mulVec] using hxy
   exact hFactor (hObservable hJacobian)
+
+/-- 白化 averaging kernel 的线性映射可辨识性等价于原 Jacobian 可观测。 -/
+theorem whitenedAveragingKernel_mulVec_injective_iff_observable (f : p.PriorFactor)
+    (hObservation : p.observationErrorCovariance.PosDef) :
+    Function.Injective f.whitenedAveragingKernel.mulVec ↔ Observable p.jacobian := by
+  have hFactor : Function.Bijective f.matrix.mulVec := by
+    refine ⟨Matrix.mulVec_injective_of_isUnit f.isUnit, ?_⟩
+    exact (Matrix.mulVec_surjective_iff_isUnit).2 f.isUnit
+  constructor
+  · intro hB x y hxy
+    rcases hFactor.2 x with ⟨vx, hvx⟩
+    rcases hFactor.2 y with ⟨vy, hvy⟩
+    have hBxy : f.whitenedAveragingKernel.mulVec vx =
+        f.whitenedAveragingKernel.mulVec vy := by
+      have hZero : f.whitenedAveragingKernel.mulVec (vx - vy) = 0 := by
+        apply (f.whitenedAveragingKernel_mulVec_eq_zero_iff_jacobian hObservation
+          (vx - vy)).2
+        have hKDiff : p.jacobian.mulVec
+            (f.matrix.mulVec (vx - vy)) = 0 := by
+          calc
+            p.jacobian.mulVec (f.matrix.mulVec (vx - vy)) =
+                p.jacobian.mulVec (f.matrix.mulVec vx - f.matrix.mulVec vy) := by
+                  congr 1
+                  exact Matrix.mulVec_sub _ _ _
+            _ = p.jacobian.mulVec (x - y) := by rw [hvx, hvy]
+            _ = 0 := by rw [Matrix.mulVec_sub, hxy, sub_self]
+        exact hKDiff
+      exact sub_eq_zero.mp (by simpa [Matrix.mulVec_sub] using hZero)
+    calc
+      x = f.matrix.mulVec vx := hvx.symm
+      _ = f.matrix.mulVec vy := congrArg f.matrix.mulVec (hB hBxy)
+      _ = y := hvy
+  · intro hK x y hxy
+    exact (Matrix.PosDef.mulVec_injective
+      (f.whitenedAveragingKernel_posDef_of_observable hObservation hK)) hxy
+
+/-- 白化 averaging kernel 存在零谱当且仅当原 Jacobian 不可观测。 -/
+theorem whitenedAveragingKernel_zero_mem_spectrum_iff_not_observable
+    (f : p.PriorFactor) (hObservation : p.observationErrorCovariance.PosDef) :
+    (0 : ℝ) ∈ spectrum ℝ f.whitenedAveragingKernel ↔ ¬ Observable p.jacobian := by
+  rw [spectrum.mem_iff]
+  have hNeg : IsUnit (-f.whitenedAveragingKernel) ↔
+      IsUnit f.whitenedAveragingKernel := by
+    constructor
+    · intro h
+      simpa using IsUnit.neg h
+    · exact IsUnit.neg
+  have hGoal : ¬ IsUnit (-f.whitenedAveragingKernel) ↔ ¬ Observable p.jacobian := by
+    rw [hNeg, ← Matrix.mulVec_injective_iff_isUnit,
+      f.whitenedAveragingKernel_mulVec_injective_iff_observable hObservation]
+  simpa using hGoal
 
 /-- 使用单位先验的坐标问题，仅用于复用已有后验协方差定理。 -/
 private def coordinateProblem (f : p.PriorFactor) : Problem n m where
@@ -260,6 +311,38 @@ theorem dofs_eq_sum_eigenvalues (f : p.PriorFactor)
       Matrix.one_mul]
   exact hTrace.trans
     (f.whitenedAveragingKernel_posSemidef hObservation).isHermitian.trace_eq_sum_eigenvalues
+
+/-- DOFS 不超过 Jacobian 的矩阵秩。 -/
+theorem dofs_le_jacobian_rank (f : p.PriorFactor)
+    (hObservation : p.observationErrorCovariance.PosDef) :
+    p.dofs ≤ (p.jacobian.rank : ℝ) := by
+  classical
+  let e : Fin n → ℝ := f.eigenvalues hObservation
+  let s : Finset (Fin n) := Finset.univ.filter (fun i => e i ≠ 0)
+  have hSum : (∑ i, e i) = s.sum e := by
+    symm
+    apply Finset.sum_subset (Finset.filter_subset _ _)
+    intro i hi hNot
+    by_contra hZero
+    exact hNot (Finset.mem_filter.mpr ⟨hi, hZero⟩)
+  have hBound : s.sum e ≤ (s.card : ℝ) := by
+    have hCard := Finset.sum_le_card_nsmul s e 1 (fun i hi =>
+      (f.eigenvalues_bounds hObservation i).2)
+    simpa [e, nsmul_eq_mul] using hCard
+  have hRankCard : f.whitenedAveragingKernel.rank = s.card := by
+    have hRank :=
+      (f.whitenedAveragingKernel_posSemidef hObservation).isHermitian.rank_eq_card_non_zero_eigs
+    rw [Fintype.card_subtype] at hRank
+    simpa [e, s, eigenvalues] using hRank
+  calc
+    p.dofs = ∑ i, e i := f.dofs_eq_sum_eigenvalues hObservation
+    _ = s.sum e := hSum
+    _ ≤ (s.card : ℝ) := hBound
+    _ = (f.whitenedAveragingKernel.rank : ℝ) := by
+      rw [hRankCard]
+    _ = (p.jacobian.rank : ℝ) := by
+      rw [f.whitenedAveragingKernel_rank_eq hObservation]
+
 
 end Problem.PriorFactor
 

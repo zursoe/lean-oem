@@ -33,11 +33,14 @@ public import LeanOEM.Physics
 #print axioms LeanOEM.Problem.PriorFactor.whitenedAveragingKernel_posDef_of_observable
 #print axioms LeanOEM.Problem.PriorFactor.whitenedAveragingKernel_mulVec_eq_zero_iff
 #print axioms LeanOEM.Problem.PriorFactor.whitenedAveragingKernel_mulVec_eq_zero_iff_jacobian
+#print axioms LeanOEM.Problem.PriorFactor.whitenedAveragingKernel_mulVec_injective_iff_observable
+#print axioms LeanOEM.Problem.PriorFactor.whitenedAveragingKernel_zero_mem_spectrum_iff_not_observable
 #print axioms LeanOEM.Problem.PriorFactor.one_sub_whitenedAveragingKernel_posDef
 #print axioms LeanOEM.Problem.PriorFactor.eigenvalues_bounds
 #print axioms LeanOEM.Problem.PriorFactor.eigenvalues_pos_of_observable
 #print axioms LeanOEM.Problem.PriorFactor.whitenedAveragingKernel_rank_le
 #print axioms LeanOEM.Problem.PriorFactor.whitenedAveragingKernel_rank_eq
+#print axioms LeanOEM.Problem.PriorFactor.dofs_le_jacobian_rank
 #print axioms LeanOEM.Problem.PriorFactor.spectrum_eq_range_eigenvalues
 #print axioms LeanOEM.Problem.PriorFactor.charpoly_splits
 #print axioms LeanOEM.Problem.PriorFactor.dofs_eq_sum_eigenvalues
