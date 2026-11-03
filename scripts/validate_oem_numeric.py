@@ -208,6 +208,51 @@ def prior_whitening_case() -> None:
         raise AssertionError("白化前后的 DOFS 必须等于两个特征值之和")
 
 
+def singular_prior_support_case() -> None:
+    """独立复算奇异先验的支持坐标白化和支持内不可观测边界。"""
+    factor = matrix([[1], [0]])
+    prior = matrix([[1, 0], [0, 0]])
+    jacobian = matrix([[1, 0]])
+    observation_error = identity(1)
+
+    innovation = add(multiply(multiply(jacobian, prior), transpose(jacobian)),
+                     observation_error)
+    gain = multiply(multiply(prior, transpose(jacobian)), inverse(innovation))
+    averaging = multiply(gain, jacobian)
+    support_jacobian = multiply(jacobian, factor)
+    support_whitened = multiply(
+        multiply(transpose(support_jacobian), inverse(innovation)),
+        support_jacobian,
+    )
+
+    assert_matrix(multiply(factor, transpose(factor)), prior, "奇异先验支持因子化")
+    assert_matrix(innovation, matrix([[2]]), "奇异先验创新协方差")
+    assert_matrix(gain, matrix([[F(1, 2)], [0]]), "奇异先验增益")
+    assert_matrix(averaging, matrix([[F(1, 2), 0], [0, 0]]),
+                  "奇异先验 ambient averaging kernel")
+    assert_matrix(support_jacobian, matrix([[1]]), "奇异先验支持 Jacobian")
+    assert_matrix(support_whitened, matrix([[F(1, 2)]]),
+                  "奇异先验支持白化矩阵")
+    if trace(averaging) != trace(support_whitened) or trace(averaging) != F(1, 2):
+        raise AssertionError("奇异先验 ambient 与支持 DOFS 不一致")
+
+    unobservable_jacobian = matrix([[0, 1]])
+    unobservable_innovation = add(
+        multiply(multiply(unobservable_jacobian, prior), transpose(unobservable_jacobian)),
+        observation_error,
+    )
+    unobservable_support_jacobian = multiply(unobservable_jacobian, factor)
+    unobservable_whitened = multiply(
+        multiply(transpose(unobservable_support_jacobian),
+                inverse(unobservable_innovation)),
+        unobservable_support_jacobian,
+    )
+    assert_matrix(unobservable_support_jacobian, matrix([[0]]),
+                  "奇异先验不可观测支持 Jacobian")
+    assert_matrix(unobservable_whitened, matrix([[0]]),
+                  "奇异先验不可观测支持白化矩阵")
+
+
 def iteration_cases() -> None:
     """精确复算状态增量，检查刷新、冻结和零步长停滞。"""
     def update(state: Fraction, prediction: Fraction, jacobian: Fraction) -> Fraction:
@@ -451,6 +496,7 @@ def main() -> None:
     scalar_case()
     rank_deficient_case()
     prior_whitening_case()
+    singular_prior_support_case()
     iteration_cases()
     local_contraction_case()
     discretization_error_case()
@@ -461,6 +507,7 @@ def main() -> None:
     print("一维精确 OEM 交叉验证：通过")
     print("秩亏二维 OEM 交叉验证：通过")
     print("先验白化、相似变换和精确特征对交叉验证：通过")
+    print("奇异先验支持白化和支持内不可观测边界交叉验证：通过")
     print("Gauss–Newton 轨迹与停滞反例交叉验证：通过")
     print("平方模型局部收缩契约交叉验证：通过")
     print("中心差分离散化误差交叉验证：通过")

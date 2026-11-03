@@ -122,7 +122,7 @@ Joseph 恒等式应先抽象成一个小型非交换矩阵代数引理，再实�
 
 当前已完成 DOFS trace、加法性、总迹界和静态可辨识性接口。`SpectralDiagnostics` 提供
 Hermitian 条件谱界；`PriorWhitening` 进一步从正定先验构造平方根因子，证明最优增益
-averaging kernel 与半正定矩阵相似、其全部特征值为实数且属于 `[0,1]`，并将 DOFS
+averaging kernel 与半正定矩阵相似、其全部特征值为实数且属于 `[0,1)`，并将 DOFS
 写成特征值之和。相关先验与秩亏 Jacobian 的二维例子验证原矩阵可以不对称。
 
 后验协方差完成后再扩展诊断量。
@@ -133,8 +133,8 @@ averaging kernel 与半正定矩阵相似、其全部特征值为实数且属于
    并通过先验白化相似关系得到原最优增益的逐特征值界，详见 [谱诊断规格](spectral-diagnostics.md)。
 3. 定义静态可辨识性，例如 `Observable K := Function.Injective K.mulVec`，与“某个具体先验下的后验不确定性”分开。
 4. 先证明 `Kᴴ * S * K` 在 `S` 正定且 `K` 满列秩时正定，再考虑矩阵秩的等价刻画。
-5. 谱诊断分别位于 `SpectralDiagnostics` 和 `PriorWhitening`，基础 `Diagnostics` 保持 trace
-   接口；下一步连接零特征值、矩阵秩与可辨识性。
+5. 谱诊断分别位于 `SpectralDiagnostics`、`PriorWhitening` 和 `SupportWhitening`，基础
+   `Diagnostics` 保持 trace 接口；零特征值、矩阵秩与可辨识性连接已经完成。
 
 ## 阶段 P5：信息形式和纯数学扩展
 
@@ -362,11 +362,27 @@ P12-C-3 和 P12-C-4 已完成第一条前向模型/Jacobian 联合误差链以�
 1. 完善 Physics 模块的参数有效性结构，例如正频率、正温度、正线宽和速度范围；Gaussian
    线宽参数包的正性约束已完成第一条切片；
 2. 有限层、Gaussian、Doppler、Planck、通道空网格、负误差常数和零差分步长的边界反例已加入；根据新增定理继续补充具体边界；
-3. 先验白化与最优增益逐特征值界已完成；下一步连接零特征值、矩阵秩与可辨识性；
+3. 先验白化与最优增益的逐特征值界、零谱、秩界和支持坐标白化已完成；下一步研究任意
+   半正定先验的自动支持因子构造和 `range` 子空间包装；
 4. 带统一加性误差底的轨迹界已完成第一条切片；后续再研究阻尼 Gauss–Newton、有限步停止和更一般的误差底契约；
 5. 为稳定 Core 与实验 Physics 入口补充外部导入示例和 API 文档。
 
 这些工作都保持在精确实数、显式假设和合成例子范围内，不把外部工程或真实数据作为验收内容。
+
+## 阶段 P13：奇异先验支持白化
+
+P13 第一批已完成 `LeanOEM/Core/SupportWhitening.lean`：
+
+- `Problem.SupportFactor` 用满列秩矩形因子 `Sₐ = L Lᴴ` 表示半正定先验；
+- `supportJacobian` 和支持坐标白化 averaging kernel 使用 `Fin r` 的单位先验问题；
+- 已证明支持矩阵的半正定性、补矩阵正定性、特征值 `[0,1)` 界、支持内可辨识性和零谱等价；
+- 已证明 `rank Bₛ = rank(KL)`、`DOFS = trace Bₛ`、`DOFS ≤ r`、`DOFS ≤ rank(KL)` 和
+  `DOFS ≤ rank(Sₐ)`；
+- 精确测试覆盖 `Sₐ = diag(1,0)`、支持内可观测、支持内不可观测以及 ambient 不可观测边界。
+
+本批不修改正定 `PriorFactor`，不引入 Moore–Penrose 伪逆，也不声称奇异因子下 ambient
+averaging kernel 与支持矩阵具有完整特征多项式相似关系。后续 P13 批次再研究从任意
+`PosSemidef` 矩阵自动构造支持因子、`range` 子空间包装和 ambient 非零谱关系。
 
 ## 发布门槛
 
@@ -380,5 +396,5 @@ P12-C-3 和 P12-C-4 已完成第一条前向模型/Jacobian 联合误差链以�
 - README、范围文档和来源映射明确写出“已证明范围”和“尚未证明范围”；
 - 干净 checkout 可以在锁定工具链和 `lake-manifest.json` 下完成构建。
 
-下一次实际编码批次优先处理奇异先验的子空间白化。统一误差底与具体模型契约
-的桥接仍保留为后续独立工作包。
+下一次实际编码批次优先处理半正定先验的自动支持因子构造和支持空间的坐标无关包装。
+统一误差底与具体模型契约的桥接仍保留为后续独立工作包。

@@ -13,6 +13,7 @@
 - [x] `api/linear-core` 从远端 `main` 建立，并已通过 PR #1 合并到远端主线。
 - [x] 版本说明、范围说明和来源映射已写入 `docs/`。
 - [x] 稳定 `LeanOEM.Core` 与实验 `LeanOEM.Physics` 的入口边界已由独立 `CoreEntry` 和显式 Physics 导入示例验证。
+- [x] 奇异半正定先验的 `SupportFactor` 接口保持在稳定 Core，未修改正定 `PriorFactor` 的语义。
 - [x] 当前主线已有与代码范围一致的版本说明和审计提交号（`44c08be`）。
 - [x] `.github/workflows/ci.yml` 已固定 action 提交，并覆盖构建、审计和精确数值校验。
 
@@ -22,6 +23,7 @@
 - [x] `LeanOEM.Tests.Basic` 编译成功。
 - [x] 一维精确矩阵示例编译成功。
 - [x] 秩亏 `2 × 1` 示例编译成功。
+- [x] 奇异先验支持坐标、支持内可观测/不可观测和 ambient 不可观测边界示例编译成功。
 - [x] 负定、零矩阵和非对称协方差边界编译成功。
 - [x] `scripts/validate_oem_numeric.py` 独立有理数验证成功。
 - [x] `scripts/run_audit.sh` 完整运行成功。
@@ -48,4 +50,5 @@
 - [ ] 前向模型/Jacobian 联合误差和两状态有限层 fixture 已完成独立审阅。
 - [ ] Physics 模块的参数有效性、合成例子和形式边界已完成审阅。
 - [ ] 先验白化的因子方向、谱界假设及非对称合成例子已完成独立语义审阅。
+- [ ] 奇异先验支持因子的满列秩语义、支持坐标谱界和 ambient/支持可辨识性边界已完成独立语义审阅。
 - [ ] 创建与发布说明一致的 Git tag 和 GitHub Release。

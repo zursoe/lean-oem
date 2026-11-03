@@ -3,6 +3,7 @@ module
 import LeanOEM.Tests.Basic
 import LeanOEM.Tests.CoreEntry
 import LeanOEM.Tests.PriorWhitening
+import LeanOEM.Tests.SupportWhitening
 import LeanOEM.Tests.Examples
 import LeanOEM.Tests.ForwardModel
 import LeanOEM.Tests.FiniteLayer

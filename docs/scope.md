@@ -25,6 +25,7 @@
 - 标准后验协方差、Joseph 协方差及其半正定性；
 - averaging kernel 的 DOFS trace 定义、加法性、`0 ≤ A ≤ I` 条件下的上下界和静态可辨识性；
 - 正定先验下的信息矩阵和后验逆矩阵恒等式；
+- 奇异半正定先验的矩形支持因子、支持坐标白化、支持谱界、零谱和秩界；
 - 确定性误差分解
 
   $$
@@ -90,12 +91,18 @@ $$
 
 外部边界：本库不依赖 ARTS、Python 工程、真实数据或 SCI 论文项目；这些内容属于库外使用场景。
 
-当前 DOFS 上下界有两层接口：通用定理接收 averaging kernel 半正定以及 `I - A` 半正定作为显式
-矩阵序假设；`Problem.dofs_bounds_of_posDef` 则在正定先验和正定观测误差下，利用半正定矩阵
-乘积的迹非负性及后验协方差恒等式，直接证明最优增益满足 $0\leq\mathrm{DOFS}\leq n$。
-在显式矩阵序条件下，`eigenvalues_bounds_of_posSemidef` 已进一步证明每个 Hermitian 特征值落在
-`[0, 1]`。`PriorWhitening` 通过可逆先验因子 `Sₐ = L Lᴴ` 构造 `B = L⁻¹ A L`，
-证明其半正定性和补矩阵正定性，再将谱界传回原矩阵 `A`。正定先验可用矩阵平方根自动构造
-因子，因此 `Problem.averagingKernel_spectrum_subset_Icc` 只要求先验与观测误差正定。
-特征多项式实数分裂和 DOFS 特征值求和也已证明。奇异先验、严格上界、谱半径和
-零特征值的可辨识性刻画仍待后续工作，见 [谱诊断规格](spectral-diagnostics.md)。
+当前 DOFS 上下界有三层接口：通用定理接收 averaging kernel 半正定以及 `I - A` 半正定作为显式
+矩阵序假设；`Problem.dofs_bounds_of_posDef` 在正定先验和正定观测误差下直接证明最优增益满足
+$0\leq\mathrm{DOFS}\leq n$；`Problem.SupportFactor` 则把半正定先验限制到支持坐标，证明
+$\mathrm{DOFS}\leq r$、$\mathrm{DOFS}\leq\operatorname{rank}(K L)$ 和
+$\mathrm{DOFS}\leq\operatorname{rank}(S_a)$。
+
+在显式矩阵序条件下，`eigenvalues_bounds_of_posSemidef` 证明每个 Hermitian 特征值落在 `[0, 1]`。
+`PriorWhitening` 通过可逆先验因子 `Sₐ = L Lᴴ` 构造 `B = L⁻¹ A L`，证明其半正定性、
+补矩阵正定性、严格上界、零谱刻画和 DOFS 谱求和。`SupportWhitening` 对矩形满列秩因子
+`Sₐ = L Lᴴ` 在支持坐标中复用同一证明链；它保留 `trace A = trace Bₛ`，不声称奇异因子下
+的完整 ambient 特征多项式相似关系。
+
+正定先验可用矩阵平方根自动构造因子，因此 `Problem.averagingKernel_spectrum_subset_Icc`
+只要求先验与观测误差正定。半正定先验的自动支持因子构造、`range` 子空间包装和 ambient
+非零谱关系属于后续纯数学工作，见 [奇异先验支持白化规格](singular-prior-design.md)。

@@ -76,6 +76,18 @@
   `whitenedAveragingKernel_zero_mem_spectrum_iff_not_observable`：可辨识性双向等价和零谱命题；
 - `Problem.averagingKernel_spectrum_subset_Icc` 与 `averagingKernel_charpoly_splits`：
   仅以正定先验和观测误差为假设的高层入口，详见 [谱诊断规格](spectral-diagnostics.md)。
+- `Problem.SupportFactor`：用满列秩矩形因子 `Sₐ = L Lᴴ` 表示半正定先验；`supportJacobian`
+  和 `whitenedAveragingKernel` 在 `Fin r` 支持坐标中工作，不使用先验协方差的逆矩阵。
+- `SupportFactor.whitenedAveragingKernel_posSemidef`、`one_sub_whitenedAveragingKernel_posDef`
+  和 `eigenvalues_lt_one`：支持坐标白化矩阵半正定、补矩阵正定和严格特征值上界；
+- `SupportFactor.observableOnSupport`、`eigenvalues_pos_of_observableOnSupport` 和
+  `whitenedAveragingKernel_zero_mem_spectrum_iff_not_observableOnSupport`：把支持内可辨识性
+  与 ambient `Observable` 分开，刻画支持内严格正谱和零谱；
+- `SupportFactor.matrix_rank_eq_support_dim`、`priorCovariance_rank_eq_support_dim` 和
+  `whitenedAveragingKernel_rank_eq`：分别连接支持因子、先验协方差和支持白化矩阵的秩；
+- `SupportFactor.dofs_eq_support_trace`、`dofs_le_support_dim`、
+  `dofs_le_support_jacobian_rank` 和 `dofs_le_priorCovariance_rank`：证明 ambient DOFS
+  与支持白化迹相等，并给出支持维数、支持 Jacobian 秩和先验秩界。
 - `posteriorCovariance`：
 
   $$
@@ -351,6 +363,7 @@ P12 第一批位于 `LeanOEM/Core/DiscretizationError.lean`：
 - 迭代误差界只在精确实数和显式收缩条件下成立；没有浮点、条件数或舍入误差保证。
 - 没有把外部工程代码、运行数据、观测数据库或具体场景输出作为 Lean 依赖。
 - 连续辐射传输方程、由光滑性导出有限差分余项界、非线性求解器阻尼及模型收缩条件仍待形式化；已有谱线、差分契约和条件迭代结果不替代这些工作。
-- 正定 OEM 的相似变换、实谱 $[0,1]$ 界与 DOFS 谱求和已完成；奇异先验、严格上界、
-  谱半径和零特征值与可辨识性的连接仍待形式化。
+- 正定 OEM 的相似变换、实谱 $[0,1)$ 界、严格上界、零特征值、秩界与 DOFS 谱求和已完成；
+  奇异先验的支持因子第一批也已完成。任意半正定矩阵的自动支持因子构造、`range` 子空间
+  包装和 ambient 与支持谱的非可逆因子关系仍待形式化。
 - Rodgers 的教材支持术语和公式来源，不自动支持某个现实场景中的参数、先验或误差模型。

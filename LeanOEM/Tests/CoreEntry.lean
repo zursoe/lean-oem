@@ -88,6 +88,12 @@ example {n m : ℕ} (p : Problem n m) (f : p.PriorFactor)
     (0 : ℝ) ∈ spectrum ℝ f.whitenedAveragingKernel ↔ ¬ Observable p.jacobian :=
   f.whitenedAveragingKernel_zero_mem_spectrum_iff_not_observable hObservation
 
+example {n m r : ℕ} (p : Problem n m)
+    (f : @Problem.SupportFactor n m r p)
+    (hObservation : p.observationErrorCovariance.PosDef) :
+    p.dofs ≤ (p.priorCovariance.rank : ℝ) :=
+  f.dofs_le_priorCovariance_rank hObservation
+
 example {n m : ℕ} (p : Problem n m) (f : p.PriorFactor)
     (hObservation : p.observationErrorCovariance.PosDef)
     (hObservable : Observable p.jacobian) (i : Fin n) :
