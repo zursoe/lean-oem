@@ -32,6 +32,7 @@ Mathlib 的版本和提交由 `lean-toolchain`、`lakefile.toml` 与 `lake-manif
 - 正定先验的平方根因子、白化相似变换、原 averaging kernel 的实谱 `[0,1)` 界及 DOFS 特征值求和公式，见 [谱诊断规格](docs/spectral-diagnostics.md)。
 - 奇异半正定先验的矩形支持因子、支持坐标白化、严格谱界、零谱和秩/DOFS 界，见
   [奇异先验支持白化规格](docs/singular-prior-design.md)。
+- 任意半正定先验的精确平方根因子和 canonical `range` support。
 - 信息矩阵、Woodbury 后验公式和后验逆矩阵恒等式。
 - 通用 `ForwardModel`、Jacobian 导数规格、锚点线性化余项和 `Problem.predict` 连接。
 - 最小有限层无散射辐射传输递推，以及非负性、上界保持和两层组合性质。

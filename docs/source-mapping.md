@@ -78,6 +78,10 @@
   仅以正定先验和观测误差为假设的高层入口，详见 [谱诊断规格](spectral-diagnostics.md)。
 - `Problem.SupportFactor`：用满列秩矩形因子 `Sₐ = L Lᴴ` 表示半正定先验；`supportJacobian`
   和 `whitenedAveragingKernel` 在 `Fin r` 支持坐标中工作，不使用先验协方差的逆矩阵。
+- `Problem.PriorSqrtFactor.ofPosSemidef`：用 `CFC.sqrt Sₐ` 自动构造半正定先验平方根因子；
+  `PriorSqrtFactor.support` 是 `range(sqrt Sₐ)`，不要求平方根可逆；
+- `PriorSqrtFactor.support_finrank_eq_priorCovariance_rank`：证明 canonical support 维数等于
+  先验协方差矩阵秩；
 - `SupportFactor.whitenedAveragingKernel_posSemidef`、`one_sub_whitenedAveragingKernel_posDef`
   和 `eigenvalues_lt_one`：支持坐标白化矩阵半正定、补矩阵正定和严格特征值上界；
 - `SupportFactor.observableOnSupport`、`eigenvalues_pos_of_observableOnSupport` 和
@@ -364,6 +368,6 @@ P12 第一批位于 `LeanOEM/Core/DiscretizationError.lean`：
 - 没有把外部工程代码、运行数据、观测数据库或具体场景输出作为 Lean 依赖。
 - 连续辐射传输方程、由光滑性导出有限差分余项界、非线性求解器阻尼及模型收缩条件仍待形式化；已有谱线、差分契约和条件迭代结果不替代这些工作。
 - 正定 OEM 的相似变换、实谱 $[0,1)$ 界、严格上界、零特征值、秩界与 DOFS 谱求和已完成；
-  奇异先验的支持因子第一批也已完成。任意半正定矩阵的自动支持因子构造、`range` 子空间
-  包装和 ambient 与支持谱的非可逆因子关系仍待形式化。
+  奇异先验的支持因子第一批和自动平方根/range support 第一小步也已完成。从 canonical
+  support 选择有限坐标、构造矩形支持因子和 ambient 与支持谱的非可逆因子关系仍待形式化。
 - Rodgers 的教材支持术语和公式来源，不自动支持某个现实场景中的参数、先验或误差模型。

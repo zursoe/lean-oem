@@ -107,6 +107,24 @@ private lemma support_observable : singularSupportFactor.observableOnSupport := 
 
 example : singularSupportFactor.observableOnSupport := support_observable
 
+private def canonicalSqrt :
+    @Problem.PriorSqrtFactor 2 1 singularProblem :=
+  Problem.PriorSqrtFactor.ofPosSemidef singularSupportFactor.prior_posSemidef
+
+example : canonicalSqrt.matrix.PosSemidef :=
+  canonicalSqrt.matrix_posSemidef
+
+example (v : State 2) :
+    v ∈ canonicalSqrt.support ↔ ∃ x : State 2, canonicalSqrt.matrix.mulVec x = v :=
+  canonicalSqrt.mem_support_iff v
+
+example : Module.finrank ℝ canonicalSqrt.support = 1 := by
+  calc
+    Module.finrank ℝ canonicalSqrt.support = singularProblem.priorCovariance.rank :=
+      canonicalSqrt.support_finrank_eq_priorCovariance_rank
+    _ = 1 := by
+      exact singularSupportFactor.priorCovariance_rank_eq_support_dim
+
 example : ¬ Observable singularProblem.jacobian := by
   intro hObservable
   have hEqual : singularProblem.jacobian.mulVec (![0, 0] : State 2) =

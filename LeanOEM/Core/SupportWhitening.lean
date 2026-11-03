@@ -21,6 +21,58 @@ noncomputable section
 
 open scoped MatrixOrder BigOperators
 
+/-- 半正定先验的自动平方根因子。
+
+该因子允许奇异；它的 `support` 是平方根矩阵的线性映射像空间。
+矩形满列秩坐标因子仍由 `Problem.SupportFactor` 单独表示。
+-/
+structure Problem.PriorSqrtFactor {n m : ℕ} (p : Problem n m) where
+  matrix : Square n
+  matrix_posSemidef : matrix.PosSemidef
+  covariance_eq : p.priorCovariance = matrix * matrix.conjTranspose
+
+namespace Problem.PriorSqrtFactor
+
+variable {n m : ℕ} {p : Problem n m}
+
+open scoped MatrixOrder in
+/-- 用 Mathlib 的精确矩阵平方根自动构造半正定先验因子。 -/
+def ofPosSemidef (hPrior : p.priorCovariance.PosSemidef) :
+    p.PriorSqrtFactor where
+  matrix := CFC.sqrt p.priorCovariance
+  matrix_posSemidef := Matrix.nonneg_iff_posSemidef.mp (CFC.sqrt_nonneg _)
+  covariance_eq := by
+    have hSqrt : (CFC.sqrt p.priorCovariance).PosSemidef :=
+      Matrix.nonneg_iff_posSemidef.mp (CFC.sqrt_nonneg p.priorCovariance)
+    have hHermitian := hSqrt.isHermitian.eq
+    rw [hHermitian, CFC.sqrt_mul_sqrt_self _ hPrior.nonneg]
+
+/-- 平方根因子对应的 canonical support 子空间。 -/
+def support (f : p.PriorSqrtFactor) : Submodule ℝ (State n) :=
+  LinearMap.range f.matrix.mulVecLin
+
+/-- support 成员正是平方根矩阵作用得到的状态向量。 -/
+theorem mem_support_iff (f : p.PriorSqrtFactor) (v : State n) :
+    v ∈ f.support ↔ ∃ x : State n, f.matrix.mulVec x = v := by
+  rfl
+
+/-- 因子恒等式给出原先验半正定。 -/
+theorem prior_posSemidef (f : p.PriorSqrtFactor) :
+    p.priorCovariance.PosSemidef := by
+  rw [f.covariance_eq]
+  exact Matrix.posSemidef_self_mul_conjTranspose f.matrix
+
+/-- canonical support 的维数等于先验协方差的矩阵秩。 -/
+theorem support_finrank_eq_priorCovariance_rank (f : p.PriorSqrtFactor) :
+    Module.finrank ℝ f.support = p.priorCovariance.rank := by
+  calc
+    Module.finrank ℝ f.support = f.matrix.rank := by rfl
+    _ = (f.matrix * f.matrix.conjTranspose).rank :=
+      (Matrix.rank_self_mul_conjTranspose f.matrix).symm
+    _ = p.priorCovariance.rank := by rw [f.covariance_eq]
+
+end Problem.PriorSqrtFactor
+
 /-- 半正定先验的矩形支持因子。
 
 `matrix` 把 `Fin r` 的支持坐标注入完整状态空间；`covariance_eq` 将其 Gram 矩阵

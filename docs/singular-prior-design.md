@@ -1,6 +1,7 @@
 # 奇异先验支持白化规格
 
-状态：第一批接口和定理已实现，自动构造支持因子与 ambient 全空间谱关系保留为后续工作。
+状态：矩形支持因子第一批和自动平方根/range 支持第一小步已实现，坐标化支持因子与 ambient
+全空间谱关系保留为后续工作。
 
 ## 目标和边界
 
@@ -20,6 +21,15 @@ $$
 协方差，所有逆矩阵定理继续只在正定观测误差假设下使用。
 
 ## 核心 API
+
+`Problem.PriorSqrtFactor.ofPosSemidef` 对任意半正定先验自动构造精确平方根因子，并定义
+
+```text
+support = LinearMap.range (sqrt Sa).mulVecLin
+```
+
+该 canonical support 不要求平方根可逆；`support_finrank_eq_priorCovariance_rank` 证明其
+有限维维数等于先验协方差的矩阵秩。
 
 `Problem.SupportFactor` 保存：
 
@@ -48,6 +58,7 @@ $$
 - `rank Bₛ = rank Kₛ`；
 - `DOFS = trace Bₛ`，且 `DOFS ≤ r`、`DOFS ≤ rank(Kₛ)`、`DOFS ≤ rank(Sₐ)`；
 - 支持因子的矩阵秩和先验协方差秩都等于 `r`。
+- 任意半正定先验都可以自动得到平方根因子和 canonical support，且 support 维数等于 `rank(Sₐ)`。
 
 `trace A = trace Bₛ` 是本批对 ambient averaging kernel 的连接。它不依赖 `L` 可逆，
 但不等同于 `A` 与 `Bₛ` 的完整特征多项式相似关系。
@@ -69,6 +80,6 @@ $$
 
 ## 后续工作
 
-下一批再考虑从任意 `PosSemidef` 先验自动构造满列秩支持因子，或用 `Submodule.range` 包装
-支持空间。ambient averaging kernel 的非零谱与支持谱的关系也需要单独的非可逆因子定理，
-不能从当前正定 `PriorFactor` 的相似变换直接推出。
+下一批再考虑从 canonical `Submodule.range` 选择 `Fin r` 坐标并构造矩形满列秩
+`SupportFactor`。ambient averaging kernel 的非零谱与支持谱的关系也需要单独的非可逆因子
+定理，不能从当前正定 `PriorFactor` 的相似变换直接推出。

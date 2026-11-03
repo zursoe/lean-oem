@@ -26,6 +26,7 @@
 - averaging kernel 的 DOFS trace 定义、加法性、`0 ≤ A ≤ I` 条件下的上下界和静态可辨识性；
 - 正定先验下的信息矩阵和后验逆矩阵恒等式；
 - 奇异半正定先验的矩形支持因子、支持坐标白化、支持谱界、零谱和秩界；
+- 半正定先验的自动平方根因子和 `range(sqrt Sₐ)` canonical support；
 - 确定性误差分解
 
   $$
@@ -103,6 +104,7 @@ $\mathrm{DOFS}\leq\operatorname{rank}(S_a)$。
 `Sₐ = L Lᴴ` 在支持坐标中复用同一证明链；它保留 `trace A = trace Bₛ`，不声称奇异因子下
 的完整 ambient 特征多项式相似关系。
 
-正定先验可用矩阵平方根自动构造因子，因此 `Problem.averagingKernel_spectrum_subset_Icc`
-只要求先验与观测误差正定。半正定先验的自动支持因子构造、`range` 子空间包装和 ambient
-非零谱关系属于后续纯数学工作，见 [奇异先验支持白化规格](singular-prior-design.md)。
+正定先验可用矩阵平方根自动构造可逆因子，因此 `Problem.averagingKernel_spectrum_subset_Icc`
+只要求先验与观测误差正定。半正定先验现在已有自动平方根和 canonical range support；从该
+support 选择 `Fin r` 坐标、构造矩形满列秩因子以及 ambient 非零谱关系属于后续纯数学工作，
+见 [奇异先验支持白化规格](singular-prior-design.md)。

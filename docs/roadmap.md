@@ -362,8 +362,8 @@ P12-C-3 和 P12-C-4 已完成第一条前向模型/Jacobian 联合误差链以�
 1. 完善 Physics 模块的参数有效性结构，例如正频率、正温度、正线宽和速度范围；Gaussian
    线宽参数包的正性约束已完成第一条切片；
 2. 有限层、Gaussian、Doppler、Planck、通道空网格、负误差常数和零差分步长的边界反例已加入；根据新增定理继续补充具体边界；
-3. 先验白化与最优增益的逐特征值界、零谱、秩界和支持坐标白化已完成；下一步研究任意
-   半正定先验的自动支持因子构造和 `range` 子空间包装；
+3. 先验白化与最优增益的逐特征值界、零谱、秩界、支持坐标白化以及自动平方根/range support
+   已完成；下一步研究从 canonical support 选择 `Fin r` 坐标并构造矩形支持因子；
 4. 带统一加性误差底的轨迹界已完成第一条切片；后续再研究阻尼 Gauss–Newton、有限步停止和更一般的误差底契约；
 5. 为稳定 Core 与实验 Physics 入口补充外部导入示例和 API 文档。
 
@@ -374,6 +374,9 @@ P12-C-3 和 P12-C-4 已完成第一条前向模型/Jacobian 联合误差链以�
 P13 第一批已完成 `LeanOEM/Core/SupportWhitening.lean`：
 
 - `Problem.SupportFactor` 用满列秩矩形因子 `Sₐ = L Lᴴ` 表示半正定先验；
+- `Problem.PriorSqrtFactor.ofPosSemidef` 自动构造 `CFC.sqrt Sₐ`，并定义
+  `support = range(sqrt Sₐ)`；
+- `support_finrank_eq_priorCovariance_rank` 证明 canonical support 维数等于 `rank(Sₐ)`；
 - `supportJacobian` 和支持坐标白化 averaging kernel 使用 `Fin r` 的单位先验问题；
 - 已证明支持矩阵的半正定性、补矩阵正定性、特征值 `[0,1)` 界、支持内可辨识性和零谱等价；
 - 已证明 `rank Bₛ = rank(KL)`、`DOFS = trace Bₛ`、`DOFS ≤ r`、`DOFS ≤ rank(KL)` 和
@@ -381,8 +384,8 @@ P13 第一批已完成 `LeanOEM/Core/SupportWhitening.lean`：
 - 精确测试覆盖 `Sₐ = diag(1,0)`、支持内可观测、支持内不可观测以及 ambient 不可观测边界。
 
 本批不修改正定 `PriorFactor`，不引入 Moore–Penrose 伪逆，也不声称奇异因子下 ambient
-averaging kernel 与支持矩阵具有完整特征多项式相似关系。后续 P13 批次再研究从任意
-`PosSemidef` 矩阵自动构造支持因子、`range` 子空间包装和 ambient 非零谱关系。
+averaging kernel 与支持矩阵具有完整特征多项式相似关系。后续 P13 批次再研究从 canonical
+support 选择有限坐标并构造矩形支持因子，以及 ambient 非零谱关系。
 
 ## 发布门槛
 
@@ -396,5 +399,5 @@ averaging kernel 与支持矩阵具有完整特征多项式相似关系。后续
 - README、范围文档和来源映射明确写出“已证明范围”和“尚未证明范围”；
 - 干净 checkout 可以在锁定工具链和 `lake-manifest.json` 下完成构建。
 
-下一次实际编码批次优先处理半正定先验的自动支持因子构造和支持空间的坐标无关包装。
+下一次实际编码批次优先处理 canonical support 到有限坐标和矩形支持因子的转换。
 统一误差底与具体模型契约的桥接仍保留为后续独立工作包。

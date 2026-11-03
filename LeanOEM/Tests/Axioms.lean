@@ -49,6 +49,10 @@ public import LeanOEM.Physics
 #print axioms LeanOEM.Problem.averagingKernel_spectrum_subset_Icc
 #print axioms LeanOEM.Problem.averagingKernel_charpoly_splits
 #print axioms LeanOEM.Problem.SupportFactor.prior_posSemidef
+#print axioms LeanOEM.Problem.PriorSqrtFactor.ofPosSemidef
+#print axioms LeanOEM.Problem.PriorSqrtFactor.mem_support_iff
+#print axioms LeanOEM.Problem.PriorSqrtFactor.prior_posSemidef
+#print axioms LeanOEM.Problem.PriorSqrtFactor.support_finrank_eq_priorCovariance_rank
 #print axioms LeanOEM.Problem.SupportFactor.matrix_rank_eq_support_dim
 #print axioms LeanOEM.Problem.SupportFactor.priorCovariance_rank_eq_support_dim
 #print axioms LeanOEM.Problem.SupportFactor.whitenedAveragingKernel_posSemidef

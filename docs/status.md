@@ -26,6 +26,8 @@
 - `LeanOEM` 兼容根入口只导出 `LeanOEM.Core`；实验性 Physics 通过显式导入保持隔离。
 - 奇异半正定先验的 `Problem.SupportFactor` 支持因子接口；支持坐标白化、谱界、零谱、秩界和
   `DOFS ≤ rank(Sₐ)` 已完成，见 [奇异先验支持白化规格](singular-prior-design.md)。
+- `Problem.PriorSqrtFactor.ofPosSemidef` 已能自动构造半正定先验的精确平方根因子，并把
+  `range(sqrt Sₐ)` 定义为 canonical support；support 维数等于 `rank(Sₐ)`。
 
 ## 当前信任边界
 
@@ -41,8 +43,8 @@
 
 ## 下一工作包
 
-下一阶段优先处理半正定先验的自动支持因子构造、`range`/支持子空间包装和 ambient 与支持谱的
-非可逆因子关系。统一误差底与具体模型契约的桥接仍为独立后续工作包。
+下一阶段优先处理 canonical support 到 `Fin r` 坐标和矩形 `SupportFactor` 的转换，以及 ambient
+与支持谱的非可逆因子关系。统一误差底与具体模型契约的桥接仍为独立后续工作包。
 
 ## 发布状态
 
