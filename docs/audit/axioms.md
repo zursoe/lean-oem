@@ -2,7 +2,7 @@
 
 审计日期：2026-11-03
 
-审计基线：最终代码提交 `6ff28c1`；本批新增构造和公开定理均已纳入，共检查 154 项公理输出。
+审计基线：最终代码提交 `4cc7343`；本批新增构造和公开定理均已纳入，共检查 158 项公理输出。
 
 执行命令：
 
@@ -64,6 +64,10 @@ lake env lean LeanOEM/Tests/Axioms.lean
 - `Problem.averagingKernel_spectrum_subset_Icc`；
 - `Problem.averagingKernel_charpoly_splits`；
 - `Problem.SupportFactor.prior_posSemidef`；
+- `Problem.PriorSqrtFactor.ofPosSemidef`；
+- `Problem.PriorSqrtFactor.mem_support_iff`；
+- `Problem.PriorSqrtFactor.prior_posSemidef`；
+- `Problem.PriorSqrtFactor.support_finrank_eq_priorCovariance_rank`；
 - `Problem.SupportFactor.matrix_rank_eq_support_dim`；
 - `Problem.SupportFactor.priorCovariance_rank_eq_support_dim`；
 - `Problem.SupportFactor.whitenedAveragingKernel_posSemidef`；

@@ -15,7 +15,7 @@
 - [x] 稳定 `LeanOEM.Core` 与实验 `LeanOEM.Physics` 的入口边界已由独立 `CoreEntry` 和显式 Physics 导入示例验证。
 - [x] 奇异半正定先验的 `SupportFactor` 接口保持在稳定 Core，未修改正定 `PriorFactor` 的语义。
 - [x] 半正定先验的自动 `PriorSqrtFactor` 和 canonical `range` support 已加入稳定 Core。
-- [x] 当前主线已有与代码范围一致的版本说明和审计提交号（`6ff28c1`）。
+- [x] 当前主线已有与代码范围一致的版本说明和审计提交号（`4cc7343`）。
 - [x] `.github/workflows/ci.yml` 已固定 action 提交，并覆盖构建、审计和精确数值校验。
 
 ## 构建和测试

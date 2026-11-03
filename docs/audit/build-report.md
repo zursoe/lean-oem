@@ -135,3 +135,19 @@ git diff --check：通过
 全部只依赖 `propext`、`Classical.choice` 和 `Quot.sound`。Lean 精确例子和独立 `Fraction`
 复算覆盖 `Sₐ = diag(1,0)`、支持内可观测、支持内不可观测、ambient 不可观测以及
 `DOFS ≤ rank(Sₐ)` 边界。没有引入伪逆、外部工程依赖或自定义公理。
+
+## Canonical support square root
+
+验证日期：2026-11-04。本批代码提交：`4cc7343`。
+
+```text
+lake build：Build completed successfully (3420 jobs).
+bash scripts/run_audit.sh --no-build：通过
+python3 scripts/validate_oem_numeric.py：通过
+git diff --check：通过
+```
+
+本批在 `SupportWhitening` 中增加 `PriorSqrtFactor.ofPosSemidef`、平方根因子对应的
+`range` canonical support，以及 `support_finrank_eq_priorCovariance_rank`。新增 4 项公理审计，
+仍只依赖 `propext`、`Classical.choice` 和 `Quot.sound`。矩形 `SupportFactor` 保持不变；
+从 canonical support 选择有限坐标和构造满列秩矩形因子留在下一批。
