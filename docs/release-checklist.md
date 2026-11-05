@@ -19,7 +19,7 @@
   契约已加入稳定 Core。
 - [x] `PriorSqrtFactor.toSupportFactor` 已自动提供平方根支持因子的 Gram 恒等式和满列秩。
 - [x] 自动支持因子的列空间等于 canonical support。
-- [x] 当前主线已有与代码范围一致的版本说明和审计提交号（`4cc7343`）。
+- [x] 当前主线已有与代码范围一致的版本说明和审计提交号（`ac8df74`）。
 - [x] `.github/workflows/ci.yml` 已固定 action 提交，并覆盖构建、审计和精确数值校验。
 
 ## 构建和测试
