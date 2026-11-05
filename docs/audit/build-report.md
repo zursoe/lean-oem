@@ -151,3 +151,22 @@ git diff --check：通过
 `range` canonical support，以及 `support_finrank_eq_priorCovariance_rank`。新增 4 项公理审计，
 仍只依赖 `propext`、`Classical.choice` 和 `Quot.sound`。矩形 `SupportFactor` 保持不变；
 从 canonical support 选择有限坐标和构造满列秩矩形因子留在下一批。
+
+## Canonical support 坐标小批次
+
+验证日期：2026-11-05。当前工作区在未提交状态完成了支持坐标层的实现与验证：
+
+```text
+lake build LeanOEM：通过（2828 个目标）
+lake build LeanOEMTests：通过（3421 个目标）
+bash scripts/run_audit.sh --no-build：通过
+python3 scripts/validate_oem_numeric.py：通过
+git diff --check：通过
+```
+
+本批新增 `LeanOEM/Core/SupportCoordinates.lean` 和
+`LeanOEM/Tests/SupportCoordinates.lean`。坐标层在 EuclideanSpace 表示中选择正交规范
+基，再搬回既有 `State n` 表示；Lean 已检查列矩阵单射、列空间等于 canonical support、
+矩阵秩与支持维数对应关系。公理审计覆盖新增公开定理，仍只有
+`propext`、`Classical.choice` 和 `Quot.sound`。本批没有修改依赖、没有引入伪逆或自定义
+公理，也没有创建远端发布。

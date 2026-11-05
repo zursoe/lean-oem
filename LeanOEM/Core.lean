@@ -10,6 +10,7 @@ public import LeanOEM.Core.Information
 public import LeanOEM.Core.SpectralDiagnostics
 public import LeanOEM.Core.PriorWhitening
 public import LeanOEM.Core.SupportWhitening
+public import LeanOEM.Core.SupportCoordinates
 public import LeanOEM.Core.Observability
 public import LeanOEM.Core.Theorems
 public import LeanOEM.Core.ForwardModel

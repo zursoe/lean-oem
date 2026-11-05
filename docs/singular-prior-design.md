@@ -1,7 +1,7 @@
 # 奇异先验支持白化规格
 
-状态：矩形支持因子第一批和自动平方根/range 支持第一小步已实现，坐标化支持因子与 ambient
-全空间谱关系保留为后续工作。
+状态：矩形支持因子第一批、自动平方根/range support 和 canonical 坐标层已实现；自动
+矩形支持因子与 ambient 全空间谱关系保留为后续工作。
 
 ## 目标和边界
 
@@ -30,6 +30,19 @@ support = LinearMap.range (sqrt Sa).mulVecLin
 
 该 canonical support 不要求平方根可逆；`support_finrank_eq_priorCovariance_rank` 证明其
 有限维维数等于先验协方差的矩阵秩。
+
+`LeanOEM.Core.SupportCoordinates` 进一步定义：
+
+- `euclideanSupport` 是 canonical support 在 `EuclideanSpace` 中的像；
+- `euclideanSupportBasis` 使用 `stdOrthonormalBasis` 提供正交规范基；
+- `supportBasis` 将该基搬回 `State n` 的支持子空间，`supportBasisMatrix` 将其写成列矩阵；
+- `supportBasisMatrix.mulVec` 单射，且
+  `LinearMap.range supportBasisMatrix.mulVecLin = support`；
+- 坐标索引先固定为 `Fin (Module.finrank ℝ support)`，再由
+  `support_finrank_eq_priorCovariance_rank` 识别为 `Fin (rank Sₐ)` 的维数。
+
+由于核心 `State n` 保持函数空间表示，本层不为它添加与既有范数不相容的内积实例；正交
+性只在 `euclideanSupport` 中使用，矩阵 API 仍然使用原有的 `State n` 坐标。
 
 `Problem.SupportFactor` 保存：
 
@@ -80,6 +93,13 @@ $$
 
 ## 后续工作
 
-下一批再考虑从 canonical `Submodule.range` 选择 `Fin r` 坐标并构造矩形满列秩
-`SupportFactor`。ambient averaging kernel 的非零谱与支持谱的关系也需要单独的非可逆因子
-定理，不能从当前正定 `PriorFactor` 的相似变换直接推出。
+下一批考虑定义
+
+$$
+L = \sqrt{S_a}\,Q,
+$$
+
+其中 `Q` 是 `supportBasisMatrix`，并证明 `L` 满列秩、`Sₐ = L Lᴴ` 以及
+`range L = range(sqrt Sₐ)`。这一步需要显式使用 support 上的正交投影/Gram 恒等式；若证明
+暂时过重，保留当前 `PriorSqrtFactor` 与显式 `SupportFactor` 双接口。完成自动因子后，再
+用 `A = XY`、`Bₛ = YX` 的非可逆因子理论研究 ambient 与支持矩阵的非零谱关系。

@@ -383,9 +383,22 @@ P13 第一批已完成 `LeanOEM/Core/SupportWhitening.lean`：
   `DOFS ≤ rank(Sₐ)`；
 - 精确测试覆盖 `Sₐ = diag(1,0)`、支持内可观测、支持内不可观测以及 ambient 不可观测边界。
 
+P13 坐标化小批次已完成 `LeanOEM/Core/SupportCoordinates.lean`：
+
+- `stateEuclideanEquiv` 明确区分 `State n` 的函数空间代数表示和 Mathlib 的
+  `EuclideanSpace` 内积表示，避免为既有函数范数伪造不相容的 `InnerProductSpace` 实例；
+- `euclideanSupportBasis` 在 `range(sqrt Sₐ)` 的 EuclideanSpace 像中选择
+  `stdOrthonormalBasis`，再通过 `supportEuclideanEquiv` 搬回 canonical support；
+- `supportBasisMatrix` 把搬回后的基向量按列写成 `n × finrank(support)` 矩阵；
+- 已证明列矩阵 `mulVec` 单射、线性映射像等于 canonical support，矩阵秩等于 support
+  维数，并可进一步识别为 `rank(Sₐ)`；
+- `LeanOEM.Tests.SupportCoordinates` 用 `Sₐ = diag(1,0)` 的合成例子检查上述契约，测试
+  不依赖 `stdOrthonormalBasis` 的任意符号选择。
+
 本批不修改正定 `PriorFactor`，不引入 Moore–Penrose 伪逆，也不声称奇异因子下 ambient
-averaging kernel 与支持矩阵具有完整特征多项式相似关系。后续 P13 批次再研究从 canonical
-support 选择有限坐标并构造矩形支持因子，以及 ambient 非零谱关系。
+averaging kernel 与支持矩阵具有完整特征多项式相似关系。当前坐标层已经固定了从 canonical
+support 到有限坐标的内部契约，但自动 `SupportFactor` 仍需证明平方根因子在 support
+投影下的 Gram 恒等式；ambient 非零谱关系随后单独处理。
 
 ## 发布门槛
 
@@ -399,5 +412,7 @@ support 选择有限坐标并构造矩形支持因子，以及 ambient 非零谱
 - README、范围文档和来源映射明确写出“已证明范围”和“尚未证明范围”；
 - 干净 checkout 可以在锁定工具链和 `lake-manifest.json` 下完成构建。
 
-下一次实际编码批次优先处理 canonical support 到有限坐标和矩形支持因子的转换。
+下一次实际编码批次优先处理 `L = sqrt(Sₐ) · supportBasisMatrix` 的自动矩形
+`SupportFactor`：先完成投影/Gram 恒等式，再复用现有支持谱定理。若该证明需要额外的
+线性代数边界引理，先保留坐标层和显式 `SupportFactor` 双接口，不用伪逆或临时公理绕过。
 统一误差底与具体模型契约的桥接仍保留为后续独立工作包。

@@ -15,6 +15,8 @@
 - [x] 稳定 `LeanOEM.Core` 与实验 `LeanOEM.Physics` 的入口边界已由独立 `CoreEntry` 和显式 Physics 导入示例验证。
 - [x] 奇异半正定先验的 `SupportFactor` 接口保持在稳定 Core，未修改正定 `PriorFactor` 的语义。
 - [x] 半正定先验的自动 `PriorSqrtFactor` 和 canonical `range` support 已加入稳定 Core。
+- [x] canonical support 的 EuclideanSpace 正交规范基、有限坐标列矩阵及其满列秩/像空间
+  契约已加入稳定 Core。
 - [x] 当前主线已有与代码范围一致的版本说明和审计提交号（`4cc7343`）。
 - [x] `.github/workflows/ci.yml` 已固定 action 提交，并覆盖构建、审计和精确数值校验。
 
@@ -52,4 +54,5 @@
 - [ ] Physics 模块的参数有效性、合成例子和形式边界已完成审阅。
 - [ ] 先验白化的因子方向、谱界假设及非对称合成例子已完成独立语义审阅。
 - [ ] 奇异先验支持因子的满列秩语义、支持坐标谱界和 ambient/支持可辨识性边界已完成独立语义审阅。
+- [ ] canonical support 到自动矩形 `SupportFactor` 的 Gram 恒等式和满列秩构造已完成。
 - [ ] 创建与发布说明一致的 Git tag 和 GitHub Release。

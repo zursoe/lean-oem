@@ -27,6 +27,7 @@
 - 正定先验下的信息矩阵和后验逆矩阵恒等式；
 - 奇异半正定先验的矩形支持因子、支持坐标白化、支持谱界、零谱和秩界；
 - 半正定先验的自动平方根因子和 `range(sqrt Sₐ)` canonical support；
+- canonical support 的 EuclideanSpace 正交规范基和有限坐标列矩阵契约；
 - 确定性误差分解
 
   $$
@@ -106,5 +107,5 @@ $\mathrm{DOFS}\leq\operatorname{rank}(S_a)$。
 
 正定先验可用矩阵平方根自动构造可逆因子，因此 `Problem.averagingKernel_spectrum_subset_Icc`
 只要求先验与观测误差正定。半正定先验现在已有自动平方根和 canonical range support；从该
-support 选择 `Fin r` 坐标、构造矩形满列秩因子以及 ambient 非零谱关系属于后续纯数学工作，
+support 已有有限坐标列矩阵；构造自动矩形满列秩因子以及 ambient 非零谱关系属于后续纯数学工作，
 见 [奇异先验支持白化规格](singular-prior-design.md)。

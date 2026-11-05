@@ -1,6 +1,6 @@
 # 当前开发状态
 
-更新时间：2026-11-03。
+更新时间：2026-11-05。
 
 本批从本地提交 `5aef5de` 开始，完成奇异半正定先验的支持坐标白化。验证结果和代码基线以
 [构建记录](audit/build-report.md) 和 [公理记录](audit/axioms.md) 为准；本批仅作本地提交。
@@ -28,6 +28,10 @@
   `DOFS ≤ rank(Sₐ)` 已完成，见 [奇异先验支持白化规格](singular-prior-design.md)。
 - `Problem.PriorSqrtFactor.ofPosSemidef` 已能自动构造半正定先验的精确平方根因子，并把
   `range(sqrt Sₐ)` 定义为 canonical support；support 维数等于 `rank(Sₐ)`。
+- `LeanOEM.Core.SupportCoordinates` 已为 canonical support 建立可复用坐标契约：在
+  `EuclideanSpace` 表示中选择 `stdOrthonormalBasis`，再搬回既有 `State n` 代数表示；
+  得到 `supportBasisMatrix`，并证明其 `mulVec` 单射、列空间等于 canonical support，
+  以及矩阵秩和 support 维数/先验协方差秩的对应关系。
 
 ## 当前信任边界
 
@@ -43,8 +47,9 @@
 
 ## 下一工作包
 
-下一阶段优先处理 canonical support 到 `Fin r` 坐标和矩形 `SupportFactor` 的转换，以及 ambient
-与支持谱的非可逆因子关系。统一误差底与具体模型契约的桥接仍为独立后续工作包。
+下一阶段优先用 `supportBasisMatrix` 构造自动矩形 `SupportFactor`，先证明平方根因子在
+canonical support 投影下的 Gram 恒等式和满列秩，再处理 ambient 与支持谱的非可逆因子关系。
+统一误差底与具体模型契约的桥接仍为独立后续工作包。
 
 ## 发布状态
 

@@ -53,6 +53,11 @@ public import LeanOEM.Physics
 #print axioms LeanOEM.Problem.PriorSqrtFactor.mem_support_iff
 #print axioms LeanOEM.Problem.PriorSqrtFactor.prior_posSemidef
 #print axioms LeanOEM.Problem.PriorSqrtFactor.support_finrank_eq_priorCovariance_rank
+#print axioms LeanOEM.Problem.PriorSqrtFactor.euclideanSupport_finrank_eq_support
+#print axioms LeanOEM.Problem.PriorSqrtFactor.supportBasisVector_linearIndependent
+#print axioms LeanOEM.Problem.PriorSqrtFactor.supportBasisMatrix_injective
+#print axioms LeanOEM.Problem.PriorSqrtFactor.supportBasisMatrix_range_eq_support
+#print axioms LeanOEM.Problem.PriorSqrtFactor.supportBasisMatrix_rank_eq_support_finrank
 #print axioms LeanOEM.Problem.SupportFactor.matrix_rank_eq_support_dim
 #print axioms LeanOEM.Problem.SupportFactor.priorCovariance_rank_eq_support_dim
 #print axioms LeanOEM.Problem.SupportFactor.whitenedAveragingKernel_posSemidef
