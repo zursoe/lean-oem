@@ -35,6 +35,8 @@ Mathlib 的版本和提交由 `lean-toolchain`、`lakefile.toml` 与 `lake-manif
 - 任意半正定先验的精确平方根因子和 canonical `range` support。
 - canonical support 的 EuclideanSpace 正交规范基、有限坐标列矩阵，以及列矩阵满列秩和
   像空间契约。
+- `PriorSqrtFactor.toSupportFactor` 自动构造平方根支持因子，并证明协方差 Gram 恒等式和
+  满列秩与列空间等于 canonical support。
 - 信息矩阵、Woodbury 后验公式和后验逆矩阵恒等式。
 - 通用 `ForwardModel`、Jacobian 导数规格、锚点线性化余项和 `Problem.predict` 连接。
 - 最小有限层无散射辐射传输递推，以及非负性、上界保持和两层组合性质。

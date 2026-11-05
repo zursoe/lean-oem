@@ -53,6 +53,12 @@ def euclideanSupportBasis (f : p.PriorSqrtFactor) :
     OrthonormalBasis (Fin (Module.finrank ℝ f.euclideanSupport)) ℝ f.euclideanSupport :=
   stdOrthonormalBasis ℝ f.euclideanSupport
 
+/-- 将 Euclidean support 基重索引到 `Fin (finrank support)`。 -/
+def reindexedEuclideanSupportBasis (f : p.PriorSqrtFactor) :
+    OrthonormalBasis (Fin (Module.finrank ℝ f.support)) ℝ f.euclideanSupport :=
+  f.euclideanSupportBasis.reindex
+    (finCongr f.euclideanSupport_finrank_eq_support)
+
 /-- 支持子空间与 EuclideanSpace 像之间的线性等价。 -/
 def supportEuclideanEquiv (f : p.PriorSqrtFactor) :
     f.support ≃ₗ[ℝ] f.euclideanSupport :=
@@ -66,14 +72,41 @@ def supportEuclideanEquiv (f : p.PriorSqrtFactor) :
 /-- canonical support 的基，已重索引为 `Fin (finrank support)`。 -/
 def supportBasis (f : p.PriorSqrtFactor) :
     Module.Basis (Fin (Module.finrank ℝ f.support)) ℝ f.support :=
-  (f.euclideanSupportBasis.reindex
-      (finCongr f.euclideanSupport_finrank_eq_support)).toBasis.map
+  f.reindexedEuclideanSupportBasis.toBasis.map
     f.supportEuclideanEquiv.symm
 
 /-- canonical support 坐标的第 `j` 个 ambient 状态向量。 -/
 def supportBasisVector (f : p.PriorSqrtFactor)
     (j : Fin (Module.finrank ℝ f.support)) : State n :=
   f.supportBasis j
+
+@[simp]
+theorem supportBasisVector_eq_coe (f : p.PriorSqrtFactor)
+    (j : Fin (Module.finrank ℝ f.support)) :
+    f.supportBasisVector j = (f.supportBasis j : State n) :=
+  rfl
+
+/-- 支持基向量搬到 EuclideanSpace 后就是重索引的正交规范基向量。 -/
+theorem stateEuclideanEquiv_supportBasisVector (f : p.PriorSqrtFactor)
+    (j : Fin (Module.finrank ℝ f.support)) :
+    stateEuclideanEquiv n (f.supportBasisVector j) =
+      (f.reindexedEuclideanSupportBasis j : EuclideanSpace ℝ (Fin n)) := by
+  change stateEuclideanEquiv n
+      (↑(f.supportEuclideanEquiv.symm (f.reindexedEuclideanSupportBasis j)) : State n) = _
+  have hMap (x : f.support) :
+      (f.supportEuclideanEquiv x : EuclideanSpace ℝ (Fin n)) =
+        stateEuclideanEquiv n (x : State n) := by
+    change stateEuclideanEquiv n (x : State n) = stateEuclideanEquiv n (x : State n)
+    rfl
+  have hInv :
+      (f.supportEuclideanEquiv (f.supportEuclideanEquiv.symm
+        (f.reindexedEuclideanSupportBasis j)) : EuclideanSpace ℝ (Fin n)) =
+        (f.reindexedEuclideanSupportBasis j : EuclideanSpace ℝ (Fin n)) :=
+    congrArg (fun z : f.euclideanSupport =>
+      (z : EuclideanSpace ℝ (Fin n)))
+    (f.supportEuclideanEquiv.apply_symm_apply (f.reindexedEuclideanSupportBasis j))
+  rw [hMap] at hInv
+  exact hInv
 
 /-- 把 canonical support 基向量按列写成矩阵。 -/
 def supportBasisMatrix (f : p.PriorSqrtFactor) :
@@ -93,12 +126,82 @@ theorem supportBasisMatrix_col (f : p.PriorSqrtFactor)
   funext i
   rfl
 
+/-- 正交规范基列矩阵的 Gram 矩阵是单位矩阵。 -/
+theorem supportBasisMatrix_conjTranspose_mul_self (f : p.PriorSqrtFactor) :
+    f.supportBasisMatrix.conjTranspose * f.supportBasisMatrix =
+      (1 : Matrix (Fin (Module.finrank ℝ f.support))
+        (Fin (Module.finrank ℝ f.support)) ℝ) := by
+  ext j k
+  have hBasis := f.reindexedEuclideanSupportBasis.inner_eq_ite k j
+  have hCoord (j : Fin (Module.finrank ℝ f.support)) (i : Fin n) :
+      f.supportBasisVector j i =
+        (f.reindexedEuclideanSupportBasis j : EuclideanSpace ℝ (Fin n)) i := by
+    have h := congrArg (fun x : EuclideanSpace ℝ (Fin n) => x i)
+      (f.stateEuclideanEquiv_supportBasisVector j)
+    simpa [stateEuclideanEquiv] using h
+  simpa [supportBasisMatrix, Matrix.mul_apply, Matrix.conjTranspose_apply,
+    hCoord, Matrix.one_apply, PiLp.inner_apply, RCLike.inner_apply', eq_comm] using hBasis
+
+/-! ## 从支持投影到 Gram 因子 -/
+
+/--
+若列矩阵 `Q` 的 Gram 矩阵为单位矩阵，且其列空间等于一个 Hermitian 矩阵 `A` 的像空间，
+则 `A Q` 的 Gram 矩阵与 `A` 的 Gram 矩阵相同。这个引理把“正交规范基张成支持”与
+后续的协方差因子恒等式分开。
+-/
+private theorem mul_basis_gram_eq_of_range_eq
+    {r : ℕ} {A : Square n} (Q : Matrix (Fin n) (Fin r) ℝ)
+    (hQ : Q.conjTranspose * Q = (1 : Square r))
+    (hRange : LinearMap.range Q.mulVecLin = LinearMap.range A.mulVecLin)
+    (hA : A.IsHermitian) :
+    (A * Q) * (A * Q).conjTranspose = A * A.conjTranspose := by
+  let P : Square n := Q * Q.conjTranspose
+  have hPA : P * A = A := by
+    ext i j
+    have hAcol : A.col j ∈ LinearMap.range A.mulVecLin := by
+      refine ⟨Pi.single j 1, ?_⟩
+      simp
+    have hQcol : A.col j ∈ LinearMap.range Q.mulVecLin := by
+      rw [hRange]
+      exact hAcol
+    rcases hQcol with ⟨x, hx⟩
+    have hx' : Q.mulVec x = A.col j := by
+      simpa only [Matrix.coe_mulVecLin] using hx
+    have hProj : P.mulVec (A.col j) = A.col j := by
+      calc
+        P.mulVec (A.col j) = P.mulVec (Q.mulVec x) := congrArg P.mulVec hx'.symm
+        _ = Q.mulVec ((Q.conjTranspose * Q).mulVec x) := by
+          rw [show P = Q * Q.conjTranspose from rfl, Matrix.mulVec_mulVec,
+            Matrix.mulVec_mulVec, Matrix.mul_assoc]
+        _ = Q.mulVec x := by rw [hQ]; simp
+        _ = A.col j := hx'
+    have hCol : (P * A).col j = A.col j := by
+      rw [Matrix.col_mul_eq_mulVec_col]
+      exact hProj
+    exact congrFun hCol i
+  have hAT : A.transpose = A := by
+    ext i j
+    have hij := congrArg (fun M : Square n => M i j) hA.eq
+    simpa [Matrix.conjTranspose, Matrix.transpose, starRingEnd_apply] using hij
+  have hP : P.transpose = P := by
+    simp [P]
+  have hAP : A * P = A := by
+    have hTranspose := congrArg Matrix.transpose hPA
+    simpa [Matrix.transpose_mul, hP, hAT] using hTranspose
+  calc
+    (A * Q) * (A * Q).conjTranspose = (A * P) * A.conjTranspose := by
+      simp [P, Matrix.mul_assoc]
+    _ = A * A.conjTranspose := by rw [hAP]
+
 /-- 基向量作为 ambient 向量族仍然线性无关。 -/
 theorem supportBasisVector_linearIndependent (f : p.PriorSqrtFactor) :
     LinearIndependent ℝ f.supportBasisVector := by
   have hSubtype : LinearIndependent ℝ f.supportBasis := f.supportBasis.linearIndependent
   have hMapped := hSubtype.map' f.support.subtype (Submodule.ker_subtype f.support)
-  change LinearIndependent ℝ (fun j => (f.supportBasis j : State n))
+  have hVec : f.supportBasisVector = fun j => (f.supportBasis j : State n) := by
+    funext j
+    rfl
+  rw [hVec]
   exact hMapped
 
 /-- 列矩阵的 `mulVec` 是单射，即 canonical 坐标确实是满列秩坐标。 -/
@@ -124,7 +227,92 @@ theorem supportBasisMatrix_range_eq_support (f : p.PriorSqrtFactor) :
     apply Submodule.sum_mem
     intro j hj
     apply Submodule.smul_mem
-    exact Submodule.subset_span ⟨j, rfl⟩
+    exact Submodule.subset_span ⟨j, by simp [supportBasisVector_eq_coe]⟩
+
+/-- canonical support 坐标与平方根因子组合后的协方差 Gram 恒等式。 -/
+theorem supportFactorMatrix_gram_eq (f : p.PriorSqrtFactor) :
+    (f.matrix * f.supportBasisMatrix) *
+        (f.matrix * f.supportBasisMatrix).conjTranspose =
+      p.priorCovariance := by
+  rw [f.covariance_eq]
+  exact mul_basis_gram_eq_of_range_eq f.supportBasisMatrix
+    f.supportBasisMatrix_conjTranspose_mul_self
+    (by simpa [support] using f.supportBasisMatrix_range_eq_support)
+    f.matrix_posSemidef.isHermitian
+
+/-- Gram 等式和先验秩等式共同推出自动支持因子的满列秩。 -/
+theorem supportFactorMatrix_injective (f : p.PriorSqrtFactor) :
+    Function.Injective
+      (f.matrix * f.supportBasisMatrix).mulVec := by
+  let L : Matrix (Fin n) (Fin (Module.finrank ℝ f.support)) ℝ :=
+    f.matrix * f.supportBasisMatrix
+  have hRangeRank :
+      Module.finrank ℝ (LinearMap.range L.mulVecLin) =
+        Module.finrank ℝ (Fin (Module.finrank ℝ f.support) → ℝ) := by
+    calc
+      Module.finrank ℝ (LinearMap.range L.mulVecLin) = L.rank := rfl
+      _ = (L * L.conjTranspose).rank :=
+        (Matrix.rank_self_mul_conjTranspose L).symm
+      _ = p.priorCovariance.rank := by
+        rw [show L = f.matrix * f.supportBasisMatrix from rfl,
+          f.supportFactorMatrix_gram_eq]
+      _ = Module.finrank ℝ f.support :=
+        f.support_finrank_eq_priorCovariance_rank.symm
+      _ = Module.finrank ℝ (Fin (Module.finrank ℝ f.support) → ℝ) := by
+        simp
+  have hNull := L.mulVecLin.finrank_range_add_finrank_ker
+  have hKerFinrank : Module.finrank ℝ (LinearMap.ker L.mulVecLin) = 0 := by
+    have hEq :
+        Module.finrank ℝ (LinearMap.range L.mulVecLin) +
+            Module.finrank ℝ (LinearMap.ker L.mulVecLin) =
+          Module.finrank ℝ (LinearMap.range L.mulVecLin) := by
+      calc
+        Module.finrank ℝ (LinearMap.range L.mulVecLin) +
+              Module.finrank ℝ (LinearMap.ker L.mulVecLin) =
+            Module.finrank ℝ (Fin (Module.finrank ℝ f.support) → ℝ) := hNull
+        _ = Module.finrank ℝ (LinearMap.range L.mulVecLin) := hRangeRank.symm
+    have hEq' :
+        Module.finrank ℝ (LinearMap.range L.mulVecLin) +
+            Module.finrank ℝ (LinearMap.ker L.mulVecLin) =
+          Module.finrank ℝ (LinearMap.range L.mulVecLin) + 0 := by
+      simpa using hEq
+    exact Nat.add_left_cancel hEq'
+  have hKer : LinearMap.ker L.mulVecLin = ⊥ :=
+    Submodule.finrank_eq_zero.mp hKerFinrank
+  have hInjective : Function.Injective L.mulVecLin :=
+    LinearMap.ker_eq_bot.mp hKer
+  simpa only [L, Matrix.coe_mulVecLin] using hInjective
+
+/-- 从 canonical support 自动构造矩形满列秩 `SupportFactor`。 -/
+def toSupportFactor (f : p.PriorSqrtFactor) :
+    @Problem.SupportFactor n m (Module.finrank ℝ f.support) p where
+  matrix := f.matrix * f.supportBasisMatrix
+  injective := f.supportFactorMatrix_injective
+  covariance_eq := f.supportFactorMatrix_gram_eq.symm
+
+@[simp]
+theorem toSupportFactor_matrix (f : p.PriorSqrtFactor) :
+    f.toSupportFactor.matrix = f.matrix * f.supportBasisMatrix :=
+  rfl
+
+theorem toSupportFactor_covariance_eq (f : p.PriorSqrtFactor) :
+    p.priorCovariance = f.toSupportFactor.matrix * f.toSupportFactor.matrix.conjTranspose :=
+  f.toSupportFactor.covariance_eq
+
+/-- 自动支持因子的列空间仍然是 canonical support。 -/
+theorem toSupportFactor_range_eq_support (f : p.PriorSqrtFactor) :
+    LinearMap.range f.toSupportFactor.matrix.mulVecLin = f.support := by
+  apply Submodule.eq_of_le_of_finrank_eq
+  · rintro v ⟨x, rfl⟩
+    change ∃ y : State n, f.matrix.mulVec y =
+      f.toSupportFactor.matrix.mulVec x
+    refine ⟨f.supportBasisMatrix.mulVec x, ?_⟩
+    simp [toSupportFactor_matrix, Matrix.mulVec_mulVec]
+  · calc
+      Module.finrank ℝ (LinearMap.range f.toSupportFactor.matrix.mulVecLin) =
+          Module.finrank ℝ (Fin (Module.finrank ℝ f.support) → ℝ) :=
+        LinearMap.finrank_range_of_inj f.toSupportFactor.injective
+      _ = Module.finrank ℝ f.support := by simp
 
 /-- 矩阵列空间的有限维数等于先验协方差的秩。 -/
 theorem supportBasisMatrix_range_finrank_eq_priorCovariance_rank

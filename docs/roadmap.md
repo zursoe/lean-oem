@@ -362,8 +362,8 @@ P12-C-3 和 P12-C-4 已完成第一条前向模型/Jacobian 联合误差链以�
 1. 完善 Physics 模块的参数有效性结构，例如正频率、正温度、正线宽和速度范围；Gaussian
    线宽参数包的正性约束已完成第一条切片；
 2. 有限层、Gaussian、Doppler、Planck、通道空网格、负误差常数和零差分步长的边界反例已加入；根据新增定理继续补充具体边界；
-3. 先验白化与最优增益的逐特征值界、零谱、秩界、支持坐标白化以及自动平方根/range support
-   已完成；下一步研究从 canonical support 选择 `Fin r` 坐标并构造矩形支持因子；
+3. 先验白化与最优增益的逐特征值界、零谱、秩界、支持坐标白化、自动平方根/range support
+   和自动矩形 `SupportFactor` 已完成；下一步研究 ambient 与支持谱的非可逆因子关系；
 4. 带统一加性误差底的轨迹界已完成第一条切片；后续再研究阻尼 Gauss–Newton、有限步停止和更一般的误差底契约；
 5. 为稳定 Core 与实验 Physics 入口补充外部导入示例和 API 文档。
 
@@ -395,10 +395,19 @@ P13 坐标化小批次已完成 `LeanOEM/Core/SupportCoordinates.lean`：
 - `LeanOEM.Tests.SupportCoordinates` 用 `Sₐ = diag(1,0)` 的合成例子检查上述契约，测试
   不依赖 `stdOrthonormalBasis` 的任意符号选择。
 
+P13 自动因子小批次继续完成：
+
+- 证明 `supportBasisMatrixᴴ * supportBasisMatrix = I`；
+- 把列空间等于 canonical support 与平方根矩阵的 Hermitian 性质结合起来，证明
+  `sqrt(Sₐ) · supportBasisMatrix` 的 Gram 矩阵等于 `Sₐ`；
+- 用矩阵秩和有限维 rank-nullity 证明该矩形因子满列秩；
+- 新增 `Problem.PriorSqrtFactor.toSupportFactor`，自动得到
+  `SupportFactor`，证明其列空间仍为 canonical support，并在 `diag(1,0)` 合成例子中检查
+  协方差、满列秩和秩值。
+
 本批不修改正定 `PriorFactor`，不引入 Moore–Penrose 伪逆，也不声称奇异因子下 ambient
-averaging kernel 与支持矩阵具有完整特征多项式相似关系。当前坐标层已经固定了从 canonical
-support 到有限坐标的内部契约，但自动 `SupportFactor` 仍需证明平方根因子在 support
-投影下的 Gram 恒等式；ambient 非零谱关系随后单独处理。
+averaging kernel 与支持矩阵具有完整特征多项式相似关系。自动因子只证明了给定平方根和
+canonical support 坐标下的协方差与满列秩契约；ambient 非零谱关系随后单独处理。
 
 ## 发布门槛
 
@@ -412,7 +421,7 @@ support 到有限坐标的内部契约，但自动 `SupportFactor` 仍需证明�
 - README、范围文档和来源映射明确写出“已证明范围”和“尚未证明范围”；
 - 干净 checkout 可以在锁定工具链和 `lake-manifest.json` 下完成构建。
 
-下一次实际编码批次优先处理 `L = sqrt(Sₐ) · supportBasisMatrix` 的自动矩形
-`SupportFactor`：先完成投影/Gram 恒等式，再复用现有支持谱定理。若该证明需要额外的
-线性代数边界引理，先保留坐标层和显式 `SupportFactor` 双接口，不用伪逆或临时公理绕过。
+下一次实际编码批次优先处理 ambient averaging kernel 与支持矩阵的非零谱关系，目标是证明
+相应的特征多项式乘幂关系；该结果不能升级为奇异情形下的完整相似变换。若需要额外的
+线性代数边界引理，继续保留自动和显式 `SupportFactor` 双接口，不用伪逆或临时公理绕过。
 统一误差底与具体模型契约的桥接仍保留为后续独立工作包。

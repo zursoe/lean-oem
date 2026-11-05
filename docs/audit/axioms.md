@@ -69,6 +69,10 @@ lake env lean LeanOEM/Tests/Axioms.lean
 - `Problem.PriorSqrtFactor.prior_posSemidef`；
 - `Problem.PriorSqrtFactor.support_finrank_eq_priorCovariance_rank`；
 - `Problem.PriorSqrtFactor.euclideanSupport_finrank_eq_support`；
+- `Problem.PriorSqrtFactor.supportBasisMatrix_conjTranspose_mul_self`；
+- `Problem.PriorSqrtFactor.supportFactorMatrix_gram_eq`；
+- `Problem.PriorSqrtFactor.supportFactorMatrix_injective`；
+- `Problem.PriorSqrtFactor.toSupportFactor_covariance_eq`；
 - `Problem.PriorSqrtFactor.supportBasisVector_linearIndependent`；
 - `Problem.PriorSqrtFactor.supportBasisMatrix_injective`；
 - `Problem.PriorSqrtFactor.supportBasisMatrix_range_eq_support`；

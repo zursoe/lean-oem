@@ -17,6 +17,8 @@
 - [x] 半正定先验的自动 `PriorSqrtFactor` 和 canonical `range` support 已加入稳定 Core。
 - [x] canonical support 的 EuclideanSpace 正交规范基、有限坐标列矩阵及其满列秩/像空间
   契约已加入稳定 Core。
+- [x] `PriorSqrtFactor.toSupportFactor` 已自动提供平方根支持因子的 Gram 恒等式和满列秩。
+- [x] 自动支持因子的列空间等于 canonical support。
 - [x] 当前主线已有与代码范围一致的版本说明和审计提交号（`4cc7343`）。
 - [x] `.github/workflows/ci.yml` 已固定 action 提交，并覆盖构建、审计和精确数值校验。
 
@@ -54,5 +56,6 @@
 - [ ] Physics 模块的参数有效性、合成例子和形式边界已完成审阅。
 - [ ] 先验白化的因子方向、谱界假设及非对称合成例子已完成独立语义审阅。
 - [ ] 奇异先验支持因子的满列秩语义、支持坐标谱界和 ambient/支持可辨识性边界已完成独立语义审阅。
-- [ ] canonical support 到自动矩形 `SupportFactor` 的 Gram 恒等式和满列秩构造已完成。
+- [ ] canonical support 自动矩形 `SupportFactor` 的满列秩语义、协方差因子方向和支持谱边界
+  已完成独立语义审阅。
 - [ ] 创建与发布说明一致的 Git tag 和 GitHub Release。

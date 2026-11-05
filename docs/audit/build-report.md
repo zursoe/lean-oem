@@ -170,3 +170,20 @@ git diff --check：通过
 矩阵秩与支持维数对应关系。公理审计覆盖新增公开定理，仍只有
 `propext`、`Classical.choice` 和 `Quot.sound`。本批没有修改依赖、没有引入伪逆或自定义
 公理，也没有创建远端发布。
+
+## 自动矩形 SupportFactor 小批次
+
+验证日期：2026-11-05。当前工作区在未提交状态完成自动矩形因子和合成测试：
+
+```text
+lake build LeanOEM：通过（2828 个目标）
+lake build LeanOEMTests：通过（3421 个目标）
+bash scripts/run_audit.sh --no-build：通过
+python3 scripts/validate_oem_numeric.py：通过
+git diff --check：通过
+```
+
+本批在 `SupportCoordinates` 中新增正交基 Gram 恒等式、平方根因子协方差恒等式、满列秩
+证明、列空间等于 canonical support 的定理和 `Problem.PriorSqrtFactor.toSupportFactor` 自动
+构造。`diag(1,0)` 合成测试直接检查自动因子的协方差、满列秩、列空间和秩值。新增公理审计仍只依赖
+`propext`、`Classical.choice` 和 `Quot.sound`；没有引入伪逆、外部工程依赖或自定义公理。

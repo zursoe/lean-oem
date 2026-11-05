@@ -49,6 +49,8 @@ private def canonicalSqrt :
     @Problem.PriorSqrtFactor 2 1 singularProblem :=
   Problem.PriorSqrtFactor.ofPosSemidef singularSupportFactor.prior_posSemidef
 
+private def canonicalFactor := canonicalSqrt.toSupportFactor
+
 example : Module.finrank ℝ canonicalSqrt.support = 1 := by
   calc
     Module.finrank ℝ canonicalSqrt.support = singularProblem.priorCovariance.rank :=
@@ -75,6 +77,32 @@ example : Module.finrank ℝ canonicalSqrt.euclideanSupport =
 
 example : Orthonormal ℝ canonicalSqrt.euclideanSupportBasis :=
   canonicalSqrt.euclideanSupportBasis.orthonormal
+
+example : Function.Injective canonicalFactor.matrix.mulVec :=
+  canonicalFactor.injective
+
+example : singularProblem.priorCovariance =
+    canonicalFactor.matrix * canonicalFactor.matrix.conjTranspose :=
+  canonicalFactor.covariance_eq
+
+example : canonicalFactor.matrix.rank = 1 := by
+  calc
+    canonicalFactor.matrix.rank = Module.finrank ℝ canonicalSqrt.support :=
+      canonicalFactor.matrix_rank_eq_support_dim
+    _ = 1 := by
+      exact canonicalSqrt.support_finrank_eq_priorCovariance_rank.trans
+        singularSupportFactor.priorCovariance_rank_eq_support_dim
+
+example : singularProblem.priorCovariance.rank = 1 := by
+  calc
+    singularProblem.priorCovariance.rank = Module.finrank ℝ canonicalSqrt.support :=
+      canonicalFactor.priorCovariance_rank_eq_support_dim
+    _ = 1 := by
+      exact canonicalSqrt.support_finrank_eq_priorCovariance_rank.trans
+        singularSupportFactor.priorCovariance_rank_eq_support_dim
+
+example : LinearMap.range canonicalFactor.matrix.mulVecLin = canonicalSqrt.support :=
+  canonicalSqrt.toSupportFactor_range_eq_support
 
 end
 end LeanOEM.Tests.SupportCoordinates

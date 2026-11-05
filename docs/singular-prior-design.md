@@ -1,7 +1,7 @@
 # 奇异先验支持白化规格
 
-状态：矩形支持因子第一批、自动平方根/range support 和 canonical 坐标层已实现；自动
-矩形支持因子与 ambient 全空间谱关系保留为后续工作。
+状态：矩形支持因子第一批、自动平方根/range support、canonical 坐标层和自动矩形因子
+已实现；ambient 全空间谱关系保留为后续工作。
 
 ## 目标和边界
 
@@ -40,6 +40,9 @@ support = LinearMap.range (sqrt Sa).mulVecLin
   `LinearMap.range supportBasisMatrix.mulVecLin = support`；
 - 坐标索引先固定为 `Fin (Module.finrank ℝ support)`，再由
   `support_finrank_eq_priorCovariance_rank` 识别为 `Fin (rank Sₐ)` 的维数。
+- `toSupportFactor` 自动定义矩阵
+  `sqrt(Sₐ) · supportBasisMatrix`，并证明其满列秩、协方差恒等式和列空间等于
+  canonical support。
 
 由于核心 `State n` 保持函数空间表示，本层不为它添加与既有范数不相容的内积实例；正交
 性只在 `euclideanSupport` 中使用，矩阵 API 仍然使用原有的 `State n` 坐标。
@@ -93,13 +96,12 @@ $$
 
 ## 后续工作
 
-下一批考虑定义
+下一批研究 ambient averaging kernel 与支持矩阵的非零谱关系。对
 
 $$
-L = \sqrt{S_a}\,Q,
+A=XY,\qquad B_s=YX,
 $$
 
-其中 `Q` 是 `supportBasisMatrix`，并证明 `L` 满列秩、`Sₐ = L Lᴴ` 以及
-`range L = range(sqrt Sₐ)`。这一步需要显式使用 support 上的正交投影/Gram 恒等式；若证明
-暂时过重，保留当前 `PriorSqrtFactor` 与显式 `SupportFactor` 双接口。完成自动因子后，再
-用 `A = XY`、`Bₛ = YX` 的非可逆因子理论研究 ambient 与支持矩阵的非零谱关系。
+目标是证明特征多项式的乘幂关系或等价的非零谱结论；奇异情形下不把它升级为完整相似
+变换。自动 `SupportFactor` 已经完成协方差和满列秩契约，后续只需在这个接口上处理
+ambient/支持之间的非可逆边界。

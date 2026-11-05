@@ -2,9 +2,9 @@
 
 更新时间：2026-11-05。
 
-本批从本地提交 `5aef5de` 开始，完成奇异半正定先验的支持坐标白化。验证结果和代码基线以
-[构建记录](audit/build-report.md) 和 [公理记录](audit/axioms.md) 为准；本批仅作本地提交。
-本批代码已在 `4cc7343` 收口；完整构建为 3420 个目标，审计与独立精确数值复算均通过。
+本批从本地提交 `724f9df` 开始，完成 canonical support 到自动矩形 `SupportFactor` 的转换。
+验证结果和代码基线以 [构建记录](audit/build-report.md) 和 [公理记录](audit/axioms.md) 为准；
+当前批次仍待本地提交收口。
 
 ## 已完成基线
 
@@ -32,6 +32,10 @@
   `EuclideanSpace` 表示中选择 `stdOrthonormalBasis`，再搬回既有 `State n` 代数表示；
   得到 `supportBasisMatrix`，并证明其 `mulVec` 单射、列空间等于 canonical support，
   以及矩阵秩和 support 维数/先验协方差秩的对应关系。
+- 已证明 `supportBasisMatrixᴴ * supportBasisMatrix = I`，并由此证明
+  `sqrt(Sₐ) * supportBasisMatrix` 的协方差 Gram 等式和满列秩；
+  `PriorSqrtFactor.toSupportFactor` 现在可以自动构造 `SupportFactor`，且其列空间等于
+  canonical support。
 
 ## 当前信任边界
 
@@ -47,9 +51,9 @@
 
 ## 下一工作包
 
-下一阶段优先用 `supportBasisMatrix` 构造自动矩形 `SupportFactor`，先证明平方根因子在
-canonical support 投影下的 Gram 恒等式和满列秩，再处理 ambient 与支持谱的非可逆因子关系。
-统一误差底与具体模型契约的桥接仍为独立后续工作包。
+下一阶段优先处理 ambient averaging kernel 与支持矩阵之间的非零谱/特征多项式乘幂关系，
+并复用自动 `SupportFactor` 验证其支持谱接口；统一误差底与具体模型契约的桥接仍为独立
+后续工作包。
 
 ## 发布状态
 
