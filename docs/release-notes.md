@@ -25,6 +25,8 @@
 - canonical support 的 EuclideanSpace 正交规范基、有限坐标列矩阵、满列秩和像空间定理；
 - `PriorSqrtFactor.toSupportFactor` 自动构造矩形支持因子，并提供协方差、满列秩和列空间定理；
 - 支持因子下 ambient/support 特征多项式乘幂关系；
+- 支持因子下 ambient/support 非零谱集合相等、零根代数重数加法，以及支持可辨识时的
+  `n-r` 零方向重数；
 - `Observable` 下的严格正特征值结论，以及白化 averaging kernel 的 Jacobian 秩上界；
 - `LeanOEM.Core` 稳定聚合入口和 `LeanOEM.Physics` 实验聚合入口；
 - 精确有理数交叉验证、公理审计和 GitHub Actions CI。

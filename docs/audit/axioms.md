@@ -2,7 +2,7 @@
 
 审计日期：2026-11-07
 
-审计基线：代码提交 `ab5881f`；本批新增构造和公开定理均已纳入。
+审计基线：代码提交 `52e36b1`；本批新增构造和公开定理均已纳入。
 
 执行命令：
 
@@ -75,6 +75,9 @@ lake env lean LeanOEM/Tests/Axioms.lean
 - `Problem.PriorSqrtFactor.toSupportFactor_covariance_eq`；
 - `Problem.PriorSqrtFactor.toSupportFactor_range_eq_support`；
 - `Problem.SupportFactor.averagingKernel_charpoly_eq_support_factor`；
+- `Problem.SupportFactor.averagingKernel_nonzeroSpectrum_eq_support_factor`；
+- `Problem.SupportFactor.averagingKernel_zero_rootMultiplicity_eq`；
+- `Problem.SupportFactor.averagingKernel_zero_rootMultiplicity_eq_dim_sub_support_of_observableOnSupport`；
 - `Problem.PriorSqrtFactor.supportBasisVector_linearIndependent`；
 - `Problem.PriorSqrtFactor.supportBasisMatrix_injective`；
 - `Problem.PriorSqrtFactor.supportBasisMatrix_range_eq_support`；

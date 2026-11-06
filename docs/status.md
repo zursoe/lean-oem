@@ -4,7 +4,7 @@
 
 本批从本地提交 `724f9df` 开始，完成 canonical support 到自动矩形 `SupportFactor` 的转换。
 验证结果和代码基线以 [构建记录](audit/build-report.md) 和 [公理记录](audit/axioms.md) 为准；
-本批代码已在 `ab5881f` 收口。
+本批代码已在 `52e36b1` 收口。
 
 ## 已完成基线
 

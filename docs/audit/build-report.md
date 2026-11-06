@@ -204,3 +204,18 @@ git diff --check：通过
 `A = XY`、`Bₛ = YX` 和 Mathlib 矩形特征多项式恒等式，得到
 `χ_A = X^(n-r) χ_{Bₛ}`；合成测试覆盖自动 `diag(1,0)` 支持因子。公理审计仍只有
 `propext`、`Classical.choice` 和 `Quot.sound`。
+
+## Ambient/support 非零谱接口小批次
+
+验证日期：2026-11-07。本批代码提交 `52e36b1`：
+
+```text
+lake build LeanOEM LeanOEMTests：通过（3422 个目标）
+bash scripts/run_audit.sh --no-build：通过
+python3 scripts/validate_oem_numeric.py：通过
+git diff --check：通过
+```
+
+本批新增 `nonzeroSpectrum`、ambient/support 非零谱集合相等、零根代数重数加法，以及
+支持坐标可辨识时零根重数为 `n-r` 的定理。新增公开定理均已纳入 `LeanOEM/Tests/Axioms.lean`；
+审计结果仍只有 `propext`、`Classical.choice` 和 `Quot.sound`。
