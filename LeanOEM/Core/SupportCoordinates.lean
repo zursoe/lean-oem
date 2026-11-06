@@ -22,6 +22,17 @@ noncomputable section
 
 open scoped MatrixOrder BigOperators
 
+/-! ## 非零谱 -/
+
+/--
+ambient 矩阵的非零谱集合。
+
+这里按集合记录谱元素及其非零条件；它只表达取值集合，不记录代数重数。奇异支持
+因子的代数重数关系另由 `rootMultiplicity` 定理给出。
+-/
+def nonzeroSpectrum {n : ℕ} (A : Square n) : Set ℝ :=
+  {x | x ∈ spectrum ℝ A ∧ x ≠ 0}
+
 namespace Problem.PriorSqrtFactor
 
 variable {n m : ℕ} {p : Problem n m}
@@ -368,6 +379,69 @@ theorem averagingKernel_charpoly_eq_support_factor
   simpa [Fintype.card_fin] using
     (Matrix.charpoly_mul_comm_of_le f.matrix Y
       (by simpa only [Fintype.card_fin] using hle))
+
+/--
+ambient averaging kernel 与支持白化矩阵的非零谱集合相同。
+
+该结论只比较非零谱的取值集合；它不把奇异 ambient 矩阵和支持矩阵解释成完整相似
+变换，也不抹去支持矩阵自身可能存在的零特征值。
+-/
+theorem averagingKernel_nonzeroSpectrum_eq_support_factor
+    (f : @Problem.SupportFactor n m r p) :
+    nonzeroSpectrum (averagingKernel p.gain p.jacobian) =
+      nonzeroSpectrum f.whitenedAveragingKernel := by
+  ext x
+  change (x ∈ spectrum ℝ (averagingKernel p.gain p.jacobian) ∧ x ≠ 0) ↔
+    (x ∈ spectrum ℝ f.whitenedAveragingKernel ∧ x ≠ 0)
+  rw [Matrix.mem_spectrum_iff_isRoot_charpoly,
+    Matrix.mem_spectrum_iff_isRoot_charpoly,
+    f.averagingKernel_charpoly_eq_support_factor]
+  rw [Polynomial.root_mul]
+  simp only [Polynomial.IsRoot, Polynomial.eval_X_pow]
+  constructor
+  · rintro ⟨hX | hSupport, hx⟩
+    · exfalso
+      exact (pow_ne_zero _ hx) hX
+    · exact ⟨hSupport, hx⟩
+  · rintro ⟨hSupport, hx⟩
+    exact ⟨Or.inr hSupport, hx⟩
+
+/--
+ambient averaging kernel 在零点的特征多项式根重数等于支持矩阵根重数加上 ambient
+零方向贡献 `n - r`。
+-/
+theorem averagingKernel_zero_rootMultiplicity_eq
+    (f : @Problem.SupportFactor n m r p) :
+    Polynomial.rootMultiplicity (0 : ℝ)
+        (averagingKernel p.gain p.jacobian).charpoly =
+      (n - r) + Polynomial.rootMultiplicity (0 : ℝ)
+        f.whitenedAveragingKernel.charpoly := by
+  rw [f.averagingKernel_charpoly_eq_support_factor,
+    Polynomial.rootMultiplicity_mul]
+  · simpa using (Polynomial.rootMultiplicity_X_sub_C_pow (0 : ℝ) (n - r))
+  · exact mul_ne_zero (pow_ne_zero _ Polynomial.X_ne_zero)
+      f.whitenedAveragingKernel.charpoly_monic.ne_zero
+
+/--
+若支持坐标内可辨识，则 ambient 零特征值的代数重数正好是 `n - r`。
+-/
+theorem averagingKernel_zero_rootMultiplicity_eq_dim_sub_support_of_observableOnSupport
+    (f : @Problem.SupportFactor n m r p)
+    (hObservation : p.observationErrorCovariance.PosDef)
+    (hObservable : f.observableOnSupport) :
+    Polynomial.rootMultiplicity (0 : ℝ)
+        (averagingKernel p.gain p.jacobian).charpoly = n - r := by
+  have hNotRootSupport :
+      ¬ Polynomial.IsRoot f.whitenedAveragingKernel.charpoly (0 : ℝ) := by
+    intro hRoot
+    have hZeroSpectrum : (0 : ℝ) ∈ spectrum ℝ f.whitenedAveragingKernel :=
+      Matrix.mem_spectrum_iff_isRoot_charpoly.mpr hRoot
+    exact (f.whitenedAveragingKernel_zero_mem_spectrum_iff_not_observableOnSupport
+      hObservation).mp hZeroSpectrum hObservable
+  have hRootMultiplicitySupport :
+      Polynomial.rootMultiplicity (0 : ℝ) f.whitenedAveragingKernel.charpoly = 0 :=
+    Polynomial.rootMultiplicity_eq_zero hNotRootSupport
+  rw [f.averagingKernel_zero_rootMultiplicity_eq, hRootMultiplicitySupport, Nat.add_zero]
 
 end Problem.SupportFactor
 

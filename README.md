@@ -38,6 +38,7 @@ Mathlib 的版本和提交由 `lean-toolchain`、`lakefile.toml` 与 `lake-manif
 - `PriorSqrtFactor.toSupportFactor` 自动构造平方根支持因子，并证明协方差 Gram 恒等式和
   满列秩与列空间等于 canonical support。
 - 支持因子下 ambient 与支持 averaging kernel 的特征多项式乘幂关系。
+- 支持因子下 ambient 与支持 averaging kernel 的非零谱集合接口，以及零根代数重数关系。
 - 信息矩阵、Woodbury 后验公式和后验逆矩阵恒等式。
 - 通用 `ForwardModel`、Jacobian 导数规格、锚点线性化余项和 `Problem.predict` 连接。
 - 最小有限层无散射辐射传输递推，以及非负性、上界保持和两层组合性质。

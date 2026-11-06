@@ -113,5 +113,32 @@ example :
         singularSupportFactor.priorCovariance_rank_eq_support_dim
     simpa [hDim] using canonicalFactor.averagingKernel_charpoly_eq_support_factor
 
+example :
+    nonzeroSpectrum (averagingKernel singularProblem.gain singularProblem.jacobian) =
+      nonzeroSpectrum canonicalFactor.whitenedAveragingKernel :=
+  canonicalFactor.averagingKernel_nonzeroSpectrum_eq_support_factor
+
+example :
+    Polynomial.rootMultiplicity (0 : ℝ)
+        (averagingKernel singularProblem.gain singularProblem.jacobian).charpoly =
+      (2 - 1) + Polynomial.rootMultiplicity (0 : ℝ)
+        canonicalFactor.whitenedAveragingKernel.charpoly :=
+  by
+    have hDim : Module.finrank ℝ canonicalSqrt.support = 1 := by
+      exact canonicalSqrt.support_finrank_eq_priorCovariance_rank.trans
+        singularSupportFactor.priorCovariance_rank_eq_support_dim
+    simpa [hDim] using canonicalFactor.averagingKernel_zero_rootMultiplicity_eq
+
+example (hObservable : canonicalFactor.observableOnSupport) :
+    Polynomial.rootMultiplicity (0 : ℝ)
+        (averagingKernel singularProblem.gain singularProblem.jacobian).charpoly = 2 - 1 :=
+  by
+    have hDim : Module.finrank ℝ canonicalSqrt.support = 1 := by
+      exact canonicalSqrt.support_finrank_eq_priorCovariance_rank.trans
+        singularSupportFactor.priorCovariance_rank_eq_support_dim
+    simpa [hDim] using
+      canonicalFactor.averagingKernel_zero_rootMultiplicity_eq_dim_sub_support_of_observableOnSupport
+        (show singularProblem.observationErrorCovariance.PosDef from Matrix.PosDef.one) hObservable
+
 end
 end LeanOEM.Tests.SupportCoordinates

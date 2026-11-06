@@ -104,11 +104,11 @@ $\mathrm{DOFS}\leq\operatorname{rank}(S_a)$。
 在显式矩阵序条件下，`eigenvalues_bounds_of_posSemidef` 证明每个 Hermitian 特征值落在 `[0, 1]`。
 `PriorWhitening` 通过可逆先验因子 `Sₐ = L Lᴴ` 构造 `B = L⁻¹ A L`，证明其半正定性、
 补矩阵正定性、严格上界、零谱刻画和 DOFS 谱求和。`SupportWhitening` 对矩形满列秩因子
-`Sₐ = L Lᴴ` 在支持坐标中复用同一证明链；它保留 `trace A = trace Bₛ`，不声称奇异因子下
-的完整 ambient 特征多项式相似关系。
+`Sₐ = L Lᴴ` 在支持坐标中复用同一证明链；`SupportCoordinates` 进一步用特征多项式乘幂
+关系给出 ambient/support 的非零谱集合相等和零根代数重数关系，仍不声称奇异因子下的
+完整相似变换。
 
 正定先验可用矩阵平方根自动构造可逆因子，因此 `Problem.averagingKernel_spectrum_subset_Icc`
 只要求先验与观测误差正定。半正定先验现在已有自动平方根、canonical range support、有限
-坐标列矩阵、自动矩形支持因子和 ambient/support 特征多项式乘幂关系；更直接的非零谱集合
-接口属于后续纯数学工作，
+坐标列矩阵、自动矩形支持因子、ambient/support 特征多项式乘幂关系和非零谱集合接口；
 见 [奇异先验支持白化规格](singular-prior-design.md)。

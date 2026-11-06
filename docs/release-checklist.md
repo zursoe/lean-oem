@@ -20,6 +20,7 @@
 - [x] `PriorSqrtFactor.toSupportFactor` 已自动提供平方根支持因子的 Gram 恒等式和满列秩。
 - [x] 自动支持因子的列空间等于 canonical support。
 - [x] ambient averaging kernel 与支持白化矩阵的特征多项式乘幂关系已形式化。
+- [x] ambient/support 非零谱集合相等和零根代数重数关系已形式化并纳入测试与公理审计。
 - [x] 当前主线已有与代码范围一致的版本说明和审计提交号（`ab5881f`）。
 - [x] `.github/workflows/ci.yml` 已固定 action 提交，并覆盖构建、审计和精确数值校验。
 

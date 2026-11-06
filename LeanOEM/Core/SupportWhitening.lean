@@ -9,8 +9,9 @@ public import LeanOEM.Core.PriorWhitening
 给定满列秩的 `L : n × r` 和 `Sₐ = L Lᴴ`，`Fin r` 表示先验协方差的支持坐标。
 在这些坐标中使用单位先验，避免把奇异矩阵的总函数逆解释成伪逆。
 
-本批只证明支持坐标中的谱和 DOFS 结果。原 ambient averaging kernel 与支持矩阵的
-完整特征多项式关系需要额外的非可逆因子理论，不在此接口中隐含声称。
+本文件只提供支持坐标中的谱和 DOFS 结果。ambient averaging kernel 与支持矩阵的
+非零谱关系由 `SupportCoordinates` 接口以特征多项式乘幂形式提供；这里不把
+它隐含为奇异情形下的完整相似变换。
 -/
 
 @[expose] public section
