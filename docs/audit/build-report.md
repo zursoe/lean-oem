@@ -187,3 +187,20 @@ git diff --check：通过
 证明、列空间等于 canonical support 的定理和 `Problem.PriorSqrtFactor.toSupportFactor` 自动
 构造。`diag(1,0)` 合成测试直接检查自动因子的协方差、满列秩、列空间和秩值。新增公理审计仍只依赖
 `propext`、`Classical.choice` 和 `Quot.sound`；没有引入伪逆、外部工程依赖或自定义公理。
+
+## Ambient/support 特征多项式关系小批次
+
+验证日期：2026-11-07。当前工作区在未提交状态完成 ambient/support 特征多项式关系：
+
+```text
+lake build LeanOEM：通过（2828 个目标）
+lake build LeanOEMTests：通过（3421 个目标）
+bash scripts/run_audit.sh --no-build：通过
+python3 scripts/validate_oem_numeric.py：通过
+git diff --check：通过
+```
+
+本批新增 `Problem.SupportFactor.averagingKernel_charpoly_eq_support_factor`。证明使用
+`A = XY`、`Bₛ = YX` 和 Mathlib 矩形特征多项式恒等式，得到
+`χ_A = X^(n-r) χ_{Bₛ}`；合成测试覆盖自动 `diag(1,0)` 支持因子。公理审计仍只有
+`propext`、`Classical.choice` 和 `Quot.sound`。

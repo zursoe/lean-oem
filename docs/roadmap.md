@@ -404,6 +404,9 @@ P13 自动因子小批次继续完成：
 - 新增 `Problem.PriorSqrtFactor.toSupportFactor`，自动得到
   `SupportFactor`，证明其列空间仍为 canonical support，并在 `diag(1,0)` 合成例子中检查
   协方差、满列秩和秩值。
+- 对任意 `SupportFactor`，定义 `X = L`、`Y = Lᴴ Kᴴ Sᵧ⁻¹ K`，证明 ambient averaging
+  kernel 为 `XY`、支持白化矩阵为 `YX`，并调用 Mathlib 的矩形特征多项式定理得到
+  `χ_A = X^(n-r) χ_{Bₛ}`。
 
 本批不修改正定 `PriorFactor`，不引入 Moore–Penrose 伪逆，也不声称奇异因子下 ambient
 averaging kernel 与支持矩阵具有完整特征多项式相似关系。自动因子只证明了给定平方根和
@@ -421,7 +424,7 @@ canonical support 坐标下的协方差与满列秩契约；ambient 非零谱关
 - README、范围文档和来源映射明确写出“已证明范围”和“尚未证明范围”；
 - 干净 checkout 可以在锁定工具链和 `lake-manifest.json` 下完成构建。
 
-下一次实际编码批次优先处理 ambient averaging kernel 与支持矩阵的非零谱关系，目标是证明
-相应的特征多项式乘幂关系；该结果不能升级为奇异情形下的完整相似变换。若需要额外的
-线性代数边界引理，继续保留自动和显式 `SupportFactor` 双接口，不用伪逆或临时公理绕过。
+下一次实际编码批次优先补充从该特征多项式关系得到的非零谱集合接口，并检查其与支持
+DOFS/秩界的组合；该结果不能升级为奇异情形下的完整相似变换。若需要额外的线性代数
+边界引理，继续保留自动和显式 `SupportFactor` 双接口，不用伪逆或临时公理绕过。
 统一误差底与具体模型契约的桥接仍保留为后续独立工作包。

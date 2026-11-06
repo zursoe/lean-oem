@@ -43,6 +43,8 @@ support = LinearMap.range (sqrt Sa).mulVecLin
 - `toSupportFactor` 自动定义矩阵
   `sqrt(Sₐ) · supportBasisMatrix`，并证明其满列秩、协方差恒等式和列空间等于
   canonical support。
+- `averagingKernel_charpoly_eq_support_factor` 对任意支持因子证明
+  `χ_A = X^(n-r) χ_{Bₛ}`，用特征多项式乘幂表达 ambient 与支持矩阵的非零谱关系。
 
 由于核心 `State n` 保持函数空间表示，本层不为它添加与既有范数不相容的内积实例；正交
 性只在 `euclideanSupport` 中使用，矩阵 API 仍然使用原有的 `State n` 坐标。
@@ -96,12 +98,6 @@ $$
 
 ## 后续工作
 
-下一批研究 ambient averaging kernel 与支持矩阵的非零谱关系。对
-
-$$
-A=XY,\qquad B_s=YX,
-$$
-
-目标是证明特征多项式的乘幂关系或等价的非零谱结论；奇异情形下不把它升级为完整相似
-变换。自动 `SupportFactor` 已经完成协方差和满列秩契约，后续只需在这个接口上处理
-ambient/支持之间的非可逆边界。
+下一批把上述特征多项式恒等式整理为非零谱集合接口，并研究它与支持 DOFS/秩界的组合。
+奇异情形下不把该关系升级为完整相似变换；自动 `SupportFactor` 已经完成协方差、满列
+秩和列空间契约。

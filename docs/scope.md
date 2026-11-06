@@ -29,6 +29,7 @@
 - 半正定先验的自动平方根因子和 `range(sqrt Sₐ)` canonical support；
 - canonical support 的 EuclideanSpace 正交规范基和有限坐标列矩阵契约；
 - 从 canonical support 自动构造矩形 `SupportFactor` 的协方差、满列秩与列空间契约；
+- ambient/support averaging kernel 的特征多项式乘幂关系；
 - 确定性误差分解
 
   $$
@@ -108,5 +109,6 @@ $\mathrm{DOFS}\leq\operatorname{rank}(S_a)$。
 
 正定先验可用矩阵平方根自动构造可逆因子，因此 `Problem.averagingKernel_spectrum_subset_Icc`
 只要求先验与观测误差正定。半正定先验现在已有自动平方根、canonical range support、有限
-坐标列矩阵和自动矩形支持因子；ambient 非零谱关系属于后续纯数学工作，
+坐标列矩阵、自动矩形支持因子和 ambient/support 特征多项式乘幂关系；更直接的非零谱集合
+接口属于后续纯数学工作，
 见 [奇异先验支持白化规格](singular-prior-design.md)。

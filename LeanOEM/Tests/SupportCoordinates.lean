@@ -104,5 +104,14 @@ example : singularProblem.priorCovariance.rank = 1 := by
 example : LinearMap.range canonicalFactor.matrix.mulVecLin = canonicalSqrt.support :=
   canonicalSqrt.toSupportFactor_range_eq_support
 
+example :
+    (averagingKernel singularProblem.gain singularProblem.jacobian).charpoly =
+      (Polynomial.X : Polynomial ℝ) ^ (2 - 1) * canonicalFactor.whitenedAveragingKernel.charpoly :=
+  by
+    have hDim : Module.finrank ℝ canonicalSqrt.support = 1 := by
+      exact canonicalSqrt.support_finrank_eq_priorCovariance_rank.trans
+        singularSupportFactor.priorCovariance_rank_eq_support_dim
+    simpa [hDim] using canonicalFactor.averagingKernel_charpoly_eq_support_factor
+
 end
 end LeanOEM.Tests.SupportCoordinates

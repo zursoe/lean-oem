@@ -332,5 +332,44 @@ theorem supportBasisMatrix_rank_eq_support_finrank (f : p.PriorSqrtFactor) :
 
 end Problem.PriorSqrtFactor
 
+namespace Problem.SupportFactor
+
+variable {n m r : ℕ} {p : Problem n m}
+
+/-! ## ambient 与支持矩阵的非零谱关系 -/
+
+/--
+支持因子下，ambient averaging kernel 与支持白化矩阵只差一个非方阵因子交换。
+
+这里的 `X` 是支持因子 `L`，`Y` 是
+`Lᴴ Kᴴ Sᵧ⁻¹ K`。因此 Mathlib 的矩形特征多项式恒等式可以直接给出非零谱关系，
+而不需要在奇异情形下构造完整相似变换。
+-/
+theorem averagingKernel_charpoly_eq_support_factor
+    (f : @Problem.SupportFactor n m r p) :
+    (averagingKernel p.gain p.jacobian).charpoly =
+      (Polynomial.X : Polynomial ℝ) ^ (n - r) *
+        f.whitenedAveragingKernel.charpoly := by
+  let Y : Matrix (Fin r) (Fin n) ℝ :=
+    f.matrix.conjTranspose * p.jacobian.conjTranspose *
+      p.innovationCovariance⁻¹ * p.jacobian
+  have hAmbient :
+      averagingKernel p.gain p.jacobian = f.matrix * Y := by
+    simp [Y, averagingKernel, Problem.gain, f.covariance_eq, Matrix.mul_assoc]
+  have hSupport : f.whitenedAveragingKernel = Y * f.matrix := by
+    simp [Y, Problem.SupportFactor.whitenedAveragingKernel,
+      Problem.SupportFactor.supportJacobian,
+      Matrix.mul_assoc]
+  have hle : r ≤ n := by
+    calc
+      r = f.matrix.rank := f.matrix_rank_eq_support_dim.symm
+      _ ≤ n := Matrix.rank_le_height f.matrix
+  rw [hAmbient, hSupport]
+  simpa [Fintype.card_fin] using
+    (Matrix.charpoly_mul_comm_of_le f.matrix Y
+      (by simpa only [Fintype.card_fin] using hle))
+
+end Problem.SupportFactor
+
 end
 end LeanOEM

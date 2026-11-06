@@ -59,6 +59,7 @@ public import LeanOEM.Physics
 #print axioms LeanOEM.Problem.PriorSqrtFactor.supportFactorMatrix_injective
 #print axioms LeanOEM.Problem.PriorSqrtFactor.toSupportFactor_covariance_eq
 #print axioms LeanOEM.Problem.PriorSqrtFactor.toSupportFactor_range_eq_support
+#print axioms LeanOEM.Problem.SupportFactor.averagingKernel_charpoly_eq_support_factor
 #print axioms LeanOEM.Problem.PriorSqrtFactor.supportBasisVector_linearIndependent
 #print axioms LeanOEM.Problem.PriorSqrtFactor.supportBasisMatrix_injective
 #print axioms LeanOEM.Problem.PriorSqrtFactor.supportBasisMatrix_range_eq_support
