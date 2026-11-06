@@ -190,7 +190,7 @@ git diff --check：通过
 
 ## Ambient/support 特征多项式关系小批次
 
-验证日期：2026-11-07。当前工作区在未提交状态完成 ambient/support 特征多项式关系：
+验证日期：2026-11-07。本批代码提交 `ab5881f` 完成 ambient/support 特征多项式关系：
 
 ```text
 lake build LeanOEM：通过（2828 个目标）
