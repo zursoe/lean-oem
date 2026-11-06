@@ -36,7 +36,7 @@
 - [x] `scripts/run_audit.sh` 完整运行成功。
 - [x] 本地按 CI 顺序运行 `lake build`、`bash scripts/run_audit.sh --no-build` 和 `python3 scripts/validate_oem_numeric.py` 成功。
 - [x] 历史提交 `e803313` 的干净 checkout 重新物化依赖并完成 3166 个构建目标。
-- [ ] 当前候选代码重新完成干净 checkout 构建。
+- [x] 当前候选代码在干净 detached worktree 中重新物化锁定依赖并完成 `lake build LeanOEM LeanOEMTests`（3429 个目标）。
 
 ## 可信性和公理
 
