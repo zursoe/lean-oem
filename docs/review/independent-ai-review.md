@@ -55,5 +55,7 @@
 - canonical support 按 `range(sqrt Sₐ)` 定义，维数等于 `rank(Sₐ)` 已形式化；与
   `range(Sₐ)` 的子空间集合等式尚无独立定理，文档不声称已完成该接口。
 
-本批完成后，独立人工复核、当前候选远端 CI 和正式发布仍分别按
-[发布清单](../release-checklist.md) 记录。
+后续作者于 2026-11-11 确认本版数学含义和范围；候选 `7f8265f` 的
+[远端 CI](https://github.com/zursoe/lean-oem/actions/runs/43010549697) 已全部通过。该候选仅增加
+确认文档，源码、测试、脚本及工作流与 `7cf0e67` 相同。独立人工数学审查和正式发布仍按
+[发布清单](../release-checklist.md) 分别记录。

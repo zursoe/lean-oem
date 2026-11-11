@@ -3,6 +3,8 @@
 状态：尚未打 tag，也没有 GitHub Release。数学实现基线为 `52e36b1`，本轮发布收口从
 `9bb9f25` 开始，首次干净受检候选为 `ff3ca1d`。独立 AI 复核后的语义修正基于 `88e65c5`；
 本批工作区验证与历史干净候选分开记录，见 [构建记录](audit/build-report.md)。
+作者已确认本版数学含义和范围；候选 `7f8265f` 已推送到 `release/0.1.0-candidate` 并
+[通过远端 CI](https://github.com/zursoe/lean-oem/actions/runs/43010549697)。
 
 版本定位：这是一个纯 Lean 4 + Mathlib 数学库候选版本。`LeanOEM.Core` 是稳定通用入口，
 `LeanOEM.Physics` 是随包提供的实验性归一化数学模块，不构成外部工程适配承诺。
@@ -76,6 +78,6 @@ python3 scripts/validate_oem_numeric.py
 ## 后续发布门槛
 
 内部源码复核见 [候选审阅记录](review/release-candidate-review.md)，两份独立 AI 报告及处理
-情况见 [语义收口记录](review/independent-ai-review.md)。独立人工语义复核、当前候选
-远端 CI 和正式发布仍未完成，分别在 [发布清单](release-checklist.md) 保留待办。
-历史远端 CI 的通过记录只对应历史提交。创建 tag、推送远端和 GitHub Release 另行决定。
+情况见 [语义收口记录](review/independent-ai-review.md)。作者已确认范围，候选 `7f8265f`
+远端 CI 已通过。独立人工数学审查与正式合并、tag 和 GitHub Release 分别记录，未完成项
+见 [发布清单](release-checklist.md)。当前 CI 结论对应上述候选提交；不以历史运行代替。

@@ -67,6 +67,9 @@
 - [x] 语义说明、五项反例回归和验证记录归档为本地提交。
 - [x] 作者已于 2026-11-11 确认 [最终数学含义和本版范围](review/author-semantic-review.md)；
   该确认与下列独立人工数学审查分别记录。
+- [x] 候选 `7f8265f` 已推送至 `release/0.1.0-candidate`，该提交的
+  [GitHub CI](https://github.com/zursoe/lean-oem/actions/runs/43010549697) 全部通过：3425 个
+  构建目标、200 项公理审计和独立精确算术复核。正式合并与发布另行记录。
 
 ## 发布前仍需完成
 
@@ -74,5 +77,4 @@
 - [ ] Physics 参数有效性、合成例子和归一化边界的独立人工语义复核。
 - [ ] 正定先验白化方向、谱界假设及非对称例子的独立人工语义复核。
 - [ ] 奇异先验支持因子、canonical 自动因子及 ambient/support 谱边界的独立人工语义复核。
-- [ ] 当前候选推送至 `release/0.1.0-candidate` 并通过该提交的 GitHub CI。
 - [ ] 创建与发布说明一致的 Git tag 和 GitHub Release。

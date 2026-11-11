@@ -320,3 +320,28 @@ git diff --check、README/docs 相对文件链接与制表符检查：通过
 `.lake/semantic-boundary-build-fixed.log`（修正后构建）和
 `.lake/semantic-boundary-audit.log`（最终审计）。这些日志不进入公开源代码。
 验证完成后只更新结果文档；未推送远端，也未创建 tag 或 Release。
+
+## 作者确认与候选远端 CI
+
+验证日期：2026-11-11。作者在会话中回复“确认符合”，确认本版四项数学含义与范围，
+记录见 [作者语义核对](../review/author-semantic-review.md)。该确认与独立人工逐项数学
+审查分别登记，不代替尚未完成的审查记录。
+
+将含确认文档的候选推送至 `release/0.1.0-candidate`：
+
+- 受检完整提交：`7f8265f57576b85d59b300598ab33eed22b9011d`；
+- 数学说明与回归提交：`7cf0e673dd971161ba67101454b520af14cfe5e7`；两者之间仅修改确认文档；
+- 工作流：`Lean OEM CI`，事件为 `push`；
+- [运行 43010549697](https://github.com/zursoe/lean-oem/actions/runs/43010549697)；
+- 开始：2026-11-11 11:16:18 UTC，结束：11:19:13 UTC；
+- 结果：`completed / success`，全部工作流步骤成功。
+
+远端日志已逐项核对：Lean 为固定版本 `4.35.0`，完成 3425 个构建目标，仓库公理登记
+200/200 项完整、无重复或缺失，依赖并集仅为 `propext`、`Classical.choice`、`Quot.sound`。
+独立精确有理数复核、占位扫描及编译产物跟踪检查均通过。该运行使用 GitHub runner 与
+Mathlib 缓存，结论不能表述为从源码重编整个 Mathlib。
+
+本地忽略证据为 `.lake/candidate-ci-7f8265f-result.json`、
+`.lake/candidate-ci-7f8265f.log` 和 `.lake/candidate-ci-7f8265f-watch.log`。
+远端 `main` 未合并此候选，尚未创建 tag 或 GitHub Release。本次结果归档提交仅修改文档，
+其源码、测试、依赖锁、脚本和工作流与受检候选一致。
