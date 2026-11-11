@@ -242,16 +242,47 @@ README/docs 相对文件链接：通过
 ```
 
 本地缓存日志保存在 `.lake/release-local-audit-fiu5vy64.log`，不进入源代码发布内容。
-干净验证将在固定本轮提交后进行：仅复用锁定依赖的 Git 对象和 Mathlib 下载缓存，
-重新检出依赖并重建项目产物。实际提交、命令、缓存使用方式及结果将在该条目补齐。
+干净验证复用锁定依赖的 Git 对象和 Mathlib 下载缓存，重新检出依赖并重建项目产物。
+首次失败和修正后结果分别记录如下。
 
 首次干净验证固定到 `9512730`：重新检出全部 9 个锁定依赖，从本机已有 Mathlib 缓存解包
 9030 项产物（另 1 项已有），`lake build LeanOEM LeanOEMTests` 完成 3422 个目标。
-后续公理审计失败，直接诊断为缺少 `LeanOEM.Physics.olean`：测试根入口仅导入各个 Physics
+后续公理审计失败，直接诊断为缺少 `LeanOEM/Physics.olean`：测试根入口仅导入各个 Physics
 子模块，没有让 Lake 构建聚合入口。既有本地缓存包含该入口，因而本地检查没有暴露缺口。
 
 修正为在 `LeanOEMTests.lean` 显式导入 `LeanOEM.Physics`，并让审计脚本在 Lean 失败时显示
-错误输出、保留退出码。首次失败记录保留；修正后将再次从固定提交验证。
+错误输出、保留退出码。失败分支回归检查证实脚本以退出码 1 停止，并显示缺失 Physics
+模块的原始错误；之后恢复临时工作树中的脚本，首次失败记录保留。
+
+### 修正后候选验证
+
+最终受检提交：`ff3ca1dad57da9b3336f25a5af386266ebe7a2e5`。
+
+在另一个干净 detached worktree 中执行以下流程：
+
+1. 重新检出提交，并确认项目没有 `.lake/build`；
+2. 使用本机 Git 对象缓存克隆 9 个依赖，逐一 checkout 到锁文件的精确提交；依赖也不携带构建目录；
+3. 执行 `lake exe cache unpack`，从已有下载缓存恢复依赖产物，无新增网络下载；
+4. 执行 `lake build LeanOEM LeanOEMTests`，重新生成项目及测试产物；
+5. 执行 `bash scripts/run_audit.sh --no-build`，核对每项公理输出和允许集合，并检查工作树仍干净。
+
+```text
+修正后本地构建：通过（3423 个目标）
+修正后干净构建：Build completed successfully (3423 jobs).
+LeanOEM/Physics.olean：由测试构建正常生成
+公理输出：195 项完整，依赖集合仅为 propext、Classical.choice、Quot.sound
+独立精确算术核对：通过
+占位证明扫描与编译产物跟踪检查：通过
+git diff --check 与干净工作树检查：通过
+```
+
+修正后本地日志为 `.lake/release-local-fixed-audit.log`，干净验证日志为
+`.lake/release-clean-ff3ca1d.log`。两个本轮临时 worktree 均已清理；日志留在忽略的本地
+缓存目录，不进入公开源代码。
+
+该验证使用依赖缓存，不能解释为不使用缓存从源码重编整个 Mathlib；LeanOEM 自身的产物
+确实从空构建目录重新生成。后续仅更新审计结果和候选状态文档，不改变该受检提交的代码、
+测试、脚本或依赖锁定内容。
 
 本轮未同步远端，也没有创建 tag 或 Release。内部源码复核见
 [候选审阅记录](../review/release-candidate-review.md)；独立人工语义审查仍待完成。

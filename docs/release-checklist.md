@@ -37,12 +37,14 @@
 - [x] 本地按 CI 顺序运行 `lake build`、`bash scripts/run_audit.sh --no-build` 和 `python3 scripts/validate_oem_numeric.py` 成功。
 - [x] 历史提交 `e803313` 的干净 checkout 重新物化依赖并完成 3166 个构建目标。
 - [x] 历史非零谱批次已在干净 detached worktree 中构建通过（3429 个目标，结论登记于 `9bb9f25`）。
-- [ ] 本轮候选从固定提交建立干净 worktree，重新构建并完成审计，记录依赖缓存的使用方式。
+- [x] 本轮候选 `ff3ca1d` 从固定提交建立干净 worktree，完成 3423 个构建目标和完整审计；
+  依赖 Git 对象与下载缓存的使用方式见 [构建记录](audit/build-report.md)。
+- [x] 默认测试构建涵盖 Physics 聚合入口；审计失败时显示原始 Lean 错误并保留退出码。
 
 ## 可信性和公理
 
 - [x] 源代码没有 `sorry`、`admit` 或未登记自定义 `axiom`。
-- [x] 核心定理执行 `#print axioms`。
+- [x] 全部 192 个显式公开定理及 3 个因子构造执行 `#print axioms`，195 项输出完整。
 - [x] 核心定理只依赖 `propext`、`Classical.choice` 和 `Quot.sound`。
 - [x] 形式假设、形式定理、独立验证证据和数学来源已分开记录。
 

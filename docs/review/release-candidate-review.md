@@ -5,6 +5,7 @@
 审阅对象：从本地提交 `9bb9f25` 开始的发布收口批次；数学实现基线为 `52e36b1`。
 本记录由 AI 对源代码、定理陈述和合成例子进行内部复核形成；独立人工语义审查仍待完成。
 实际受检提交与构建结果以 [构建记录](../audit/build-report.md) 的本轮条目为准。
+最终受检候选为 `ff3ca1d`。
 
 ## 版本定位
 
@@ -89,15 +90,16 @@ ARTS、Python 工程、真实数据和 SCI 论文项目不属于本库目标、�
 本轮不增加数学定义或定理，不修改现有证明项。
 
 候选 `9512730` 的干净构建还暴露了一个构建图缺口：测试原先只导入各个 Physics 子模块，
-没有导入聚合入口，导致后续公理审计找不到 `LeanOEM.Physics.olean`。测试根入口现已显式导入
+没有导入聚合入口，导致后续公理审计找不到 `LeanOEM/Physics.olean`。测试根入口现已显式导入
 `LeanOEM.Physics`，Core-only 测试继续单独导入 Core。审计脚本也已改为先显示 Lean 的错误输出，
 再按原退出码停止，避免错误只留在被丢弃的命令输出中。
 
 ## 验证依据
 
-验证使用 `lake build LeanOEM LeanOEMTests`、`bash scripts/run_audit.sh --no-build`、独立精确算术
-复核和 `git diff --check`。本轮还将从固定提交建立干净 detached worktree，重建项目产物并
-重复审计；完成后在 [构建记录](../audit/build-report.md) 登记结果。
+修正后候选 `ff3ca1d` 的本地和干净 worktree 均完成 `lake build LeanOEM LeanOEMTests`
+（3423 个目标）、`bash scripts/run_audit.sh --no-build`、独立精确算术复核和 `git diff --check`。
+195 项公理输出完整，仅使用允许的基础公理；缺失入口产物的审计失败分支也经过回归检查。
+干净构建重新检出 9 个锁定依赖，复用 Git 对象与 Mathlib 下载缓存，项目自身产物全部重建。
 
 ## 尚待完成
 

@@ -8,7 +8,8 @@ Core/Physics 中全部 192 个显式公开定理声明及 3 个因子构造。
 
 本地执行 `bash scripts/run_audit.sh --no-build` 成功；逐项核对 195 项输出完整，公理依赖集合
 仅为 `propext`、`Classical.choice` 和 `Quot.sound`，部分辅助定理不依赖任何公理。
-本轮数学定义和证明项未改动。固定候选提交的干净构建与复核结果另记于
+本轮数学定义和证明项未改动。修正后候选 `ff3ca1d` 在干净 worktree 中重复审计，也完整输出
+195 项，依赖集合相同。干净构建与复核结果另记于
 [构建记录](build-report.md) 的本轮条目。
 
 ## 历史非零谱批次

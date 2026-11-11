@@ -1,7 +1,7 @@
 # lean-oem `0.1.0` 发布候选说明
 
 状态：尚未打 tag，也没有 GitHub Release。数学实现基线为 `52e36b1`，本轮发布收口从
-`9bb9f25` 开始。受检候选提交见 [构建记录](audit/build-report.md) 的本轮条目。
+`9bb9f25` 开始，最终受检候选为 `ff3ca1d`。构建与审计证据见 [构建记录](audit/build-report.md) 的本轮条目。
 
 版本定位：这是一个纯 Lean 4 + Mathlib 数学库候选版本。`LeanOEM.Core` 是稳定通用入口，
 `LeanOEM.Physics` 是随包提供的实验性归一化数学模块，不构成外部工程适配承诺。
