@@ -19,7 +19,11 @@
 当前验证结果：`lake build` 成功；核心定理的 `#print axioms` 只有
 `propext`、`Classical.choice` 和 `Quot.sound`；源代码没有 `sorry`、`admit` 或自定义 `axiom`。
 
-本机包使用 Lean `v4.35.0`、Mathlib 输入版本 `v4.35.0`，锁定提交记录在 `lake-manifest.json`。有限维实数矩阵核心已经合并到远端 `main`，合并提交为 `1fd31f1`；`api/linear-core` 作为历史实现分支保留。
+本机包使用 Lean `v4.35.0`、Mathlib 输入版本 `v4.35.0`，锁定提交记录在 `lake-manifest.json`。
+数学实现基线为 `52e36b1`，本轮发布收口从 `9bb9f25` 开始；最近提交尚未同步到远端，也没有创建版本标签。
+
+当前工作以文末“后续纯 Lean 工作包”和“发布门槛”为准。P0—P13 保留分批实现记录；
+其中远端审查和 CI 通过的陈述只对应历史提交，当前候选仍需另行同步和检查远端 CI。
 
 ## 总体架构原则
 
@@ -32,7 +36,7 @@
 
 ## 先冻结的设计决策
 
-在加入后验协方差之前，先固定以下契约，避免以后为兼容性反复改名和改方向。
+以下契约已经冻结，用于避免以后为兼容性反复改名和改方向。
 
 1. 保留 `Fin n → ℝ` 作为核心向量表示。它能直接使用 Mathlib 的 `Matrix.mulVec`，暂不换成 `EuclideanSpace` 或更高层的坐标无关类型。
 2. 保留 `K : m × n`、`g : n × m` 的矩阵方向。所有文档和示例都沿用“Jacobian 行是观测、列是状态”的约定。
@@ -59,7 +63,7 @@ structure Problem.WellPosed {n m : ℕ} (p : Problem n m) : Prop where
   observation_posDef : p.observationErrorCovariance.PosDef
 ```
 
-同时保留接受两个独立假设的低层定理，方便调用者只提供所需条件。应补齐以下辅助结果：
+同时保留接受两个独立假设的低层定理，方便调用者只提供所需条件。已提供以下辅助结果：
 
 - `innovationCovariance_inv_posDef`；
 - `innovationCovariance_mul_inv`；
@@ -68,7 +72,8 @@ structure Problem.WellPosed {n m : ℕ} (p : Problem n m) : Prop where
 - 先验和创新协方差的 Hermitian 性质；
 - `Problem.predict` 与 `Problem.innovation` 这类小型函数，减少估计器和误差定理中的重复表达式。
 
-验收标准是：后续证明不再直接展开 `Matrix.isUnit_iff_isUnit_det`，且每一个把逆矩阵当作普通逆矩阵的定理都显式接收 `PosDef` 或 `WellPosed` 假设。
+这些接口集中处理逆矩阵消去；后续谱和因子证明也可在显式 `IsUnit` 条件下使用 Mathlib 的
+低层定理。把逆矩阵解释为通常逆的结论必须具备正定性或其他可逆性依据。
 
 ## 阶段 P2：后验协方差和 Joseph 形式
 
@@ -87,7 +92,7 @@ def josephCovariance (p : Problem n m) (g : Matrix (Fin n) (Fin m) ℝ) : Square
     + g * p.observationErrorCovariance * gᴴ
 ```
 
-定理顺序建议如下：
+已完成的证明链为：
 
 1. 对任意增益，Joseph 形式在先验半正定、观测误差协方差半正定时是半正定；
 2. 在 `WellPosed` 假设下，标准后验公式等于最优增益的 Joseph 形式；
@@ -95,7 +100,8 @@ def josephCovariance (p : Problem n m) (g : Matrix (Fin n) (Fin m) ℝ) : Square
 4. 先验减后验可以写成 `g * innovationCovariance * gᴴ`，从而得到不确定性减少的半正定结论；
 5. 先验正定时再单独研究后验正定，不把这个更强结论混入半正定基本定理。
 
-Joseph 恒等式应先抽象成一个小型非交换矩阵代数引理，再实例化到 `Problem`。这样可以把 `Matrix.mul_assoc`、逆矩阵两侧消去和 Hermitian 逆的细节集中在一个位置。Mathlib 已有 `PosSemidef.mul_mul_conjTranspose_same`、`PosSemidef.add`、`PosDef.inv`、`Matrix.mul_nonsing_inv` 和 `Matrix.nonsing_inv_mul`，不需要自建正定性体系。
+Joseph 恒等式先通过私有非交换矩阵代数引理证明，再实例化到 `Problem`。正定性和逆矩阵消去
+复用 Mathlib 的现有定理。
 
 ## 阶段 P3：精确矩阵示例和自动审计
 
@@ -205,12 +211,13 @@ $$
 - 有限层辐射传输递推和边界条件；
 - 透过率、发射项和辐亮度的非负性及范围性质；
 - Planck 函数、Doppler 频移和简化谱线响应；
-- 通道响应、双边带合成和观测量变换；
-- 对温度、吸收系数和风扰动的导数，以及 Jacobian 的链式组合。
+- 有限通道的非负归一化加权响应；
+- 对归一化层源项的显式 Jacobian 导数契约；现实物理量参数化留在库外。
 
-当前批次使用归一化量；真实单位系统另立模块，避免把单位转换混入基础证明。
+当前批次使用归一化量；现实单位系统和外部数据库不属于本库路线，避免把单位转换混入基础证明。
 
-当前批次验收已达到：有限层递推、Planck 正性、Doppler 基本代数/正性和通道响应范围性质均有形式定理与测试。简化谱线响应、失败边界和离散误差继续作为 P10/P12 后续批次。
+有限层递推、Planck 正性、Doppler 基本代数/正性和通道响应范围性质均有形式定理与测试。
+Gaussian 简化谱线、参数边界和有限层/通道离散误差也已在后续批次完成；连续积分和完整物理参数化不在本轮范围内。
 
 ## 阶段 P11：非线性 Gauss–Newton OEM 规格
 
@@ -240,8 +247,8 @@ $$
 `residual_hasFDerivAt_of_hasJacobianAt` 把 ForwardModel 的 Jacobian 导数传到残差。
 第四批补充了 `normalDefect`、`gaussNewtonUpdate_sub_target_eq_inverse_normalDefect` 和
 `gaussNewtonUpdate_error_le_of_inverse_and_defect`：在显式逆作用界 `γ` 与缺陷界 `η` 下，
-单步误差收缩因子为 `γ·η`。当前仍未从具体模型的 Jacobian、线性化余项和权重条件自动推出
-这些界。
+单步误差收缩因子为 `γ·η`。下一批的局部收缩模块进一步连接显式余项界和加权作用界；
+一般模型自动满足这些条件仍未被证明。
 
 第五批新增 `LeanOEM/Core/LocalContraction.lean`，完成了第一条可实例化的局部收缩桥接：
 
@@ -265,8 +272,8 @@ $$
 
 此阶段连接数学导数和实际计算方法，重点是误差边界而不是把浮点程序直接当作证明。
 
-- 定义中心有限差分 Jacobian，并在光滑性假设下证明截断误差形式；
-- 定义有限层递推、频率求积和通道离散化的误差参数；
+- 定义标量中心有限差分，并在显式余项展开与界下证明截断误差；
+- 定义有限层递推和有限通道离散化的误差参数；
 - 研究 `F_h`、`K_h` 与理想模型 `F`、`K` 的关系；
 - 记录矩阵范数、状态扰动范围和误差如何进入 OEM 更新或后验量；
 - 对条件数、舍入误差和浮点实现保持外部数值证据边界，除非以后单独建立可信浮点模型。
@@ -279,8 +286,7 @@ P12 第一批已完成：
 - 证明该残差以加性项进入正规缺陷和 Gauss–Newton 更新误差界；
 - 用三次函数中心差分 fixture 独立验证 `h²` Jacobian 误差和 `1/1000` 的正规方程残差界。
 
-本批仍未把有限层、频率求积或通道响应的具体离散实现自动转换为这些契约；这些属于 P12
-后续批次。
+有限层和有限通道的契约连接在下述批次中完成；连续频率积分和具体求积规则的误差阶数仍未纳入。
 
 验收标准：至少一个简化模型有有限差分误差界和独立数值验证；误差界的假设、范数和适用范围可读且可复现。
 
@@ -356,18 +362,16 @@ P12-C-2 第一批已完成步长误差提升接口：
 
 ## 后续纯 Lean 工作包
 
-P12-C-3 和 P12-C-4 已完成第一条前向模型/Jacobian 联合误差链以及两层两状态合成模型。
-下一阶段继续围绕可复用数学 API 推进：
+P12-C-3、P12-C-4 和 P13 已完成前向模型/Jacobian 联合误差链、两层两状态合成模型以及
+奇异先验支持谱接口。当前下一阶段先暂停大规模功能扩展，按以下顺序收口：
 
-1. 完善 Physics 模块的参数有效性结构，例如正频率、正温度、正线宽和速度范围；Gaussian
-   线宽参数包的正性约束已完成第一条切片；
-2. 有限层、Gaussian、Doppler、Planck、通道空网格、负误差常数和零差分步长的边界反例已加入；根据新增定理继续补充具体边界；
-3. 先验白化与最优增益的逐特征值界、零谱、秩界、支持坐标白化、自动平方根/range support
-   和自动矩形 `SupportFactor` 已完成；下一步研究 ambient 与支持谱的非可逆因子关系；
-4. 带统一加性误差底的轨迹界已完成第一条切片；后续再研究阻尼 Gauss–Newton、有限步停止和更一般的误差底契约；
-5. 为稳定 Core 与实验 Physics 入口补充外部导入示例和 API 文档。
+1. 完成稳定 Core 与实验 Physics 的公共入口、命名和假设边界审查；
+2. 统一 README、范围、状态、路线、审计和发布说明中的目标表述；
+3. 以锁定工具链重新执行本地和干净 checkout 构建，形成 `0.1.0` 发布候选记录；
+4. 发布后再按明确的纯数学问题评估 Physics 参数有效性、阻尼迭代或更一般的误差契约。
 
-这些工作都保持在精确实数、显式假设和合成例子范围内，不把外部工程或真实数据作为验收内容。
+所有后续工作都保持在精确实数、显式假设和合成例子范围内。外部工程、真实数据和论文项目
+不作为主库路线或验收内容。
 
 ## 阶段 P13：奇异先验支持白化
 
@@ -404,7 +408,7 @@ P13 自动因子小批次继续完成：
 - 新增 `Problem.PriorSqrtFactor.toSupportFactor`，自动得到
   `SupportFactor`，证明其列空间仍为 canonical support，并在 `diag(1,0)` 合成例子中检查
   协方差、满列秩和秩值。
-- 对任意 `SupportFactor`，定义 `X = L`、`Y = Lᴴ Kᴴ Sᵧ⁻¹ K`，证明 ambient averaging
+- 对任意 `SupportFactor`，定义 `X = L`、`Y = Lᴴ Kᴴ S⁻¹ K`，其中 `S` 为创新协方差，证明 ambient averaging
   kernel 为 `XY`、支持白化矩阵为 `YX`，并调用 Mathlib 的矩形特征多项式定理得到
   `χ_A = X^(n-r) χ_{Bₛ}`。
 - 已将该恒等式整理为 ambient/support 非零谱集合相等，并给出零根代数重数的加法关系；
@@ -416,18 +420,21 @@ canonical support 坐标下的协方差、满列秩、列空间和非零谱接�
 
 ## 发布门槛
 
-在为线性核心打 `0.1.0` 标签，或把后续辐射传输模块提升为公开稳定模块前，需要满足相应门槛：
+`0.1.0` 的定位是纯 Lean 数学库候选版本：`LeanOEM.Core` 提供稳定通用 API，
+`LeanOEM.Physics` 随包提供但明确保持实验性，不承诺其兼容性。
+
+发布候选必须满足：
 
 - API 名称、矩阵方向、逆矩阵语义和协方差假设已经冻结；
 - 后验协方差至少有 Joseph 等价、半正定性和一个不确定性减少结果；
 - 有精确矩阵示例、失败边界和可重复构建命令；
 - 没有 `sorryAx`、`admit` 或未登记自定义公理；
 - 每个公开核心定理都有 `#print axioms` 记录；
-- README、范围文档和来源映射明确写出“已证明范围”和“尚未证明范围”；
+- README、范围文档、路线和数学来源映射明确写出“已证明范围”和“尚未证明范围”；
+- `Core` 与 `Physics` 的导入边界通过测试，Physics 的归一化变量没有被写成现实工程结论；
 - 干净 checkout 可以在锁定工具链和 `lake-manifest.json` 下完成构建。
 
-下一次实际工作批次转入稳定 API 和发布前收口：复核 Core/Physics 入口、同步状态和审计
-记录、补做干净 checkout 构建，并据此决定 `0.1.0` 标签。非零谱结果不能升级为奇异情形
-下的完整相似变换；若需要额外的线性代数边界引理，继续保留自动和显式 `SupportFactor`
-双接口，不用伪逆或临时公理绕过。
-统一误差底与具体模型契约的桥接仍保留为后续独立工作包。
+当前实际工作批次就是上述发布前收口：先完成目标和文档统一，再完成稳定性审查与干净复现，
+最后形成候选材料。非零谱结果不能升级为奇异情形下的完整相似变换；继续保留自动和显式
+`SupportFactor` 双接口，不用伪逆或临时公理绕过。统一误差底与具体模型契约的桥接仍是发布
+后的独立工作包。创建 tag、推送远端和 GitHub Release 需要另行决定。

@@ -63,7 +63,7 @@ support = LinearMap.range (sqrt Sa).mulVecLin
 由此定义
 
 $$
-K_s=K L,qquad
+K_s=K L,\qquad S=K S_a K^{\mathsf T}+S_y,\qquad
 B_s=K_s^{\mathsf T}S^{-1}K_s.
 $$
 
@@ -92,7 +92,7 @@ $$
 测试使用
 
 $$
-S_a=\begin{pmatrix}1&0\\0&0\end{pmatrix},qquad
+S_a=\begin{pmatrix}1&0\\0&0\end{pmatrix},\qquad
 L=\begin{pmatrix}1\\0\end{pmatrix}.
 $$
 

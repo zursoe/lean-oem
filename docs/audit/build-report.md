@@ -1,5 +1,7 @@
 # 干净 checkout 构建记录
 
+本文保留历次验证记录；本轮发布准备的最新结果见文末“纯 Lean 发布候选收口”条目。
+
 历史记录（提交 `e803313`，2026-10-31）：
 
 验证步骤：
@@ -219,3 +221,29 @@ git diff --check：通过
 本批新增 `nonzeroSpectrum`、ambient/support 非零谱集合相等、零根代数重数加法，以及
 支持坐标可辨识时零根重数为 `n-r` 的定理。新增公开定理均已纳入 `LeanOEM/Tests/Axioms.lean`；
 审计结果仍只有 `propext`、`Classical.choice` 和 `Quot.sound`。
+
+## 纯 Lean 发布候选收口
+
+验证日期：2026-11-11。本轮起点为 `9bb9f25`，数学实现基线仍为 `52e36b1`。
+
+本轮统一项目目标、Core/Physics 发布范围和历史/当前验证状态，修正创新协方差记号与过期
+待办，并补齐 22 个公开辅助定理及自动支持因子构造的公理登记。Lean 数学定义和证明项未改动。
+
+本地工作区验证：
+
+```text
+lake build LeanOEM LeanOEMTests：通过（3422 个目标）
+bash scripts/run_audit.sh --no-build：通过（含独立精确算术核对）
+公理输出：195 项完整，依赖集合仅为 propext、Classical.choice、Quot.sound
+公开定理显式审计覆盖：192/192
+Core/根入口的 LeanOEM 导入闭包：通过，不包含 Physics 或测试模块
+git diff --check：通过
+README/docs 相对文件链接：通过
+```
+
+本地缓存日志保存在 `.lake/release-local-audit-fiu5vy64.log`，不进入源代码发布内容。
+干净验证将在固定本轮提交后进行：仅复用锁定依赖的 Git 对象和 Mathlib 下载缓存，
+重新检出依赖并重建项目产物。实际提交、命令、缓存使用方式及结果将在该条目补齐。
+
+本轮未同步远端，也没有创建 tag 或 Release。内部源码复核见
+[候选审阅记录](../review/release-candidate-review.md)；独立人工语义审查仍待完成。

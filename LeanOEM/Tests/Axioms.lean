@@ -175,3 +175,28 @@ public import LeanOEM.Physics
 #print axioms LeanOEM.NonlinearProblem.normalRhsFor_difference_norm_le_of_forward_and_jacobian_error
 #print axioms LeanOEM.NonlinearProblem.normalRhsFor_norm_le_of_forward_and_jacobian_error
 #print axioms LeanOEM.NonlinearProblem.gaussNewtonUpdate_error_le_of_forward_and_jacobian_error
+
+-- 发布候选复核：补齐公开辅助定理和自动支持因子构造的公理记录。
+#print axioms LeanOEM.Problem.WellPosed.innovationCovariance_posDef
+#print axioms LeanOEM.innovationCovariance_inv_conjTranspose
+#print axioms LeanOEM.Problem.WellPosed.gain_mul_innovationCovariance
+#print axioms LeanOEM.dofs_zero_left
+#print axioms LeanOEM.dofs_eq_trace_averagingKernel
+#print axioms LeanOEM.NonlinearProblem.residualFor_model
+#print axioms LeanOEM.NonlinearProblem.normalRhsFor_model
+#print axioms LeanOEM.NonlinearProblem.normalMatrix_posDef_of_observable
+#print axioms LeanOEM.NonlinearProblem.normalMatrix_isUnit_of_observable
+#print axioms LeanOEM.eigenvalues_lt_one_of_complement_posDef
+#print axioms LeanOEM.Problem.PriorSqrtFactor.supportBasisVector_eq_coe
+#print axioms LeanOEM.Problem.PriorSqrtFactor.stateEuclideanEquiv_supportBasisVector
+#print axioms LeanOEM.Problem.PriorSqrtFactor.supportBasisMatrix_apply
+#print axioms LeanOEM.Problem.PriorSqrtFactor.supportBasisMatrix_col
+#print axioms LeanOEM.Problem.PriorSqrtFactor.toSupportFactor
+#print axioms LeanOEM.Problem.PriorSqrtFactor.toSupportFactor_matrix
+#print axioms LeanOEM.Problem.PriorSqrtFactor.supportBasisMatrix_range_finrank_eq_priorCovariance_rank
+#print axioms LeanOEM.RadiativeTransfer.TwoLayerSourceParameters.first_abs_le_one
+#print axioms LeanOEM.RadiativeTransfer.TwoLayerSourceParameters.second_abs_le_one
+#print axioms LeanOEM.RadiativeTransfer.stateOneNorm
+#print axioms LeanOEM.RadiativeTransfer.observationOneNorm
+#print axioms LeanOEM.RadiativeTransfer.twoLayerStateFirstCoefficient_eq
+#print axioms LeanOEM.RadiativeTransfer.twoLayerStateSecondCoefficient_eq

@@ -10,8 +10,9 @@ public import Mathlib.Analysis.InnerProductSpace.Subspace
 `SupportFactor` 使用，本文件为它选择一个由 Mathlib 提供的正交规范基，并把基向量
 组织成一个矩形列矩阵。
 
-本层只固定坐标契约：列矩阵满列秩，且其列空间正好是 canonical support。它不把任意
-子空间基误认为先验协方差的 Gram 因子，也不在这里引入 Moore--Penrose 伪逆。
+本层证明列矩阵满列秩、列空间等于 canonical support，再与平方根矩阵组合得到
+自动协方差因子。最后用矩形因子交换证明 ambient/support 的非零谱与零根重数关系。
+支持基矩阵本身不被解释为协方差因子；本层不引入 Moore--Penrose 伪逆。
 -/
 
 @[expose] public section
@@ -353,7 +354,7 @@ variable {n m r : ℕ} {p : Problem n m}
 支持因子下，ambient averaging kernel 与支持白化矩阵只差一个非方阵因子交换。
 
 这里的 `X` 是支持因子 `L`，`Y` 是
-`Lᴴ Kᴴ Sᵧ⁻¹ K`。因此 Mathlib 的矩形特征多项式恒等式可以直接给出非零谱关系，
+`Lᴴ Kᴴ S⁻¹ K`，其中 `S = K Sₐ Kᴴ + Sᵧ` 是创新协方差。因此 Mathlib 的矩形特征多项式恒等式可以直接给出非零谱关系，
 而不需要在奇异情形下构造完整相似变换。
 -/
 theorem averagingKernel_charpoly_eq_support_factor

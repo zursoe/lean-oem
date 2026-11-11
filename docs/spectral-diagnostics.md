@@ -124,6 +124,6 @@ $$
 
 当前高层 `PriorFactor` 接口仍要求正定先验；奇异先验使用独立的 `SupportFactor` 接口。
 任意半正定矩阵的精确平方根和 `range(sqrt Sₐ)` canonical support 已由
-`PriorSqrtFactor.ofPosSemidef` 提供；从 support 选择有限坐标、构造满列秩矩形因子和 ambient
-与支持谱的非可逆因子关系仍待后续工作。矩阵平方根是精确实数构造，本模块没有承诺浮点
-Cholesky 或特征值算法的数值稳定性。
+`PriorSqrtFactor.ofPosSemidef` 提供；有限坐标、自动矩形支持因子以及 ambient/support 的非零谱
+和零根重数接口已在 `SupportCoordinates` 中完成，见 [奇异先验支持白化规格](singular-prior-design.md)。
+矩阵平方根是精确实数构造，本模块没有承诺浮点 Cholesky 或特征值算法的数值稳定性。

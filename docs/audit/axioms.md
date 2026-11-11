@@ -1,5 +1,18 @@
 # 公理审计记录
 
+## 发布候选复核（2026-11-11）
+
+本轮从 `9bb9f25` 开始，补齐 22 个已有公开辅助定理和 `PriorSqrtFactor.toSupportFactor`
+构造的显式审计登记。当前 [Axioms.lean](../../LeanOEM/Tests/Axioms.lean) 共 195 项，覆盖
+Core/Physics 中全部 192 个显式公开定理声明及 3 个因子构造。
+
+本地执行 `bash scripts/run_audit.sh --no-build` 成功；逐项核对 195 项输出完整，公理依赖集合
+仅为 `propext`、`Classical.choice` 和 `Quot.sound`，部分辅助定理不依赖任何公理。
+本轮数学定义和证明项未改动。固定候选提交的干净构建与复核结果另记于
+[构建记录](build-report.md) 的本轮条目。
+
+## 历史非零谱批次
+
 审计日期：2026-11-07
 
 审计基线：代码提交 `52e36b1`；本批新增构造和公开定理均已纳入。

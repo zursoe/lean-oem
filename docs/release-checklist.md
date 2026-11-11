@@ -1,7 +1,7 @@
 # 0.1.0 候选版本发布检查清单
 
-当前状态：尚未发布。线性核心的历史审查已经完成，但当前主线还包含实验性 Physics 模块和
-前向/Jacobian 联合误差扩展；以下清单需要针对完整主线重新执行。
+当前状态：尚未发布。候选版本定位为纯 Lean 数学库：`LeanOEM.Core` 是稳定入口，
+`LeanOEM.Physics` 随包提供但保持实验性；以下清单针对当前完整主线执行。
 
 ## 仓库和版本
 
@@ -21,7 +21,7 @@
 - [x] 自动支持因子的列空间等于 canonical support。
 - [x] ambient averaging kernel 与支持白化矩阵的特征多项式乘幂关系已形式化。
 - [x] ambient/support 非零谱集合相等和零根代数重数关系已形式化并纳入测试与公理审计。
-- [x] 当前主线已有与代码范围一致的版本说明和审计提交号（`52e36b1`）。
+- [x] 版本说明区分数学实现基线 `52e36b1` 和本轮起点 `9bb9f25`；实际受检提交在构建记录中登记。
 - [x] `.github/workflows/ci.yml` 已固定 action 提交，并覆盖构建、审计和精确数值校验。
 
 ## 构建和测试
@@ -36,28 +36,33 @@
 - [x] `scripts/run_audit.sh` 完整运行成功。
 - [x] 本地按 CI 顺序运行 `lake build`、`bash scripts/run_audit.sh --no-build` 和 `python3 scripts/validate_oem_numeric.py` 成功。
 - [x] 历史提交 `e803313` 的干净 checkout 重新物化依赖并完成 3166 个构建目标。
-- [x] 当前候选代码在干净 detached worktree 中重新物化锁定依赖并完成 `lake build LeanOEM LeanOEMTests`（3429 个目标）。
+- [x] 历史非零谱批次已在干净 detached worktree 中构建通过（3429 个目标，结论登记于 `9bb9f25`）。
+- [ ] 本轮候选从固定提交建立干净 worktree，重新构建并完成审计，记录依赖缓存的使用方式。
 
 ## 可信性和公理
 
 - [x] 源代码没有 `sorry`、`admit` 或未登记自定义 `axiom`。
 - [x] 核心定理执行 `#print axioms`。
 - [x] 核心定理只依赖 `propext`、`Classical.choice` 和 `Quot.sound`。
-- [x] 形式假设、形式定理、数值证据和外部文献已分开记录。
+- [x] 形式假设、形式定理、独立验证证据和数学来源已分开记录。
 
-## 公开前人工审查
+## 历史审查与本轮内部复核
 
 - [x] 检查矩阵方向和转置约定。
 - [x] 检查 `observationErrorCovariance` 的语义。
 - [x] 检查总函数矩阵逆的使用条件。
 - [x] 检查后验、Joseph 和信息形式的适用假设。
 - [x] 检查数值脚本没有成为 Lean 证明的隐含依据。
-- [x] 在远端 GitHub runner 上完成 CI 运行并检查日志；push、PR 和合并到 `main` 的运行均通过。
-- [x] 线性核心实现已完成审阅并合并到 `main`；后续正演和辐射传输模块按新路线单独审阅。
-- [ ] 前向模型/Jacobian 联合误差和两状态有限层 fixture 已完成独立审阅。
-- [ ] Physics 模块的参数有效性、合成例子和形式边界已完成审阅。
-- [ ] 先验白化的因子方向、谱界假设及非对称合成例子已完成独立语义审阅。
-- [ ] 奇异先验支持因子的满列秩语义、支持坐标谱界和 ambient/支持可辨识性边界已完成独立语义审阅。
-- [ ] canonical support 自动矩形 `SupportFactor` 的满列秩语义、协方差因子方向和支持谱边界
-  已完成独立语义审阅。
+- [x] 历史线性核心在远端 GitHub runner 完成 push、PR 和合并后的 CI；当前候选不沿用该结论。
+- [x] 历史线性核心实现已完成审阅并合并到远端 `main`。
+- [x] 已完成本轮发布候选内部语义审阅，覆盖前向/Jacobian 误差、Physics 边界、先验白化和
+  canonical support；记录见 [发布候选审阅](review/release-candidate-review.md)。
+
+## 发布前仍需完成
+
+- [ ] 前向模型/Jacobian 联合误差和两状态有限层 fixture 的独立人工语义复核。
+- [ ] Physics 参数有效性、合成例子和归一化边界的独立人工语义复核。
+- [ ] 正定先验白化方向、谱界假设及非对称例子的独立人工语义复核。
+- [ ] 奇异先验支持因子、canonical 自动因子及 ambient/support 谱边界的独立人工语义复核。
+- [ ] 发布决策后同步当前候选至远端并检查该提交的 GitHub CI。
 - [ ] 创建与发布说明一致的 Git tag 和 GitHub Release。

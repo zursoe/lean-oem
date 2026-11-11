@@ -15,6 +15,7 @@ python3 scripts/validate_oem_numeric.py
 ```
 
 Mathlib 的版本和提交由 `lean-toolchain`、`lakefile.toml` 与 `lake-manifest.json` 共同固定。`.lake` 目录是本机缓存和编译产物，不属于源代码发布内容。
+其中 `scripts/validate_oem_numeric.py` 只是独立精确算术审计工具，不是库的运行依赖或主线目标。
 
 ## 当前范围
 
@@ -66,11 +67,14 @@ import LeanOEM.Physics
 
 兼容入口 `import LeanOEM` 只导出稳定核心。
 
+外部边界：本库不依赖 ARTS、Python 工程、真实数据或 SCI 论文项目；这些内容可以在库外作为应用背景或独立验证来源，但不属于主库目标、依赖、稳定 API 或发布门槛。
+
 形式定理只说明给定定义和显式假设下的数学性质。当前状态、范围、外部边界、来源映射和后续路线见 [`docs/status.md`](docs/status.md)、[`docs/scope.md`](docs/scope.md)、[`docs/source-mapping.md`](docs/source-mapping.md) 与 [`docs/roadmap.md`](docs/roadmap.md)。
+本库使用 Lean/Mathlib 的经典逻辑；审计允许 `propext`、`Classical.choice` 和 `Quot.sound`，记录见 [公理审计](docs/audit/axioms.md)。
 
-## 后续方向
+## 后续维护
 
-`LeanOEM.Core` 提供通用数学 API，`LeanOEM.Physics` 保存仍在演化的归一化模型、定理和合成例子。后续重点是完善数学接口、假设边界、反例、文档和可复现构建。迭代语义和证明边界见 [`docs/iteration.md`](docs/iteration.md)。
+`LeanOEM.Core` 提供通用数学 API，`LeanOEM.Physics` 保存仍在演化的归一化模型、定理和合成例子。当前维护重点是稳定 API 审查、假设边界、反例、文档和可复现构建；新的数学模块只有在明确的纯 Lean 问题形成后再加入。迭代语义和证明边界见 [`docs/iteration.md`](docs/iteration.md)。
 
 ## 许可证
 
