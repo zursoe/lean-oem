@@ -64,6 +64,9 @@ python3 scripts/validate_oem_numeric.py
 `.lake` 编译缓存不进入 Git。独立精确算术脚本只用于审计；Lean 定理允许的基础公理为
 `propext`、`Classical.choice`、`Quot.sound`，结果见 [公理记录](audit/axioms.md)。
 
+默认测试构建显式导入 Physics 聚合入口，保证干净环境下公理审计所需的产物存在。
+审计脚本在 Lean 失败时显示原始错误并保留退出码；相关复现记录见构建记录的首次候选失败条目。
+
 ## 后续发布门槛
 
 内部源码复核见 [候选审阅记录](review/release-candidate-review.md)。独立人工语义复核、当前候选

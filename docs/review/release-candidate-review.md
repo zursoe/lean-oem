@@ -88,6 +88,11 @@ ARTS、Python 工程、真实数据和 SCI 论文项目不属于本库目标、�
 公理登记补充了 22 个已有公开辅助定理和 `toSupportFactor` 构造，当前列表为 195 项。
 本轮不增加数学定义或定理，不修改现有证明项。
 
+候选 `9512730` 的干净构建还暴露了一个构建图缺口：测试原先只导入各个 Physics 子模块，
+没有导入聚合入口，导致后续公理审计找不到 `LeanOEM.Physics.olean`。测试根入口现已显式导入
+`LeanOEM.Physics`，Core-only 测试继续单独导入 Core。审计脚本也已改为先显示 Lean 的错误输出，
+再按原退出码停止，避免错误只留在被丢弃的命令输出中。
+
 ## 验证依据
 
 验证使用 `lake build LeanOEM LeanOEMTests`、`bash scripts/run_audit.sh --no-build`、独立精确算术

@@ -1,5 +1,8 @@
 module
 
+-- 测试构建也检查实验聚合入口，保证干净环境下公理审计所需的导入产物存在。
+import LeanOEM.Physics
+
 import LeanOEM.Tests.Basic
 import LeanOEM.Tests.CoreEntry
 import LeanOEM.Tests.PriorWhitening
