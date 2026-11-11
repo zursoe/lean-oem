@@ -85,7 +85,8 @@ Core/Physics 证明项。五项具名语义回归已加入默认测试构建及�
 ## 发布状态
 
 当前 `lakefile.toml` 的包版本仍为 `0.1.0`，仓库尚未创建 Git tag 或 GitHub Release。
-本轮起点 `9bb9f25` 比 `origin/main` 超前 30 个提交；本轮只维护本地候选材料。
+本轮起点 `9bb9f25` 比 `origin/main` 超前 30 个提交；语义修正已在 `7cf0e67` 本地归档。
 本批基于 `88e65c5` 归档为本地语义边界修正提交；发布材料区分历史干净候选和本批验证。
-最终需要作者核对的数学含义见 [作者语义核对](review/author-semantic-review.md)，尚待确认。
+作者已于 2026-11-11 确认 [数学含义和本版范围](review/author-semantic-review.md)。下一步将
+包含该确认记录的候选推送至 `release/0.1.0-candidate` 并核对远端 CI，结果按受检提交登记。
 后续如修改源代码、测试、构建配置或审计脚本，应重新验证相应候选。
