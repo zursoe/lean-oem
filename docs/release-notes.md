@@ -1,7 +1,7 @@
 # lean-oem `0.1.0` 版本说明
 
-版本引用：`v0.1.0`。作者已确认本版数学含义和范围，并于 2026-11-11 明确决定将当前候选
-正式定为 `0.1.0`。发布结果见 [GitHub Release](https://github.com/zursoe/lean-oem/releases/tag/v0.1.0)，
+版本引用：`v0.1.0`，发布于 2026-11-11，固定提交为 `ab4b0b9`。
+作者已确认本版数学含义和范围，正式发布见 [GitHub Release](https://github.com/zursoe/lean-oem/releases/tag/v0.1.0)，
 受检提交与流程证据分别记于 [构建记录](audit/build-report.md) 和 [发布检查](release-checklist.md)。
 
 版本定位：这是纯 Lean 4 + Mathlib OEM 数学库的首个版本。`LeanOEM.Core` 是稳定通用入口，
@@ -77,7 +77,10 @@ python3 scripts/validate_oem_numeric.py
 
 内部源码复核见 [候选审阅记录](review/release-candidate-review.md)，两份独立 AI 报告及处理
 情况见 [语义收口记录](review/independent-ai-review.md)。作者已确认范围，候选 `7f8265f`
-远端 CI 已通过：3425 个构建目标、200 项公理审计和精确有理数复核均成功；最终主线与
-标签验证结果见构建记录。两份 AI 复核与作者确认分别登记，独立人工逐项数学审查尚未
+远端 CI 已通过。正式版本 `ab4b0b9` 的
+[主线 CI](https://github.com/zursoe/lean-oem/actions/runs/43015103436) 和
+[标签 CI](https://github.com/zursoe/lean-oem/actions/runs/43015815874) 均成功；主线日志已核实
+3425 个构建目标、200 项公理审计和精确有理数复核全部通过，详细结果见构建记录。
+两份 AI 复核与作者确认分别登记，独立人工逐项数学审查尚未
 登记完成，作为后续审查事项保留。本次正式发布按用户明确决定执行，见
 [发布检查与审查记录](release-checklist.md)。

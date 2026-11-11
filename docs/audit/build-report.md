@@ -345,3 +345,28 @@ Mathlib 缓存，结论不能表述为从源码重编整个 Mathlib。
 `.lake/candidate-ci-7f8265f.log` 和 `.lake/candidate-ci-7f8265f-watch.log`。
 远端 `main` 未合并此候选，尚未创建 tag 或 GitHub Release。本次结果归档提交仅修改文档，
 其源码、测试、依赖锁、脚本和工作流与受检候选一致。
+
+## 0.1.0 正式发布
+
+发布日期：2026-11-11。用户在会话中明确决定“确定把当前候选版正式定为 0.1.0”，
+据此将候选及发布文档快进合并至远端 `main`，执行主线验证后创建附注标签并发布 Release。
+独立人工逐项审查尚未登记完成，按发布检查保留后续维护事项，不改写为已经完成。
+
+- 正式版本提交：`ab4b0b9d54c3a4a9873ac36acd5803b2dcdf4bd6`；
+- 附注标签：`v0.1.0`，标签对象为 `692ef22b19b9d69dae9b6f70b844241fba917674`；
+- [主线 CI 43015103436](https://github.com/zursoe/lean-oem/actions/runs/43015103436)：
+  2026-11-11 11:49:22 至 11:52:18 UTC，`completed / success`；
+- [标签 CI 43015815874](https://github.com/zursoe/lean-oem/actions/runs/43015815874)：
+  同一版本提交，全部工作流步骤成功；
+- [GitHub Release](https://github.com/zursoe/lean-oem/releases/tag/v0.1.0)：
+  2026-11-11 11:55:22 UTC 正式发布，为 latest，非草稿、非预发布版本。
+
+下载主线结果与日志，已核对 3425 个构建目标通过，200 项公理输出完整、无重复或缺失，
+依赖并集仍仅为 `propext`、`Classical.choice`、`Quot.sound`；独立精确有理数核对、占位
+扫描与编译产物跟踪检查通过。核对 GitHub API 中附注标签指向的提交与主线受检提交相同，
+Release 正文与准备的版本说明一致。源码、测试、依赖、脚本及工作流仍与受检候选一致。
+
+本地忽略证据：`.lake/release-main-ab4b0b9-result.json`、`.lake/release-main-ab4b0b9.log`、
+`.lake/release-tag-v0.1.0-result.json`、`.lake/v0.1.0-tag-ref.json`、
+`.lake/v0.1.0-tag-object.json`、`.lake/v0.1.0-release-result.json` 和
+`.lake/v0.1.0-release-body.md`。结果归档仅修改文档，版本标签保持固定。

@@ -1,6 +1,7 @@
 # 0.1.0 发布检查与审查记录
 
-用户已于 2026-11-11 明确决定将当前候选正式定为 `0.1.0`。版本定位为纯 Lean 数学库：
+`0.1.0` 已于 2026-11-11 正式发布，见
+[GitHub Release](https://github.com/zursoe/lean-oem/releases/tag/v0.1.0)。版本定位为纯 Lean 数学库：
 `LeanOEM.Core` 是稳定入口，`LeanOEM.Physics` 随包提供但保持实验性。
 技术检查、发布执行和后续独立人工审查分别记录。
 
@@ -75,8 +76,11 @@
 ## 发布执行
 
 - [x] 用户确认数学含义和本版范围，并明确授权将当前候选正式定为 `0.1.0`。
-- [ ] 候选合并至远端 `main`，核对该提交的主线 CI。
-- [ ] 主线 CI 通过后创建 `v0.1.0` 标签，发布 GitHub Release 并核对版本指向。
+- [x] 候选快进合并至远端 `main`，正式受检提交为 `ab4b0b9`，
+  [主线 CI](https://github.com/zursoe/lean-oem/actions/runs/43015103436) 全部通过。
+- [x] 创建附注标签 `v0.1.0`，指向主线受检提交；
+  [标签 CI](https://github.com/zursoe/lean-oem/actions/runs/43015815874) 全部通过。
+- [x] GitHub Release 已正式发布并列为 latest，已核对标签指向、发布正文及非草稿、非预发布状态。
 
 ## 后续独立人工审查
 

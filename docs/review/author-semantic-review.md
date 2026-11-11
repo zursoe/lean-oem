@@ -36,4 +36,6 @@
 - 远端 CI：`release/0.1.0-candidate` 上的 `7f8265f` 于 2026-11-11
   [运行通过](https://github.com/zursoe/lean-oem/actions/runs/43010549697)，构建 3425 个目标，
   200 项公理输出完整。源码、测试及工作流与本地受检 `7cf0e67` 一致。
-- 正式发布的主线、tag 和 Release 结果：见发布检查和构建记录，按实际执行结果登记。
+- 正式发布：`v0.1.0` 于 2026-11-11 发布，指向 `ab4b0b9`；该提交的主线与标签 CI 均成功。
+  [GitHub Release](https://github.com/zursoe/lean-oem/releases/tag/v0.1.0) 为非草稿、非预发布版本；
+  详细证据见发布检查及构建记录。
