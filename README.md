@@ -4,6 +4,9 @@
 
 当前主线从有限维、实数、矩阵表示的线性模型开始。状态向量使用 `Fin n → ℝ`，观测向量使用 `Fin m → ℝ`，Jacobian 的形状是 `m × n`。核心 API 将原始矩阵数据与正定性等形式假设分开保存。
 
+`0.1.0` 的固定版本引用为 `v0.1.0`，功能与适用条件见 [版本说明](docs/release-notes.md)，
+发布结果见 [GitHub Release](https://github.com/zursoe/lean-oem/releases/tag/v0.1.0)。
+
 ## 构建
 
 本项目锁定 Lean `v4.35.0` 和 Mathlib 输入版本 `v4.35.0`。在取得仓库后执行：

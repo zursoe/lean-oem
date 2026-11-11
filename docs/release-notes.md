@@ -1,12 +1,10 @@
-# lean-oem `0.1.0` 发布候选说明
+# lean-oem `0.1.0` 版本说明
 
-状态：尚未打 tag，也没有 GitHub Release。数学实现基线为 `52e36b1`，本轮发布收口从
-`9bb9f25` 开始，首次干净受检候选为 `ff3ca1d`。独立 AI 复核后的语义修正基于 `88e65c5`；
-本批工作区验证与历史干净候选分开记录，见 [构建记录](audit/build-report.md)。
-作者已确认本版数学含义和范围；候选 `7f8265f` 已推送到 `release/0.1.0-candidate` 并
-[通过远端 CI](https://github.com/zursoe/lean-oem/actions/runs/43010549697)。
+版本引用：`v0.1.0`。作者已确认本版数学含义和范围，并于 2026-11-11 明确决定将当前候选
+正式定为 `0.1.0`。发布结果见 [GitHub Release](https://github.com/zursoe/lean-oem/releases/tag/v0.1.0)，
+受检提交与流程证据分别记于 [构建记录](audit/build-report.md) 和 [发布检查](release-checklist.md)。
 
-版本定位：这是一个纯 Lean 4 + Mathlib 数学库候选版本。`LeanOEM.Core` 是稳定通用入口，
+版本定位：这是纯 Lean 4 + Mathlib OEM 数学库的首个版本。`LeanOEM.Core` 是稳定通用入口，
 `LeanOEM.Physics` 是随包提供的实验性归一化数学模块，不构成外部工程适配承诺。
 
 ## 导入与兼容性
@@ -15,12 +13,12 @@
 `import LeanOEM.Physics`。此前依赖根入口间接导入 Physics 的调用方需要显式增加该导入。
 Physics 随包构建、接受相同的无占位证明要求，但尚不承诺 API 兼容性。
 
-本批保留数学定义、定理及接口名称，明确 `linearizedGradient` 和 `TargetStationary`
+非线性接口明确 `linearizedGradient` 和 `TargetStationary`
 的代数含义，以及梯度解释所需的对称权重和真实导数条件。`Problem.toNonlinear` 明确为
 协方差总函数逆权重映射，奇异先验下不保证估计问题等价。新增五项语义边界回归纳入默认
 构建与公理审计，处理详情见 [独立 AI 复核收口](review/independent-ai-review.md)。
 
-## Core 候选范围
+## Core 范围
 
 - 有限维、实数、矩阵表示的线性 OEM 问题规格；
 - 预测、创新、创新协方差、增益、后验协方差、Joseph 形式和信息形式；
@@ -75,9 +73,11 @@ python3 scripts/validate_oem_numeric.py
 默认测试构建显式导入 Physics 聚合入口，保证干净环境下公理审计所需的产物存在。
 审计脚本在 Lean 失败时显示原始错误并保留退出码；相关复现记录见构建记录的首次候选失败条目。
 
-## 后续发布门槛
+## 验证与审查记录
 
 内部源码复核见 [候选审阅记录](review/release-candidate-review.md)，两份独立 AI 报告及处理
 情况见 [语义收口记录](review/independent-ai-review.md)。作者已确认范围，候选 `7f8265f`
-远端 CI 已通过。独立人工数学审查与正式合并、tag 和 GitHub Release 分别记录，未完成项
-见 [发布清单](release-checklist.md)。当前 CI 结论对应上述候选提交；不以历史运行代替。
+远端 CI 已通过：3425 个构建目标、200 项公理审计和精确有理数复核均成功；最终主线与
+标签验证结果见构建记录。两份 AI 复核与作者确认分别登记，独立人工逐项数学审查尚未
+登记完成，作为后续审查事项保留。本次正式发布按用户明确决定执行，见
+[发布检查与审查记录](release-checklist.md)。
