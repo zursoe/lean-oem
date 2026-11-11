@@ -50,7 +50,7 @@ theorem weightedJacobianActionBound_of_error
     _ = (beta + epsilon) * ‖v‖ := by ring
 
 /--
-若理想目标 Jacobian 满足驻点条件，而离散化 Jacobian 只满足加权误差界，
+若理想候选 Jacobian 在目标处的正规右端为零，而离散化 Jacobian 只满足加权误差界，
 则离散化后目标正规方程残差至多为 `epsilon * sigma`。
 -/
 theorem normalRhs_norm_le_of_weightedJacobianError
@@ -138,7 +138,7 @@ theorem normalRhsFor_difference_norm_le_of_forward_and_jacobian_error
         (mul_le_mul_of_nonneg_left hResidual hEpsilonJacobian)
         (mul_le_mul_of_nonneg_left hForward' hBeta)
 
-/-- 精确模型在目标处满足正规驻点时，近似前向/Jacobian 的正规右端误差界。 -/
+/-- 精确模型在目标处的代数正规右端为零时，近似前向/Jacobian 的正规右端误差界。 -/
 theorem normalRhsFor_norm_le_of_forward_and_jacobian_error
     (p : NonlinearProblem n m) (target : State n)
     (approximateModel exactModel : ForwardModel n m)

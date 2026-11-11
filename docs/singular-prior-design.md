@@ -1,7 +1,7 @@
 # 奇异先验支持白化规格
 
 状态：矩形支持因子、自动平方根/range support、canonical 坐标层、自动矩形因子和
-ambient/support 非零谱接口均已实现；完整相似变换仍不属于本规格。
+ambient/support 非零实谱接口均已实现；完整相似变换仍不属于本规格。
 
 ## 目标和边界
 
@@ -17,8 +17,9 @@ $$
 其中 `L` 满列秩，`Fin r` 是先验支持坐标。状态均值仍属于 ambient 状态空间；支持因子
 只描述先验协方差允许变化的方向。
 
-本模块不使用奇异矩阵的总函数逆，也不定义 Moore–Penrose 伪逆。支持坐标中的先验是单位
-协方差，所有逆矩阵定理继续只在正定观测误差假设下使用。
+本模块不使用奇异先验协方差的总函数逆，也不定义 Moore–Penrose 伪逆。支持坐标中的先验
+是单位协方差。创新协方差的总函数逆也出现在无条件代数恒等式中；只有给出正定观测误差
+等可逆性依据时，才将它解释为通常逆。
 
 ## 核心 API
 
@@ -30,6 +31,7 @@ support = LinearMap.range (sqrt Sa).mulVecLin
 
 该 canonical support 不要求平方根可逆；`support_finrank_eq_priorCovariance_rank` 证明其
 有限维维数等于先验协方差的矩阵秩。
+当前没有单独形式化它与 `range(Sₐ)` 的子空间集合等式；此处的 support 按上述平方根像空间定义。
 
 `LeanOEM.Core.SupportCoordinates` 进一步定义：
 
@@ -44,9 +46,9 @@ support = LinearMap.range (sqrt Sa).mulVecLin
   `sqrt(Sₐ) · supportBasisMatrix`，并证明其满列秩、协方差恒等式和列空间等于
   canonical support。
 - `averagingKernel_charpoly_eq_support_factor` 对任意支持因子证明
-  `χ_A = X^(n-r) χ_{Bₛ}`，用特征多项式乘幂表达 ambient 与支持矩阵的非零谱关系。
+  `χ_A = X^(n-r) χ_{Bₛ}`，用特征多项式乘幂表达 ambient 与支持矩阵的谱关系。
 - `averagingKernel_nonzeroSpectrum_eq_support_factor` 将上述关系整理为 ambient 与支持
-  白化矩阵的非零谱集合相等。
+  白化矩阵的非零实谱集合相等；本接口不记录重数，也未单独形式化复谱版本。
 - `averagingKernel_zero_rootMultiplicity_eq` 记录零根代数重数的加法关系；支持坐标可辨识
   时，`averagingKernel_zero_rootMultiplicity_eq_dim_sub_support_of_observableOnSupport`
   给出精确的 `n-r` 零方向重数。
@@ -76,13 +78,14 @@ $$
 - `Sₐ` 半正定，支持白化矩阵 `Bₛ` 半正定；
 - `I - Bₛ` 正定；
 - `Bₛ` 的特征值属于 `[0, 1)`；
-- `Bₛ` 正定当且仅当支持 Jacobian `Kₛ` 可辨识；
+- 支持 Jacobian `Kₛ` 可辨识时 `Bₛ` 正定；反向可由下一项零谱等价及正定矩阵可逆推出，
+  目前没有单独命名的双向定理；
 - `0` 属于 `Bₛ` 的谱当且仅当支持 Jacobian 不可辨识；
 - `rank Bₛ = rank Kₛ`；
 - `DOFS = trace Bₛ`，且 `DOFS ≤ r`、`DOFS ≤ rank(Kₛ)`、`DOFS ≤ rank(Sₐ)`；
 - 支持因子的矩阵秩和先验协方差秩都等于 `r`。
 - 任意半正定先验都可以自动得到平方根因子和 canonical support，且 support 维数等于 `rank(Sₐ)`。
-- ambient/support 的非零谱集合相等；零根重数由 ambient 维数差和支持矩阵自身的零根重数共同决定。
+- ambient/support 的非零实谱集合相等；零根重数由 ambient 维数差和支持矩阵自身的零根重数共同决定。
 
 `trace A = trace Bₛ` 是本批对 ambient averaging kernel 的连接。它不依赖 `L` 可逆，
 但不等同于 `A` 与 `Bₛ` 的完整特征多项式相似关系。

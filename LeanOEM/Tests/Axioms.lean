@@ -2,6 +2,7 @@ module
 
 public import LeanOEM.Core
 public import LeanOEM.Physics
+import LeanOEM.Tests.SemanticBoundaries
 
 #print axioms LeanOEM.innovationCovariance_posDef
 #print axioms LeanOEM.innovationCovariance_isUnit
@@ -200,3 +201,10 @@ public import LeanOEM.Physics
 #print axioms LeanOEM.RadiativeTransfer.observationOneNorm
 #print axioms LeanOEM.RadiativeTransfer.twoLayerStateFirstCoefficient_eq
 #print axioms LeanOEM.RadiativeTransfer.twoLayerStateSecondCoefficient_eq
+
+-- 独立 AI 复核后的语义边界回归，单独于 195 项 Core/Physics 登记。
+#print axioms LeanOEM.Tests.SemanticBoundaries.nonsymmetric_stationarity_counterexample
+#print axioms LeanOEM.Tests.SemanticBoundaries.wrongJacobian_stationarity_counterexample
+#print axioms LeanOEM.Tests.SemanticBoundaries.singular_conversion_counterexample
+#print axioms LeanOEM.Tests.SemanticBoundaries.twoLayerState_nonzero_offset
+#print axioms LeanOEM.Tests.SemanticBoundaries.gaussian_zero_width

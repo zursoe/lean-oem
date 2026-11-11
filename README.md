@@ -39,7 +39,7 @@ Mathlib 的版本和提交由 `lean-toolchain`、`lakefile.toml` 与 `lake-manif
 - `PriorSqrtFactor.toSupportFactor` 自动构造平方根支持因子，并证明协方差 Gram 恒等式和
   满列秩与列空间等于 canonical support。
 - 支持因子下 ambient 与支持 averaging kernel 的特征多项式乘幂关系。
-- 支持因子下 ambient 与支持 averaging kernel 的非零谱集合接口，以及零根代数重数关系。
+- 支持因子下 ambient 与支持 averaging kernel 的非零实谱集合接口，以及零根代数重数关系。
 - 信息矩阵、Woodbury 后验公式和后验逆矩阵恒等式。
 - 通用 `ForwardModel`、Jacobian 导数规格、锚点线性化余项和 `Problem.predict` 连接。
 - 最小有限层无散射辐射传输递推，以及非负性、上界保持和两层组合性质。
@@ -47,9 +47,9 @@ Mathlib 的版本和提交由 `lean-toolchain`、`lakefile.toml` 与 `lake-manif
 - 两通道、两状态有限层正演模型及其显式 Jacobian 导数契约。
 - 有限通道响应权重和谱值误差界，以及通道 Jacobian 到 OEM 误差契约的连接。
 - 归一化 Planck 函数、带正线宽参数包的 Gaussian 谱线、Doppler 频移和非负归一化通道响应的基本性质。
-- 非线性 MAP 目标、Gauss–Newton 正规方程规格，以及与线性 OEM 信息形式的连接。
+- 矩阵加权二次目标、Gauss–Newton 代数正规方程规格，以及协方差总函数逆的权重映射。
 - Gauss–Newton 迭代轨迹、步长停止判据，以及显式收缩条件下的收敛、停止误差界和统一加性误差底界。
-- 正定权重下的正规矩阵性质，以及线性化正规梯度的一阶驻点规格。
+- 正定权重下的正规矩阵性质，以及可逆正规矩阵下更新点的代数正规残差归零。
 - 可替换正演模型的 `residualFor`、`normalRhsFor` 和 `withModel`，以及前向模型/Jacobian
   联合误差到正规方程和一步更新误差的契约。
 
@@ -66,6 +66,10 @@ import LeanOEM.Physics
 ```
 
 兼容入口 `import LeanOEM` 只导出稳定核心。
+
+正规方程的梯度解释要求对称权重；把 `TargetStationary` 解释为原目标驻点还要求真实
+Jacobian。`Problem.toNonlinear` 本身只是总函数逆权重映射，奇异先验下不保证与原估计器
+等价。条件与回归反例见 [语义复核收口记录](docs/review/independent-ai-review.md)。
 
 外部边界：本库不依赖 ARTS、Python 工程、真实数据或 SCI 论文项目；这些内容可以在库外作为应用背景或独立验证来源，但不属于主库目标、依赖、稳定 API 或发布门槛。
 

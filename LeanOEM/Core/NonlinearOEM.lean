@@ -15,7 +15,8 @@ noncomputable section
 /-- 非线性 OEM 的观测、先验和权重规格。
 
 `observationWeight` 与 `priorWeight` 表示误差协方差的逆或其他显式权重；
-本结构不自动声称它们来自正定协方差。
+本结构允许任意矩阵，不自动声称它们来自正定协方差。正规方程的梯度解释要求
+两个权重对称；把候选 Jacobian 用于原目标的一阶条件还要求 `HasJacobianAt`。
 -/
 structure NonlinearProblem (n m : ℕ) where
   model : ForwardModel n m
@@ -24,7 +25,7 @@ structure NonlinearProblem (n m : ℕ) where
   priorWeight : Square n
   observationWeight : Square m
 
-/-- 非线性 OEM 权重的正定性假设。 -/
+/-- 两个权重均正定的假设；实数上的 `PosDef` 同时保证对称性。 -/
 structure WeightWellPosed (p : NonlinearProblem n m) : Prop where
   prior_posDef : p.priorWeight.PosDef
   observation_posDef : p.observationWeight.PosDef
@@ -101,23 +102,28 @@ theorem quadraticSubproblem_add {n : ℕ} (H : Square n) (b d h : State n)
   rw [dotProduct_comm b h]
   ring
 
-/-- 带先验约束的非线性 MAP 目标函数。 -/
+/-- 带两个矩阵权重的二次目标。
+
+通常 OEM/MAP 二次目标的解释需另给权重条件；本定义不包含概率模型。 -/
 def objective (p : NonlinearProblem n m) (x : State n) : ℝ :=
   (1 / 2 : ℝ) * quadraticForm p.observationWeight (p.residual x)
     + (1 / 2 : ℝ) * quadraticForm p.priorWeight (x - p.priorMean)
 
-/-- 当前状态和 Jacobian 下的 Gauss–Newton 正规矩阵。 -/
+/-- 给定候选 Jacobian 的代数正规矩阵；对称权重下用于 Gauss–Newton 子问题。 -/
 def normalMatrix (p : NonlinearProblem n m) (_x : State n)
     (k : Jacobian n m) : Square n :=
   k.conjTranspose * p.observationWeight * k + p.priorWeight
 
-/-- 当前状态和 Jacobian 下的 Gauss–Newton 右端项。 -/
+/-- 指定模型及候选 Jacobian 的代数正规右端；梯度解释需对称权重和真实导数。 -/
 def normalRhsFor (p : NonlinearProblem n m) (model : ForwardModel n m) (x : State n)
     (k : Jacobian n m) : State n :=
   k.conjTranspose.mulVec (p.observationWeight.mulVec (p.residualFor model x))
     - p.priorWeight.mulVec (x - p.priorMean)
 
-/-- 当前问题正演模型对应的 Gauss–Newton 右端项。 -/
+/-- 当前模型及候选 Jacobian 的代数正规右端。
+
+只有权重对称且 `k` 满足当前模型的 `HasJacobianAt` 时，才将其解释为目标的负梯度。
+这些解释条件不包含在本定义内。 -/
 def normalRhs (p : NonlinearProblem n m) (x : State n)
     (k : Jacobian n m) : State n :=
   k.conjTranspose.mulVec (p.observationWeight.mulVec (p.residual x))
@@ -127,7 +133,7 @@ theorem normalRhsFor_model (p : NonlinearProblem n m) (x : State n)
     (k : Jacobian n m) :
     p.normalRhsFor p.model x k = p.normalRhs x k := rfl
 
-/-- 正定先验权重和半正定观测权重给出的正规矩阵正定性。
+/-- 正定先验权重和正定观测权重给出的正规矩阵正定性。
 
 带正定先验的 MAP 子问题即使 Jacobian 秩亏也有正定正规矩阵；观测可辨识性
 是独立的诊断性质，不是该可解性结论的必要条件。 -/
@@ -156,7 +162,10 @@ theorem normalMatrix_isUnit_of_observable (p : NonlinearProblem n m) (x : State 
     IsUnit (p.normalMatrix x k) :=
   p.normalMatrix_isUnit x k hWeights
 
-/-- 线性化子问题的正规梯度表达式；其零点就是 Gauss–Newton 正规方程。 -/
+/-- 线性化正规方程的代数残差；保留 `linearizedGradient` 名称以兼容既有调用。
+
+对称权重下，它是线性化二次子问题在 `z` 处的梯度表达式。定义本身只记录
+`H (z - x) - b`，不保证权重对称或候选 Jacobian 是原模型的真实导数。 -/
 def linearizedGradient (p : NonlinearProblem n m) (x : State n)
     (k : Jacobian n m) (z : State n) : State n :=
   (p.normalMatrix x k).mulVec (z - x) - p.normalRhs x k
@@ -180,6 +189,7 @@ theorem normalMatrix_mulVec_gaussNewtonStep
   rw [Matrix.mul_nonsing_inv _
     ((Matrix.isUnit_iff_isUnit_det _).mp hNormal), Matrix.one_mulVec]
 
+/-- 可逆正规矩阵使更新点的代数正规残差为零；不单独断言原目标驻点。 -/
 theorem gaussNewtonUpdate_linearizedGradient_eq_zero
     (p : NonlinearProblem n m) (x : State n) (k : Jacobian n m)
     (hNormal : IsUnit (p.normalMatrix x k)) :
@@ -190,7 +200,11 @@ theorem gaussNewtonUpdate_linearizedGradient_eq_zero
 
 end NonlinearProblem
 
-/-- 将线性 `Problem` 视为一个非线性规格的特例。 -/
+/-- 将线性 `Problem` 的协方差总函数逆映射为非线性规格的权重。
+
+通常 OEM/MAP 的权重解释要求先验和观测误差协方差正定。奇异先验的总函数逆
+不能保持零方差方向的约束；本映射不构造 `x = priorMean + L z` 的受支持约束问题，
+也没有对任意先验承诺与线性估计器等价。 -/
 def Problem.toNonlinear {n m : ℕ} (p : Problem n m) (y : Observation m) :
     NonlinearProblem n m :=
   { model := { observe := p.predict }

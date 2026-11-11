@@ -177,8 +177,10 @@
 - `planckRadiance`：带显式常数和正参数假设的归一化 Planck 函数；
 - `planckRadiance_pos`：正频率、正温度和正物理常数下辐亮度为正；
 - `GaussianLineParameters.Valid`：显式要求 Gaussian 线宽严格为正；`profile`、`profile_pos` 和
-  `profile_center` 将该参数包连接到裸 Gaussian 定义；
-- `dopplerShift`：一阶无量纲 Doppler 频移；
+  `profile_center` 将该参数包连接到裸 Gaussian 总函数，使用这些函数本身不要求 `Valid`；
+- `gaussianLineProfile`：中心峰值为一，不作积分归一化；零线宽时处处为一；
+- `lineResponse`：`strength` 为乘法峰值幅度，不自动表示积分线强度；
+- `dopplerShift`：一阶无量纲代数模型，正速度降低频率，负速度提高频率；正性不保证近似精度；
 - `dopplerShift_zero`、`dopplerShift_expand`、`dopplerShift_pos`：零速度、代数展开和正性结论；
 - `ChannelResponse`：非负且归一化的有限通道权重；
 - `ChannelResponse.apply`：通道加权求和；
@@ -270,7 +272,7 @@ P9 的第一批已经完成：后续形式化继续建立独立的数学规格�
 
 ### 非线性 OEM 第一批映射
 
-- `NonlinearProblem`：观测、先验均值、先验权重和观测权重的非线性 MAP 规格；
+- `NonlinearProblem`：观测、先验均值和任意矩阵权重的代数规格；通常 OEM/MAP 解释另需条件；
 - `NonlinearProblem.residual`：$y-F(x)$；
 - `NonlinearProblem.objective`：带观测权重和先验权重的二次目标；
 - `NonlinearProblem.normalMatrix`：$K^\mathsf{T}W_yK+W_a$；
@@ -279,18 +281,22 @@ P9 的第一批已经完成：后续形式化继续建立独立的数学规格�
   规格下替换正演模型，用于比较精确模型和离散近似模型；
 - `NonlinearProblem.gaussNewtonStep`：正规矩阵总函数逆定义的状态增量；
 - `normalMatrix_mulVec_gaussNewtonStep`：在正规矩阵可逆条件下，增量满足正规方程；
-- `Problem.toNonlinear`：线性 `Problem` 到非线性规格的权重形式映射；
-- `Problem.toNonlinear_normalMatrix_eq_informationMatrix`：该映射的正规矩阵退化为信息矩阵；
+- `Problem.toNonlinear`：协方差总函数逆的权重映射；通常 OEM/MAP 的权重解释要求先验和
+  观测误差协方差正定，奇异先验下不承诺保留原估计问题；
+- `Problem.toNonlinear_normalMatrix_eq_informationMatrix`：正规矩阵与信息矩阵的代数等式，
+  本身不证明估计器等价；
 - `WeightWellPosed`：先验权重和观测权重的正定性假设；
-- `normalMatrix_posDef` / `normalMatrix_isUnit`：正定先验权重和半正定观测权重给出的正规
+- `normalMatrix_posDef` / `normalMatrix_isUnit`：正定先验权重和正定观测权重给出的正规
   矩阵条件；观测可辨识性由 `Observable` 单独记录；
-- `linearizedGradient`：线性化子问题的正规梯度表达式；
+- `linearizedGradient`：线性化正规方程的代数残差；对称权重下具有子问题梯度解释；
 - `quadraticGradient` / `quadraticForm_add`：实数二次型的一阶系数与显式二阶余项展开；
 - `quadraticSubproblem` / `quadraticSubproblem_add`：对称正规矩阵线性化子问题的增量展开；
-- `gaussNewtonUpdate_linearizedGradient_eq_zero`：可逆正规矩阵下更新点满足该正规梯度为零。
+- `gaussNewtonUpdate_linearizedGradient_eq_zero`：可逆正规矩阵下更新点的代数正规残差为零。
 - `residual_hasFDerivAt_of_hasJacobianAt`：`HasJacobianAt` 沿残差映射传播，残差导数为负 Jacobian。
 
 当前批次只证明代数规格和可逆性条件，不证明非线性迭代的全局收敛、阻尼策略或现实正演有效性。
+`TargetStationary` 只记录正规右端为零；解释为原目标一阶驻点还需对称权重和
+`HasJacobianAt`。独立复核及边界证据见 [语义复核收口记录](review/independent-ai-review.md)。
 
 ### 前向模型和 Jacobian 联合误差映射
 
@@ -338,7 +344,7 @@ P9 的第一批已经完成：后续形式化继续建立独立的数学规格�
 - `normalDefectBound_of_quadraticRemainder` 在邻域半径 $r$ 内给出
   $\eta=\beta\rho r$；
 - `TargetStationary`、`normalDefect_eq_jacobianVariation_add_remainder_of_stationary` 和
-  `normalDefectBound_of_stationary_target` 处理一般非线性 MAP 驻点；目标残差界 $\sigma$
+  `normalDefectBound_of_stationary_target` 处理目标正规右端为零的情形；目标残差界 $\sigma$
   与 Jacobian 变化界 $\delta$ 贡献 $\delta\sigma$；
 - `contractsTowardAlong_of_inverse_and_defect` 给出收缩因子
   $q=\gamma\eta$。
@@ -369,5 +375,5 @@ P12 第一批位于 `LeanOEM/Core/DiscretizationError.lean`：
 - 连续辐射传输方程、由光滑性导出有限差分余项界、非线性求解器阻尼及模型收缩条件仍待形式化；已有谱线、差分契约和条件迭代结果不替代这些工作。
 - 正定 OEM 的相似变换、实谱 $[0,1)$ 界、严格上界、零特征值、秩界与 DOFS 谱求和已完成；
   奇异先验也已完成平方根/range support、canonical 有限坐标、自动矩形因子，以及
-  ambient/support 特征多项式乘幂、非零谱和零根重数关系。奇异情形下的完整相似变换仍不在范围内。
+  ambient/support 特征多项式乘幂、非零实谱和零根重数关系。奇异情形下的完整相似变换仍不在范围内。
 - Rodgers 的教材支持术语和公式来源，不自动支持某个现实场景中的参数、先验或误差模型。

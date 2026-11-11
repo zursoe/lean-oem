@@ -62,7 +62,7 @@ example :
   rw [squareProblem_normalMatrix_eq]
   norm_num [Matrix.isUnit_iff_isUnit_det]
 
-/-- 正规矩阵可逆时，Gauss–Newton 更新是线性化正规梯度的零点。 -/
+/-- 正规矩阵可逆时，Gauss–Newton 更新使代数正规残差为零。 -/
 example :
     squareProblem.linearizedGradient (![1] : State 1) squareJacobian
       (squareProblem.gaussNewtonUpdate (![1] : State 1) squareJacobian) = 0 := by

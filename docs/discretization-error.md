@@ -22,15 +22,18 @@ $$
 该结论只需要三角不等式；`epsilon` 的具体来源可以是中心有限差分、插值、求积或其他
 外部数值分析证明。
 
-## 目标驻点误差
+## 目标正规右端误差
 
-若理想目标 Jacobian 满足非线性 MAP 驻点，而近似目标 Jacobian 只满足上面的误差界，
+若理想候选 Jacobian 在目标处的正规右端为零，而近似 Jacobian 只满足上面的误差界，
 且目标残差满足 $\|r(x_\star)\|\leq\sigma$，则
 `normalRhs_norm_le_of_weightedJacobianError` 给出
 
 $$
 \|b_h(x_\star)\|\leq\epsilon\sigma.
 $$
+
+这里使用的是 `TargetStationary` 的代数等式；原目标驻点的解释另需对称权重和真实
+Jacobian。误差定理本身不隐含这两项条件，见 [迭代规格](iteration.md)。
 
 `normalDefect_additive_bound_of_stationarity_residual` 将该项和线性化余项合并：
 
@@ -70,14 +73,14 @@ $1/100$；目标残差取 $1/10$ 时，目标正规方程残差界为 $1/1000$�
 两层共享状态源项 $x$，透过率和入射辐亮度属于固定模型参数：
 
 $$
-F(x)=	au_2	au_1 I_0+
+F(x)=\tau_2\tau_1 I_0+
 \bigl(\tau_2(1-\tau_1)+(1-\tau_2)\bigr)x.
 $$
 
 因此 Jacobian 是常数
 
 $$
-K=1-	au_1	au_2.
+K=1-\tau_1\tau_2.
 $$
 
 `twoLayerSource_hasJacobianAt` 在有限维函数空间中证明了这个 Jacobian 的导数契约。
@@ -92,7 +95,7 @@ $$
 并且两组透过率都位于 $[0,1]$，则
 
 $$
-|\widehat\tau_1\widehat\tau_2-	au_1\tau_2|
+|\widehat\tau_1\widehat\tau_2-\tau_1\tau_2|
 \leq e_1+e_2.
 $$
 
@@ -220,7 +223,7 @@ $$
 \|b_h-b\|\leq \varepsilon_K\sigma+\beta_h\varepsilon_F.
 $$
 
-在精确目标满足正规驻点、近似正规矩阵可逆且逆作用界为 $\gamma$ 时，
+在精确模型的目标正规右端为零、近似正规矩阵可逆且逆作用界为 $\gamma$ 时，
 `gaussNewtonUpdate_error_le_of_forward_and_jacobian_error` 给出同一目标处的一步更新误差底：
 
 $$

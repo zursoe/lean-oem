@@ -16,6 +16,7 @@ import LeanOEM.Tests.ChannelDiscretization
 import LeanOEM.Tests.Spectral
 import LeanOEM.Tests.Discretization
 import LeanOEM.Tests.NonlinearOEM
+import LeanOEM.Tests.SemanticBoundaries
 import LeanOEM.Tests.Iteration
 import LeanOEM.Tests.LocalContraction
 import LeanOEM.Tests.DiscretizationError

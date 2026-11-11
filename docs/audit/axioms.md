@@ -1,9 +1,22 @@
 # 公理审计记录
 
-## 发布候选复核（2026-11-11）
+## 语义边界回归登记（2026-11-11）
+
+本批基于 `88e65c5`，保留原有 195 项 Core/Physics 登记，另导入
+[SemanticBoundaries.lean](../../LeanOEM/Tests/SemanticBoundaries.lean)，为五项具名回归增加
+`#print axioms`。当前 [Axioms.lean](../../LeanOEM/Tests/Axioms.lean) 共 200 项登记；
+Core/Physics 仍为 192 个显式公开定理及 3 个因子构造，回归结果不计作稳定核心 API。
+
+完整构建后执行 `bash scripts/run_audit.sh --no-build`，审计通过。逐项对照登记核实
+200/200 项输出，无重复或缺失；全部依赖的并集仍只有 `propext`、`Classical.choice` 和
+`Quot.sound`。五项回归各自也只使用这三项基础公理。占位证明扫描和编译产物跟踪检查通过。
+本次为基于 `88e65c5` 的本地工作区验证，构建方式及日志见
+[构建记录](build-report.md) 的最新条目。
+
+## 首次发布候选复核（2026-11-11）
 
 本轮从 `9bb9f25` 开始，补齐 22 个已有公开辅助定理和 `PriorSqrtFactor.toSupportFactor`
-构造的显式审计登记。当前 [Axioms.lean](../../LeanOEM/Tests/Axioms.lean) 共 195 项，覆盖
+构造的显式审计登记。当时 [Axioms.lean](../../LeanOEM/Tests/Axioms.lean) 共 195 项，覆盖
 Core/Physics 中全部 192 个显式公开定理声明及 3 个因子构造。
 
 本地执行 `bash scripts/run_audit.sh --no-build` 成功；逐项核对 195 项输出完整，公理依赖集合

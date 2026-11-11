@@ -62,6 +62,10 @@ $\mathrm{DOFS}\leq\operatorname{rank}(K)$。
 `eigenvalues_lt_one` 和 `dofs_lt_state_dim` 进一步说明非空状态空间且观测误差正定时，
 DOFS 严格小于状态维数；它们不需要 Jacobian 满秩。
 
+高层 `Problem.averagingKernel_spectrum_subset_Icc` 直接给出闭区间 `[0,1]`。
+本文的严格上界 `[0,1)` 由 `PriorFactor.spectrum_eq_range_eigenvalues` 与
+`PriorFactor.eigenvalues_lt_one` 组合得到，尚无单独的高层 `Ico` 命名定理。
+
 ## 奇异先验的支持坐标
 
 `Problem.SupportFactor` 允许使用满列秩矩形因子 `L : n × r` 表示半正定先验：
@@ -124,6 +128,6 @@ $$
 
 当前高层 `PriorFactor` 接口仍要求正定先验；奇异先验使用独立的 `SupportFactor` 接口。
 任意半正定矩阵的精确平方根和 `range(sqrt Sₐ)` canonical support 已由
-`PriorSqrtFactor.ofPosSemidef` 提供；有限坐标、自动矩形支持因子以及 ambient/support 的非零谱
+`PriorSqrtFactor.ofPosSemidef` 提供；有限坐标、自动矩形支持因子以及 ambient/support 的非零实谱
 和零根重数接口已在 `SupportCoordinates` 中完成，见 [奇异先验支持白化规格](singular-prior-design.md)。
 矩阵平方根是精确实数构造，本模块没有承诺浮点 Cholesky 或特征值算法的数值稳定性。

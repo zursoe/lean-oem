@@ -20,7 +20,7 @@
 - [x] `PriorSqrtFactor.toSupportFactor` 已自动提供平方根支持因子的 Gram 恒等式和满列秩。
 - [x] 自动支持因子的列空间等于 canonical support。
 - [x] ambient averaging kernel 与支持白化矩阵的特征多项式乘幂关系已形式化。
-- [x] ambient/support 非零谱集合相等和零根代数重数关系已形式化并纳入测试与公理审计。
+- [x] ambient/support 非零实谱集合相等和零根代数重数关系已形式化并纳入测试与公理审计。
 - [x] 版本说明区分数学实现基线 `52e36b1` 和本轮起点 `9bb9f25`；实际受检提交在构建记录中登记。
 - [x] `.github/workflows/ci.yml` 已固定 action 提交，并覆盖构建、审计和精确数值校验。
 
@@ -37,7 +37,7 @@
 - [x] 本地按 CI 顺序运行 `lake build`、`bash scripts/run_audit.sh --no-build` 和 `python3 scripts/validate_oem_numeric.py` 成功。
 - [x] 历史提交 `e803313` 的干净 checkout 重新物化依赖并完成 3166 个构建目标。
 - [x] 历史非零谱批次已在干净 detached worktree 中构建通过（3429 个目标，结论登记于 `9bb9f25`）。
-- [x] 本轮候选 `ff3ca1d` 从固定提交建立干净 worktree，完成 3423 个构建目标和完整审计；
+- [x] 首次收口候选 `ff3ca1d` 从固定提交建立干净 worktree，完成 3423 个构建目标和完整审计；
   依赖 Git 对象与下载缓存的使用方式见 [构建记录](audit/build-report.md)。
 - [x] 默认测试构建涵盖 Physics 聚合入口；审计失败时显示原始 Lean 错误并保留退出码。
 
@@ -59,9 +59,17 @@
 - [x] 历史线性核心实现已完成审阅并合并到远端 `main`。
 - [x] 已完成本轮发布候选内部语义审阅，覆盖前向/Jacobian 误差、Physics 边界、先验白化和
   canonical support；记录见 [发布候选审阅](review/release-candidate-review.md)。
+- [x] 两份独立 AI 复核意见已逐项核实并整理为 [语义收口记录](review/independent-ai-review.md)，
+  与下列人工审查待办分别登记。
+- [x] 正规零点/梯度解释条件、奇异先验转换边界和 Physics 术语已同步到源码注释及文档。
+- [x] 本批五项语义边界回归通过完整构建（3425 个目标），195 项 Core/Physics 与 5 项回归
+  的公理输出完整通过；本批工作区验证与历史干净候选分别记录。
+- [x] 语义说明、五项反例回归和验证记录归档为本地提交。
 
 ## 发布前仍需完成
 
+- [ ] 作者核对 [最终数学含义和本版范围](review/author-semantic-review.md)；该确认与下列
+  独立人工数学审查分别记录。
 - [ ] 前向模型/Jacobian 联合误差和两状态有限层 fixture 的独立人工语义复核。
 - [ ] Physics 参数有效性、合成例子和归一化边界的独立人工语义复核。
 - [ ] 正定先验白化方向、谱界假设及非对称例子的独立人工语义复核。

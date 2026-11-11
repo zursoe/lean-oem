@@ -1,7 +1,8 @@
 # lean-oem `0.1.0` 发布候选说明
 
 状态：尚未打 tag，也没有 GitHub Release。数学实现基线为 `52e36b1`，本轮发布收口从
-`9bb9f25` 开始，最终受检候选为 `ff3ca1d`。构建与审计证据见 [构建记录](audit/build-report.md) 的本轮条目。
+`9bb9f25` 开始，首次干净受检候选为 `ff3ca1d`。独立 AI 复核后的语义修正基于 `88e65c5`；
+本批工作区验证与历史干净候选分开记录，见 [构建记录](audit/build-report.md)。
 
 版本定位：这是一个纯 Lean 4 + Mathlib 数学库候选版本。`LeanOEM.Core` 是稳定通用入口，
 `LeanOEM.Physics` 是随包提供的实验性归一化数学模块，不构成外部工程适配承诺。
@@ -11,6 +12,11 @@
 `import LeanOEM` 和 `import LeanOEM.Core` 提供通用核心；使用实验模型时增加
 `import LeanOEM.Physics`。此前依赖根入口间接导入 Physics 的调用方需要显式增加该导入。
 Physics 随包构建、接受相同的无占位证明要求，但尚不承诺 API 兼容性。
+
+本批保留数学定义、定理及接口名称，明确 `linearizedGradient` 和 `TargetStationary`
+的代数含义，以及梯度解释所需的对称权重和真实导数条件。`Problem.toNonlinear` 明确为
+协方差总函数逆权重映射，奇异先验下不保证估计问题等价。新增五项语义边界回归纳入默认
+构建与公理审计，处理详情见 [独立 AI 复核收口](review/independent-ai-review.md)。
 
 ## Core 候选范围
 
@@ -31,7 +37,7 @@ Physics 随包构建、接受相同的无占位证明要求，但尚不承诺 AP
 - canonical support 的 EuclideanSpace 正交规范基、有限坐标列矩阵、满列秩和像空间定理；
 - `PriorSqrtFactor.toSupportFactor` 自动构造矩形支持因子，并提供协方差、满列秩和列空间定理；
 - 支持因子下 ambient/support 特征多项式乘幂关系；
-- 支持因子下 ambient/support 非零谱集合相等、零根代数重数加法，以及支持可辨识时的
+- 支持因子下 ambient/support 非零实谱集合相等、零根代数重数加法，以及支持可辨识时的
   `n-r` 零方向重数；
 - `Observable` 下的严格正特征值结论，以及白化 averaging kernel 的 Jacobian 秩上界；
 - Core-only 调用例子、精确矩阵和迭代边界反例。
@@ -69,6 +75,7 @@ python3 scripts/validate_oem_numeric.py
 
 ## 后续发布门槛
 
-内部源码复核见 [候选审阅记录](review/release-candidate-review.md)。独立人工语义复核、当前候选
+内部源码复核见 [候选审阅记录](review/release-candidate-review.md)，两份独立 AI 报告及处理
+情况见 [语义收口记录](review/independent-ai-review.md)。独立人工语义复核、当前候选
 远端 CI 和正式发布仍未完成，分别在 [发布清单](release-checklist.md) 保留待办。
 历史远端 CI 的通过记录只对应历史提交。创建 tag、推送远端和 GitHub Release 另行决定。

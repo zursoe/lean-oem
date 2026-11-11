@@ -25,7 +25,10 @@ def WeightedJacobianActionBound (p : NonlinearProblem n m) (k : Jacobian n m)
     (beta : ℝ) : Prop :=
   ∀ v, ‖k.conjTranspose.mulVec (p.observationWeight.mulVec v)‖ ≤ beta * ‖v‖
 
-/-- 给定目标 Jacobian 时，目标状态满足非线性 MAP 一阶驻点的契约。 -/
+/-- 给定候选目标 Jacobian 时，目标处的代数正规右端为零。
+
+这一定义不要求权重对称或 `HasJacobianAt`。只有另给这些条件时，才能作原目标
+一阶驻点的解释；本模块的缺陷恒等式和误差界只使用所记录的代数等式。 -/
 def TargetStationary (p : NonlinearProblem n m) (target : State n)
     (kTarget : Jacobian n m) : Prop :=
   p.normalRhs target kTarget = 0

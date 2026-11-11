@@ -1,6 +1,6 @@
-# 干净 checkout 构建记录
+# 构建与复现记录
 
-本文保留历次验证记录；本轮发布准备的最新结果见文末“纯 Lean 发布候选收口”条目。
+本文保留历次验证记录；最新结果见文末。工作区构建与干净 checkout 的验证方式分别说明。
 
 历史记录（提交 `e803313`，2026-10-31）：
 
@@ -286,3 +286,37 @@ git diff --check 与干净工作树检查：通过
 
 本轮未同步远端，也没有创建 tag 或 Release。内部源码复核见
 [候选审阅记录](../review/release-candidate-review.md)；独立人工语义审查仍待完成。
+
+## 独立 AI 复核后的语义说明与边界回归
+
+验证日期：2026-11-11。基础提交为 `88e65c57f6ee90c556cc75f27ecc6391b4f4ff34`，
+受检对象是包含本批语义说明、五项回归、测试入口及公理登记修改的本地工作区。
+验证在提交前的工作区完成，随后随本批语义修正归档；不将结果记到旧候选 `ff3ca1d` 名下。
+
+四个 Core/Physics 修改文件去除注释和空行后与基线完全一致，数学定义、定理陈述和原证明项
+没有改变。新增反例及采纳意见见 [独立 AI 复核收口](../review/independent-ai-review.md)。
+
+首次构建在新增回归模块失败：具名公开定理引用了私有测试规格，部分类型及实例也只作
+私有导入。修正为公开所需的测试规格及直接导入；这些声明位于测试命名空间，不进入
+稳定 Core。首次失败日志保留，修正后重新执行完整目标构建。
+
+```text
+lake build LeanOEM LeanOEMTests：Build completed successfully (3425 jobs).
+新增语义回归模块与测试聚合入口：通过，无新增警告
+bash scripts/run_audit.sh --no-build：通过
+独立精确有理数交叉验证：全部通过
+公理输出：200/200 项完整、无重复、无缺失
+Core/Physics：原有 195 项，覆盖 192 个显式公开定理及 3 个因子构造
+语义边界回归：新增 5 项
+公理依赖集合：propext、Classical.choice、Quot.sound
+占位证明扫描与编译产物跟踪检查：通过
+git diff --check、README/docs 相对文件链接与制表符检查：通过
+```
+
+本次复用固定的 Lean/Mathlib 依赖及本地缓存，没有新建干净 checkout，也未重新从源码构建
+整个 Mathlib。旧候选的干净构建证据保留在前一节，本批工作区验证与其分开记录。
+
+本地忽略日志分别为 `.lake/semantic-boundary-build.log`（首次失败）、
+`.lake/semantic-boundary-build-fixed.log`（修正后构建）和
+`.lake/semantic-boundary-audit.log`（最终审计）。这些日志不进入公开源代码。
+验证完成后只更新结果文档；未推送远端，也未创建 tag 或 Release。

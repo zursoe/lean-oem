@@ -20,6 +20,10 @@ $$
 正规矩阵可逆时，已有单步定理证明 $H_i\Delta_i=b_i$。
 本模块另证明零增量与 $b_i=0$ 的等价也需要该可逆条件。
 
+`linearizedGradient` 的名称保留兼容性，实际定义是代数正规残差。对称权重下才赋予
+线性化子问题梯度的解释；把 `TargetStationary` 解释为原目标驻点还需要真实 Jacobian。
+这些条件没有隐含在轨迹、正规缺陷或收缩契约中。
+
 `StepSmall` 要求 $\epsilon\geq0$ 且 $\|\Delta_i\|_\infty\leq\epsilon$。
 `StoppedAt ... i` 表示返回当前状态 $x_i$，尚未施加 $\Delta_i$；它不表示首次停止。
 `State n = Fin n → ℝ` 使用最大绝对分量范数，不是欧氏范数、先验加权范数或相对步长。
@@ -106,7 +110,7 @@ $$
 
 这把模型余项、权重和正规矩阵条件留在显式契约中；本模块没有声称具体辐射传输模型
 自动满足 $\gamma$、$\eta$ 界。当前批次已经在显式二次余项契约下完成了第一条推导链；
-一般正规驻点目标和非零观测残差的分解见下文“一般非线性 MAP 驻点”。
+一般正规右端为零的目标和非零观测残差的分解见下文“一般目标的正规零点”。
 
 ## 余项到正规缺陷
 
@@ -162,17 +166,21 @@ $$
 $q=1/2<1$。Lean 已检查邻域不变性、单步误差界和迭代收敛；
 这只是精确实数的数学 fixture，不代表具体工程场景或现实观测结论。
 
-## 一般非线性 MAP 驻点
+## 一般目标的正规零点
 
 为去掉“观测正好等于目标正演输出、先验均值等于目标状态”的特殊条件，
-`TargetStationary p target kTarget` 定义目标处的正规梯度驻点：
+`TargetStationary p target kTarget` 定义目标处的代数正规右端为零：
 
 $$
 k_\star^\mathsf{T}W_y\bigl(y-F(x_\star)\bigr)
 -W_a(x_\star-x_a)=0.
 $$
 
-在该条件下，`normalDefect_eq_jacobianVariation_add_remainder_of_stationary` 将正规缺陷写成
+权重对称且 `kTarget` 满足目标处的 `HasJacobianAt` 时，才可将该等式解释为原目标的
+一阶驻点条件；`WeightWellPosed` 提供权重对称性，但没有提供导数条件。相应反例见
+[语义边界回归](../LeanOEM/Tests/SemanticBoundaries.lean)。
+
+在正规右端为零的条件下，`normalDefect_eq_jacobianVariation_add_remainder_of_stationary` 将正规缺陷写成
 
 $$
 d(x)=
@@ -198,7 +206,7 @@ $$
 $$
 
 这说明非零目标残差会通过 Jacobian 变化项直接进入收缩常数。目标 Jacobian 是实际导数、
-其变化界如何由二阶光滑性得到，以及目标驻点是否对应现实 MAP 解，仍需调用者或后续物理模型证明。
+其变化界如何由二阶光滑性得到，以及目标是否为极小点，仍需调用者另证。
 
 `LeanOEM/Tests/LocalContraction.lean` 还包含一个平方模型的非零残差、非零先验偏差驻点，
 用于检查上述分解的适用边界。

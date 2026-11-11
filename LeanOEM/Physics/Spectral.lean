@@ -33,7 +33,10 @@ theorem planckRadiance_pos {h c k frequency temperature : ℝ}
     mul_pos (sq_pos_of_pos hLightSpeed) hExponential
   exact div_pos hNumerator hDenominator
 
-/-- 归一化 Gaussian 谱线响应。 -/
+/-- 中心峰值为一的 Gaussian 线型；这里不作积分归一化。
+
+谱线解释要求正线宽，见 `GaussianLineParameters.Valid`。实数除法是总函数，
+因此零线宽时本裸函数处处为一。 -/
 def gaussianLineProfile (frequency center width : ℝ) : ℝ :=
   Real.exp (-((frequency - center) / width) ^ 2)
 
@@ -63,7 +66,9 @@ namespace GaussianLineParameters
 structure Valid (parameters : GaussianLineParameters) : Prop where
   width_pos : 0 < parameters.width
 
-/-- 有效参数包对应的 Gaussian 谱线函数。 -/
+/-- 参数包对应的峰值归一化函数；调用者另给 `Valid` 以保证正线宽。
+
+本函数也接受无效参数，零线宽时处处为一。 -/
 def profile (parameters : GaussianLineParameters) (frequency : ℝ) : ℝ :=
   gaussianLineProfile frequency parameters.center parameters.width
 
@@ -81,7 +86,7 @@ theorem profile_center (parameters : GaussianLineParameters) :
 
 end GaussianLineParameters
 
-/-- 带线强度的归一化 Gaussian 谱线响应。 -/
+/-- 乘以峰值幅度 `strength` 的 Gaussian 响应；`strength` 不自动表示积分线强度。 -/
 def lineResponse (strength frequency center width : ℝ) : ℝ :=
   strength * gaussianLineProfile frequency center width
 
@@ -90,7 +95,9 @@ theorem lineResponse_nonneg {strength frequency center width : ℝ}
     0 ≤ lineResponse strength frequency center width := by
   exact mul_nonneg hStrength (gaussianLineProfile_pos frequency center width).le
 
-/-- 一阶 Doppler 频移的无量纲形式。 -/
+/-- 一阶 Doppler 代数模型；正的 `velocity` 降低频率，负值提高频率。
+
+正性定理只说明所给表达式为正，不保证一阶近似的现实精度。 -/
 def dopplerShift (frequency velocity lightSpeed : ℝ) : ℝ :=
   frequency * (1 - velocity / lightSpeed)
 
